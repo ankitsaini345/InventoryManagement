@@ -1,0 +1,51 @@
+<div class="card">
+    <div class="card-header">
+        Products List
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Ram</th>
+                        <th>Storage</th>
+                        <th>AppName</th>
+                        <th>Account</th>
+                        <th>PurchaseDate</th>
+                        <th>ListPrice</th>
+                        <th>Coupon</th>
+                        <th>CardDiscount</th>
+                        <th>CardAmount</th>
+                        <th>CostToMe</th>
+                        <th>DPrice</th>
+                        <th>CardHolder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let product of products">
+                        <td>{{product.id}}</td>
+                        <td>{{product.name}}</td>
+                        <td>{{product.ram}}</td>
+                        <td>{{product.storage}}</td>
+                        <td>{{product.AppName}}</td>
+                        <td>{{product.AppAccount}}</td>
+                        <td>{{product.date}}</td>
+                        <td>{{product.listPrice}}</td>
+                        <td>{{product.coupon}}</td>
+                        <td>{{product.giftBalence}}</td>
+                        <td>{{product.cardDiscount}}</td>
+                        <td>{{product.cardAmount}}</td>
+                        <td>{{product.costToMe}}</td>
+                        <td>{{product.dPrice}}</td>
+                        <td>{{product.cardHolder}}</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>
