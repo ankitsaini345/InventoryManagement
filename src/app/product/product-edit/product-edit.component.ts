@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { IProduct } from '../product';
+import { ProductServiceService } from '../product-service.service';
 
 @Component({
   selector: 'app-product-edit',
@@ -8,14 +10,22 @@ import { IProduct } from '../product';
 })
 export class ProductEditComponent implements OnInit {
 
-  constructor() { }
+  constructor(private route: ActivatedRoute,
+    private productService: ProductServiceService) { }
 
-  pageTitle = 'Add Product';
-  private currentProduct: IProduct;
-  private originalProduct: IProduct;
+  pageTitle = 'Edit Product';
+  currentProduct: IProduct | undefined;
+  originalProduct: IProduct | undefined;
 
-    ngOnInit(): void {
-      
+  ngOnInit(): void {
+    let id = this.route.snapshot.params['id'];
+    if (id == 0) {
+      this.pageTitle = 'Add Product';
     }
+    this.productService.getProduct(id).subscribe((product) => {
+      this.originalProduct = product;
+      this.originalProduct = product;
+    });
+  }
 
 }
