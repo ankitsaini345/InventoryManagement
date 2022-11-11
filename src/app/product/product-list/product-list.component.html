@@ -11,16 +11,23 @@
                         <th>Name</th>
                         <th>Ram</th>
                         <th>Storage</th>
-                        <th>AppName</th>
+                        <th>App Name</th>
                         <th>Account</th>
-                        <th>PurchaseDate</th>
-                        <th>ListPrice</th>
+                        <th>Purchase Date</th>
+                        <th>List Price</th>
                         <th>Coupon</th>
-                        <th>CardDiscount</th>
-                        <th>CardAmount</th>
-                        <th>CostToMe</th>
+                        <th>gift bal</th>
+                        <th>Card Discount</th>
+                        <th>Card Amount</th>
+                        <th>Cost ToMe</th>
                         <th>DPrice</th>
-                        <th>CardHolder</th>
+                        <th>Card Holder</th>
+                        <th>deliveryDate</th>
+                        <th>deliveryLoc</th>
+                        <th>finalDelDate</th>
+                        <th>distName</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,6 +47,18 @@
                         <td>{{product.costToMe}}</td>
                         <td>{{product.dPrice}}</td>
                         <td>{{product.cardHolder}}</td>
+                        <td>{{product.deliveryDate}}</td>
+                        <td>{{product.deliveryLoc}}</td>
+                        <td>{{product.finalDelDate}}</td>
+                        <td>{{product.distName}}</td>
+                        <td><button class="btn btn-outline-primary btn-sm"
+                                    [routerLink]="['/product', product.id, 'edit']">
+                            Edit
+                        </button></td>
+                        <td><button class="btn btn-outline-danger btn-sm"
+                            (click)="deleteProduct(product.id)">
+                    Delete
+                </button></td>
                     </tr>
 
                 </tbody>

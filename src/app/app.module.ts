@@ -8,6 +8,7 @@ import { ProductEditComponent } from './product/product-edit/product-edit.compon
 import { ProductDetailComponent } from './product/product-detail/product-detail.component';
 import { HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './home/home.component';
+import { FormsModule } from '@angular/forms';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './in-memory-db.service';
 
@@ -23,6 +24,7 @@ import { InMemoryDataService } from './in-memory-db.service';
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    FormsModule,
     HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService),
   ],
   providers: [],

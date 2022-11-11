@@ -16,14 +16,30 @@ export class ProductServiceService {
     return this.http.get<IProduct[]>(this.url);
   }
 
-  getProduct(id: number): Observable<IProduct | undefined>{
-    if(id == 0) {
+  getProduct(id: number): Observable<IProduct> {
+    if (id == 0) {
       return of(this.blankProduct());
     } else {
-      return this.getProducts().pipe(
-        map((products: IProduct[]) => products.find(p => p.id == id))
-      );
+      // return this.getProducts().pipe(                                    // use in case of json file
+      //   map((products: IProduct[]) => products.find(p => p.id == id))
+      // );
+
+      // for in mem db or backend service
+      return this.http.get<IProduct>(this.url + '/' + id);
     }
+  }
+
+  addProducts(product: IProduct): Observable<IProduct[]> {
+    product.id = null;
+    return this.http.post<IProduct[]>(this.url, product);
+  }
+
+  editProducts(product: IProduct): Observable<IProduct[]> {
+    return this.http.put<IProduct[]>(this.url + '/' + product.id, product);
+  }
+
+  deleteProducts(id: number): Observable<IProduct[]> {
+    return this.http.delete<IProduct[]>(this.url + '/' + id);
   }
 
   blankProduct(): IProduct {
@@ -42,7 +58,11 @@ export class ProductServiceService {
       coupon: 0,
       giftBalence: 0,
       cardDiscount: 0,
-      cardHolder: '' 
+      cardHolder: '',
+      deliveryDate: '',
+      deliveryLoc: '',
+      finalDelDate:'',
+      distName: ''
     }
   }
 

@@ -1,5 +1,5 @@
 export interface IProduct {
-    id: number,
+    id: number | null,
     name: string,
     date: string,
     ram: number,
@@ -13,5 +13,9 @@ export interface IProduct {
     coupon: number,
     giftBalence: number,
     cardDiscount: number,
-    cardHolder: string 
+    cardHolder: string,
+    deliveryDate: string,
+    deliveryLoc: string,
+    finalDelDate:string,
+    distName: string
 }

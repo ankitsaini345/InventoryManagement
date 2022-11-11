@@ -1,3 +1,7 @@
 thead {
-    color: #337AB7;
-  }
+  color: #337AB7;
+}
+
+.table {
+  text-align: center;
+}

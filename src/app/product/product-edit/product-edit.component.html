@@ -1,142 +1,166 @@
-<div class="card">
+<div class="card" style="width: 90%">
     <div class="card-header">
         {{pageTitle}}
     </div>
 
-    <div class="card-body">
+    <div class="card-body" *ngIf="currentProduct">
         <form novalidate >
             <fieldset>
                 <legend>
                     Product Information
                 </legend>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="productNameId">
+                    <label class="col col-form-label" for="productNameId">
                         Product Name
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="text" class="form-control" id="productNameId" placeholder="Name (required)"
-                            required minlength="3" name="productName">
+                            required minlength="3" name="productName" [(ngModel)]=currentProduct.name>
                     </div>
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="ram">
+                    <label class="col col-form-label" for="ram">
                         RAM
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="ram" placeholder="RAM(required)"
-                            required name="ram">
+                            required name="ram" [(ngModel)]=currentProduct.ram>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="storage">
+                    <label class="col col-form-label" for="storage">
                         Storage
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="storage" placeholder="storage (required)"
-                            required minlength="3" name="storage">
+                            required minlength="3" name="storage" [(ngModel)]=currentProduct.storage>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="productNameId">
+                    <label class="col col-form-label" for="productNameId">
                         Purchase Date
                     </label>
-                    <div class="col-md-8">
-                        <input type="text" class="form-control" id="date" placeholder="Date (required)"
-                            required minlength="3" name="date">
+                    <div class="col">
+                        <input type="date" class="form-control" id="date" placeholder="Date (required)"
+                            required minlength="3" name="date" [(ngModel)]=currentProduct.date>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="productNameId">
+                    <label class="col col-form-label" for="productNameId">
                         App Name
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="text" class="form-control" id="appName" placeholder="Ordered from App (required)"
-                            required minlength="3" name="appName">
+                            required minlength="3" name="appName" [(ngModel)]=currentProduct.AppName>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="appAccount">
+                    <label class="col col-form-label" for="appAccount">
                         App Account
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="text" class="form-control" id="appAccount" placeholder="Ordered from Account (required)"
-                            required minlength="3" name="appAccount">
+                            required minlength="3" name="appAccount" [(ngModel)]=currentProduct.AppAccount>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="listPrice">
+                    <label class="col col-form-label" for="listPrice">
                         List Price
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="listPrice" placeholder="Price on App (required)"
-                            required name="listPrice">
+                            required name="listPrice" [(ngModel)]=currentProduct.listPrice>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="cardAmount">
+                    <label class="col col-form-label" for="cardAmount">
                         Card Amount
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="cardAmount" placeholder="Amount deducted from card (required)"
-                            required name="cardAmount">
+                            required name="cardAmount" [(ngModel)]=currentProduct.cardAmount>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="costToMe">
+                    <label class="col col-form-label" for="costToMe">
                         Cost To Me
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="costToMe" placeholder="costToMe (required)"
-                            required name="costToMe">
+                            required name="costToMe" [(ngModel)]=currentProduct.costToMe>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="coupon">
+                    <label class="col col-form-label" for="coupon">
                         Coupon
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="coupon" placeholder="coupon amount (required)"
-                            required name="coupon">
+                            required name="coupon" [(ngModel)]=currentProduct.coupon>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="giftCardAmount">
+                    <label class="col col-form-label" for="giftCardAmount">
                         Gift Card Amount
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="giftCardAmount" placeholder="Gift Card Balence Used (required)"
-                            required name="giftCardAmount">
+                            required name="giftCardAmount" [(ngModel)]=currentProduct.giftBalence>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="distributorPrice">
+                    <label class="col col-form-label" for="distributorPrice">
                         Distributor Price
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="distributorPrice" placeholder="Amount Received from buyer (required)"
-                            required name="distributorPrice">
+                            required name="distributorPrice" [(ngModel)]=currentProduct.dPrice>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="cardDiscount">
+                    <label class="col col-form-label" for="cardDiscount">
                         Card Discount
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="number" class="form-control" id="cardDiscount" placeholder="Card Discount (required)"
-                            required name="cardDiscount">
+                            required name="cardDiscount" [(ngModel)]=currentProduct.cardDiscount>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" for="cardHolder">
+                    <label class="col col-form-label" for="cardHolder">
                         Card Holder
                     </label>
-                    <div class="col-md-8">
+                    <div class="col">
                         <input type="text" class="form-control" id="cardHolder" placeholder="card holder (required)"
-                            required minlength="3" name="cardHolder">
+                            required minlength="3" name="cardHolder" [(ngModel)]=currentProduct.cardHolder>
                     </div>
                 </div>
             </fieldset>
         </form>
+        <div class="row mb-2">
+            <div class="col-md-4">
+              <button class="btn btn-primary mr-3"
+                      style="width:80px"
+                      type="button"
+                      (click)="saveProduct()">
+                Save
+              </button>
+              <button class="btn btn-outline-secondary mr-3"
+                      style="width:80px"
+                      type="button"
+                      title="Cancel your edits"
+                      [routerLink]="['/products']">
+                Cancel
+              </button>
+              <button class="btn btn-outline-warning"
+                      style="width:80px"
+                      type="button"
+                      title="Delete this product"
+                      (click)="deleteProduct()">
+                Delete
+              </button>
+            </div>
+          </div>
     </div>
 </div>

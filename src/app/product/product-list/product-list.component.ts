@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
 
@@ -8,16 +9,31 @@ import { ProductServiceService } from '../product-service.service';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
-  constructor( private productService: ProductServiceService) { }
+  constructor(private productService: ProductServiceService) { }
 
   products: IProduct[] = [];
   filteredProducts: IProduct[] = [];
 
   ngOnInit(): void {
+    this.getProducts();
+  }
+
+  getProducts() {
     this.productService.getProducts().subscribe((data) => {
-      console.log(data);
       this.products = data;
     })
   }
 
+  deleteProduct(id: any) {
+    this.productService.deleteProducts(id).subscribe({
+      next: () => {
+        console.log('Product with id ' + id + ' deleted');
+        this.getProducts();
+      },
+      error: (err) => {
+        console.error('Error while deleting product with id ' + id);
+        console.error(err);
+      }
+    })
+  }
 }
