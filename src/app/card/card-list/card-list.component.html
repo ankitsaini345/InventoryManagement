@@ -14,6 +14,7 @@
                         <th>Amount Due</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,14 +24,15 @@
                         <td>{{card.billDate}}</td>
                         <td>{{card.dueDate}}</td>
                         <td>{{card.amountDue}}</td>
-                        <td><button class="btn btn-outline-primary btn-sm"
-                                    [routerLink]="['/card', card.id, 'edit']">
-                            Edit
-                        </button></td>
-                        <td><button class="btn btn-outline-danger btn-sm"
-                            (click)="deleteCard(card.id)">
-                    Delete
-                </button></td>
+                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card.id, 'edit']">
+                                Edit
+                            </button></td>
+                            <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card.id, 'txns']">
+                                See Txns
+                            </button></td>
+                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteCard(card.id)">
+                                Delete
+                            </button></td>
                     </tr>
 
                 </tbody>

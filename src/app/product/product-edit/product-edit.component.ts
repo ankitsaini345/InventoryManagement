@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Icard } from 'src/app/card/card';
+import { CardService } from 'src/app/card/card.service';
 import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
 
@@ -12,11 +14,14 @@ export class ProductEditComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
     private router: Router,
+    private cardService: CardService,
     private productService: ProductServiceService) { }
 
   pageTitle = 'Edit Product';
   currentProduct!: IProduct;
   originalProduct!: IProduct;
+  cards!:Icard[];
+  cardFilter = '';
 
   ngOnInit(): void {
     let id = this.route.snapshot.params['id'];
@@ -27,6 +32,9 @@ export class ProductEditComponent implements OnInit {
       this.currentProduct = product;
       this.originalProduct = product;
     });
+    this.cardService.getCards().subscribe((data) => {
+      this.cards = data;
+    })
   }
 
   saveProduct() {

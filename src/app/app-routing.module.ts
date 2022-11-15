@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CardListComponent } from './card/card-list/card-list.component';
 import { CardModifyComponent } from './card/card-modify/card-modify.component';
 import { CardOrderDetailComponent } from './card/card-order-detail/card-order-detail.component';
+import { CardTxnsComponent } from './card/card-txns/card-txns.component';
 import { HomeComponent } from './home/home.component';
 import { ProductDetailComponent } from './product/product-detail/product-detail.component';
 import { ProductEditComponent } from './product/product-edit/product-edit.component';
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'cards', component: CardListComponent },
   { path: 'card/:id/edit', component: CardModifyComponent},
   { path: 'card/:id/detail', component: CardOrderDetailComponent},
+  { path: 'card/:id/txns', component: CardTxnsComponent},
   {path: '**', redirectTo: 'home', pathMatch: 'full'}
 ];
 

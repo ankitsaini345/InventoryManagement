@@ -5,3 +5,7 @@ thead {
 .table {
   text-align: center;
 }
+
+.card-header {
+  font-weight: bold;
+}

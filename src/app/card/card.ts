@@ -3,5 +3,14 @@ export interface Icard {
     cardName: string,
     billDate: number,
     dueDate: number,
-    amountDue: number
+    amountDue: number,
+    txns?: IcardTxn[]
+}
+
+interface IcardTxn {
+    id: number,
+    txnDate: string,
+    amount: number,
+    orderId: number,
+    OrderName?: string
 }

@@ -13,6 +13,7 @@ export class ProductListComponent implements OnInit {
 
   products: IProduct[] = [];
   filteredProducts: IProduct[] = [];
+  filterBy = '';
 
   ngOnInit(): void {
     this.getProducts();

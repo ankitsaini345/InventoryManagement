@@ -3,6 +3,22 @@
         Products List
     </div>
     <div class="card-body">
+        <div class="row">
+            <div class="col-md-1">
+                <label class="col-form-label">
+                    FilterBy:
+                </label></div>
+            <div>
+                <input [(ngModel)]=filterBy type="text" class="form-control">
+            </div>
+        </div>
+        <div class="row" *ngIf="filterBy">
+            <div class="col-md-6">
+                <label class="col-form-label">
+                    Showing products containing <b>{{filterBy}}</b>
+                </label></div>
+        </div>
+        <br>
         <div class="table-responsive">
             <table class="table table-bordered table-sm">
                 <thead>
@@ -33,7 +49,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let product of products">
+                    <tr *ngFor="let product of products | filter:filterBy">
                         <td>{{product.id}}</td>
                         <td>{{product.name}}</td>
                         <td>{{product.ram}}</td>

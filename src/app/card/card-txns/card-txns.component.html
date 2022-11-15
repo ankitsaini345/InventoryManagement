@@ -1,0 +1,35 @@
+<div class="card" *ngIf="card">
+    <div class="card-header">
+        Transactions on Card '{{card.cardName}}'
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Purchase Date</th>
+                        <th>Amount</th>
+                        <th>Order Name</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let txn of card.txns">
+                        <td>{{txn.id}}</td>
+                        <td>{{txn.txnDate}}</td>
+                        <td>{{txn.amount}}</td>
+                        <td>{{txn.OrderName}}</td>
+                        <td><button class="btn btn-outline-primary btn-sm"
+                                [routerLink]="['/product', txn.orderId, 'details']">
+                                Order Details
+                            </button></td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>

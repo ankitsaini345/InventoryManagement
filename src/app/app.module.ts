@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { AppComponent } from './app.component';
 import { ProductListComponent } from './product/product-list/product-list.component';
 import { ProductEditComponent } from './product/product-edit/product-edit.component';
@@ -15,6 +16,7 @@ import { CardListComponent } from './card/card-list/card-list.component';
 import { CardModifyComponent } from './card/card-modify/card-modify.component';
 import { CardOrderDetailComponent } from './card/card-order-detail/card-order-detail.component';
 import { CardBillPaymentComponent } from './card/card-bill-payment/card-bill-payment.component';
+import { CardTxnsComponent } from './card/card-txns/card-txns.component';
 
 @NgModule({
   declarations: [
@@ -26,14 +28,16 @@ import { CardBillPaymentComponent } from './card/card-bill-payment/card-bill-pay
     CardListComponent,
     CardModifyComponent,
     CardOrderDetailComponent,
-    CardBillPaymentComponent
+    CardBillPaymentComponent,
+    CardTxnsComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService),
+    Ng2SearchPipeModule,
+    HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService)
   ],
   providers: [],
   bootstrap: [AppComponent]
