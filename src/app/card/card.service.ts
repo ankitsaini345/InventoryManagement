@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IProduct } from '../product/product';
-import { Icard } from './card';
+import { Icard, IcardTxn } from './card';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +37,15 @@ export class CardService {
 
   deleteCard(id: any): Observable<Icard> {
     return this.http.delete<Icard>(this.url + '/' + id);
+  }
+
+  async addCardTxn(cardName: string, txn: IcardTxn) {
+    this.getCardByName(cardName).subscribe((crd) => {
+      let card: Icard = crd;
+      card.txns?.push(txn);
+      this.updateCard(card).subscribe(() => console.log('card updated')
+      )
+    })
   }
 
   blankCard(): Icard {

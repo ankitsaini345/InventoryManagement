@@ -24,8 +24,14 @@
                         RAM
                     </label>
                     <div class="col">
-                        <input type="number" class="form-control" id="ram" placeholder="RAM(required)" required
-                            name="ram" [(ngModel)]=currentProduct.ram>
+                        <select class="form-control" name="ram" id="ram" [(ngModel)]=currentProduct.ram>
+                            <option value=2>2</option>
+                            <option value=3>3</option>
+                            <option value=4>4</option>
+                            <option value=6>6</option>
+                            <option value=8>8</option>
+                            <option value=10>10</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -33,8 +39,14 @@
                         Storage
                     </label>
                     <div class="col">
-                        <input type="number" class="form-control" id="storage" placeholder="storage (required)" required
-                            minlength="3" name="storage" [(ngModel)]=currentProduct.storage>
+                        <select class="form-control" name="storage" id="storage" [(ngModel)]=currentProduct.storage>
+                            <option value=16>16</option>
+                            <option value=32>32</option>
+                            <option value=64>64</option>
+                            <option value=128>128</option>
+                            <option value=256>256</option>
+                            <option value=512>512</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -51,8 +63,19 @@
                         App Name
                     </label>
                     <div class="col">
-                        <input type="text" class="form-control" id="appName" placeholder="Ordered from App (required)"
-                            required minlength="3" name="appName" [(ngModel)]=currentProduct.AppName>
+                            <select class="form-control" name="appName" id="appName" [(ngModel)]=currentProduct.AppName>
+                                <option value="Amazon">Amazon</option>
+                                <option value="Flipkart">Flipkart</option>
+                                <option value="Samsung">Samsung</option>
+                                <option value="Realme">Realme</option>
+                                <option value="Vivo">Vivo</option>
+                                <option value="Oppo">Oppo</option>
+                                <option value="Mi">Mi</option>
+                                <option value="1+">1+</option>
+                                <option value="TataCliQ">Tata CliQ</option>
+                                <option value="RelianceDigital">Reliance Digital</option>
+                                <option value="Others">Others</option>
+                            </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -153,8 +176,7 @@
                     <div class="col">
                         <select class="form-control" id="cardHolder" name="cardHolder"
                             [(ngModel)]=currentProduct.cardHolder>
-                            <input type="search" class="form-control" name="cardFilter" [(ngModel)]=cardFilter>
-                            <option *ngFor="let card of cards | filter:cardFilter" value="card.cardName">
+                            <option *ngFor="let card of cards | filter:cardFilter" [ngValue]="card.cardName">
                                 {{card.cardName}}</option>
                         </select>
                     </div>
@@ -163,18 +185,19 @@
         </form>
         <div class="row mb-2 form-group">
             <!-- <div class="col-md-4"> -->
-                <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="saveProduct()">
-                    Save
-                </button>
-                <button class="btn btn-outline-secondary mr-3" style="width:80px" type="button"
-                    title="Cancel your edits" [routerLink]="['/products']">
-                    Cancel
-                </button>
-                <button class="btn btn-outline-warning" style="width:80px" type="button" title="Delete this product"
-                    (click)="resetProduct()">
-                    Delete
-                </button>
+            <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="saveProduct()">
+                Save
+            </button>
+            <button class="btn btn-outline-secondary mr-3" style="width:80px" type="button" title="Cancel your edits"
+                [routerLink]="['/products']">
+                Cancel
+            </button>
+            <button class="btn btn-outline-warning" style="width:80px" type="button" title="Delete this product"
+                (click)="resetProduct()">
+                Delete
+            </button>
             <!-- </div> -->
         </div>
     </div>
+    {{ currentProduct | json }}
 </div>

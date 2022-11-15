@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Icard } from 'src/app/card/card';
+import { Icard, IcardTxn } from 'src/app/card/card';
 import { CardService } from 'src/app/card/card.service';
 import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
@@ -39,10 +39,18 @@ export class ProductEditComponent implements OnInit {
 
   saveProduct() {
     if (this.currentProduct.id == 0) {
-      this.productService.addProducts(this.currentProduct).subscribe({
-        next: () => console.log(this.currentProduct.name + ' saved.'),
-        error: () => console.error('Error in saving product ' + this.currentProduct.name)
+      this.productService.addProducts(this.currentProduct).subscribe((data) => {
+        console.log(data);
+        const txn: IcardTxn = {
+          id: null,
+          amount: this.currentProduct.cardAmount,
+          orderId: this.currentProduct.id,
+          txnDate: this.currentProduct.date,
+          OrderName: this.currentProduct.name
+        }
+        this.cardService.addCardTxn(this.currentProduct.cardHolder, txn);
       });
+
     } else {
       this.productService.editProducts(this.currentProduct).subscribe({
         next: () => console.log('Product ' + this.currentProduct.name + ' edited.'),

@@ -7,10 +7,10 @@ export interface Icard {
     txns?: IcardTxn[]
 }
 
-interface IcardTxn {
-    id: number,
+export interface IcardTxn {
+    id?: number | null,
     txnDate: string,
-    amount: number,
-    orderId: number,
+    amount: number | null,
+    orderId: number | null,
     OrderName?: string
 }
