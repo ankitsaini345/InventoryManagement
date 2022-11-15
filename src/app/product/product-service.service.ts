@@ -50,6 +50,7 @@ export class ProductServiceService {
       ram: 0,
       storage: 0,
       AppName: '',
+      status:'',
       AppAccount: '',
       listPrice: 0,
       cardAmount: 0,

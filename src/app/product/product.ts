@@ -17,5 +17,6 @@ export interface IProduct {
     deliveryDate: string,
     deliveryLoc: string,
     finalDelDate:string,
-    distName: string
+    distName: string,
+    status: string
 }

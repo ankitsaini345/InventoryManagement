@@ -1,0 +1,42 @@
+<div class="card">
+    <div class="card-header">
+        Cards List
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Card Name</th>
+                        <th>Bill Date</th>
+                        <th>Due Date</th>
+                        <th>Amount Due</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let card of cards">
+                        <td>{{card.id}}</td>
+                        <td>{{card.cardName}}</td>
+                        <td>{{card.billDate}}</td>
+                        <td>{{card.dueDate}}</td>
+                        <td>{{card.amountDue}}</td>
+                        <td><button class="btn btn-outline-primary btn-sm"
+                                    [routerLink]="['/card', card.id, 'edit']">
+                            Edit
+                        </button></td>
+                        <td><button class="btn btn-outline-danger btn-sm"
+                            (click)="deleteCard(card.id)">
+                    Delete
+                </button></td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>

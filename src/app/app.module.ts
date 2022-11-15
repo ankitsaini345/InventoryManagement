@@ -11,6 +11,10 @@ import { HomeComponent } from './home/home.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './in-memory-db.service';
+import { CardListComponent } from './card/card-list/card-list.component';
+import { CardModifyComponent } from './card/card-modify/card-modify.component';
+import { CardOrderDetailComponent } from './card/card-order-detail/card-order-detail.component';
+import { CardBillPaymentComponent } from './card/card-bill-payment/card-bill-payment.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +22,11 @@ import { InMemoryDataService } from './in-memory-db.service';
     ProductListComponent,
     ProductEditComponent,
     ProductDetailComponent,
-    HomeComponent
+    HomeComponent,
+    CardListComponent,
+    CardModifyComponent,
+    CardOrderDetailComponent,
+    CardBillPaymentComponent
   ],
   imports: [
     BrowserModule,

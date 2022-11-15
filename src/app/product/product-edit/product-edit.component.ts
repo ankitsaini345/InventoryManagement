@@ -45,7 +45,7 @@ export class ProductEditComponent implements OnInit {
     this.router.navigate(['/products'])
   }
 
-  deleteProduct() {
+  resetProduct() {
     this.productService.getProduct(0).subscribe((product) => {
       this.currentProduct = product;
       this.originalProduct = product;

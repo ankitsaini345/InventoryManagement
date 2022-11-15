@@ -41,7 +41,24 @@ export class InMemoryDataService implements InMemoryDbService {
       }
     ]
 
-    return { products };
+    const cards = [
+      {
+        id: 0,
+        cardName: 'Ankit_AxisFL',
+        billDate: 15,
+        dueDate: 4,
+        amountDue: 1000
+      },
+      {
+        id: 1,
+        cardName: 'Ankit_AxisAce',
+        billDate: 15,
+        dueDate: 5,
+        amountDue: 3000
+      }
+    ]
+
+    return { products, cards };
 
   }
 }

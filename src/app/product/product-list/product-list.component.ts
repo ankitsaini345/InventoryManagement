@@ -36,4 +36,16 @@ export class ProductListComponent implements OnInit {
       }
     })
   }
+  cancelProduct(id: any) {
+    this.productService.deleteProducts(id).subscribe({
+      next: () => {
+        console.log('Product with id ' + id + ' deleted');
+        this.getProducts();
+      },
+      error: (err) => {
+        console.error('Error while deleting product with id ' + id);
+        console.error(err);
+      }
+    })
+  }
 }

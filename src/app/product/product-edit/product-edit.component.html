@@ -65,6 +65,20 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label class="col col-form-label" for="Status">
+                        Status
+                    </label>
+                    <div class="col">
+                        <select class="form-control" name="status" id="status" [(ngModel)]=currentProduct.status>
+                            <option value="Ordered">Ordered</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="DeliveredToLoc">DeliveredToLoc</option>
+                            <option value="DeliveredHome">DeliveredHome</option>
+                            <option value="Distributor">Distributor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col col-form-label" for="listPrice">
                         List Price
                     </label>
@@ -129,10 +143,10 @@
                 </div>
                 <div class="form-group row">
                     <label class="col col-form-label" for="cardHolder">
-                        Card Holder
+                        Card Name
                     </label>
                     <div class="col">
-                        <input type="text" class="form-control" id="cardHolder" placeholder="card holder (required)"
+                        <input type="text" class="form-control" id="cardHolder" placeholder="card Name (required)"
                             required minlength="3" name="cardHolder" [(ngModel)]=currentProduct.cardHolder>
                     </div>
                 </div>
@@ -157,7 +171,7 @@
                       style="width:80px"
                       type="button"
                       title="Delete this product"
-                      (click)="deleteProduct()">
+                      (click)="resetProduct()">
                 Delete
               </button>
             </div>
