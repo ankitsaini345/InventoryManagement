@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IProduct } from '../product/product';
 import { Icard, IcardTxn } from './card';
 
 @Injectable({
@@ -17,8 +16,8 @@ export class CardService {
     return this.http.get<Icard[]>(this.url);
   }
 
-  getCardByName(name: string): Observable<Icard> {
-    return this.http.get<Icard>(this.url + '?cardName=' + name);
+  getCardByName(name: string): Observable<Icard[]> {
+    return this.http.get<Icard[]>(this.url + '?cardName=' + name);
   }
 
   getCard(id: number): Observable<Icard> {
@@ -40,12 +39,13 @@ export class CardService {
   }
 
   async addCardTxn(cardName: string, txn: IcardTxn) {
-    this.getCardByName(cardName).subscribe((crd) => {
-      let card: Icard = crd;
-      card.txns?.push(txn);
-      this.updateCard(card).subscribe(() => console.log('card updated')
-      )
-    })
+    let card = await firstValueFrom(this.getCardByName(cardName));
+    if(card.length > 0) {
+      card[0].txns?.push(txn);
+      return firstValueFrom(this.updateCard(card[0]));
+    } else {
+      throw new Error("Card not Found");
+    }
   }
 
   blankCard(): Icard {

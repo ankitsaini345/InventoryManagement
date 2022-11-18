@@ -26,7 +26,7 @@ export class ProductListComponent implements OnInit {
   }
 
   deleteProduct(id: any) {
-    this.productService.deleteProducts(id).subscribe({
+    this.productService.deleteProduct(id).subscribe({
       next: () => {
         console.log('Product with id ' + id + ' deleted');
         this.getProducts();
@@ -38,7 +38,7 @@ export class ProductListComponent implements OnInit {
     })
   }
   cancelProduct(id: any) {
-    this.productService.deleteProducts(id).subscribe({
+    this.productService.deleteProduct(id).subscribe({
       next: () => {
         console.log('Product with id ' + id + ' deleted');
         this.getProducts();

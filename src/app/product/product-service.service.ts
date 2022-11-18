@@ -29,16 +29,16 @@ export class ProductServiceService {
     }
   }
 
-  addProducts(product: IProduct): Observable<IProduct[]> {
+  addProduct(product: IProduct): Observable<IProduct> {
     product.id = null;
-    return this.http.post<IProduct[]>(this.url, product);
+    return this.http.post<IProduct>(this.url, product);
   }
 
-  editProducts(product: IProduct): Observable<IProduct[]> {
-    return this.http.put<IProduct[]>(this.url + '/' + product.id, product);
+  editProduct(product: IProduct): Observable<IProduct> {
+    return this.http.put<IProduct>(this.url + '/' + product.id, product);
   }
 
-  deleteProducts(id: number): Observable<IProduct[]> {
+  deleteProduct(id: number): Observable<IProduct[]> {
     return this.http.delete<IProduct[]>(this.url + '/' + id);
   }
 
@@ -49,21 +49,22 @@ export class ProductServiceService {
       date: new Date().toISOString().slice(0,10),
       ram: 4,
       storage: 128,
-      AppName: '',
+      AppName: 'Amazon',
       status:'Ordered',
       AppAccount: '',
       listPrice: null,
-      cardAmount: null,
-      costToMe: null,
-      dPrice: null,
-      coupon: null,
-      giftBalence: null,
-      cardDiscount: null,
+      cardAmount: 0,
+      costToMe: 0,
+      buyerPrice: null,
+      coupon: 0,
+      giftBalence: 0,
+      cardDiscount: 0,
       cardHolder: 'Ankit_AxisAce',
       deliveryDate: '',
       deliveryLoc: '',
-      finalDelDate:'',
-      distName: ''
+      buyerDate:'',
+      buyerName: 'AmtAryaNgr',
+      profit: 0
     }
   }
 

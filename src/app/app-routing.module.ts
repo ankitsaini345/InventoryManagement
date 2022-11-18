@@ -18,8 +18,10 @@ const routes: Routes = [
   { path: 'card/:id/edit', component: CardModifyComponent},
   { path: 'card/:id/detail', component: CardOrderDetailComponent},
   { path: 'card/:id/txns', component: CardTxnsComponent},
-  {path: '**', redirectTo: 'home', pathMatch: 'full'}
 ];
+
+// {path: '**', redirectTo: 'home', pathMatch: 'full'}
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col col-form-label" for="productNameId">
+                    <label class="col col-form-label" for="date">
                         Purchase Date
                     </label>
                     <div class="col">
@@ -63,19 +63,19 @@
                         App Name
                     </label>
                     <div class="col">
-                            <select class="form-control" name="appName" id="appName" [(ngModel)]=currentProduct.AppName>
-                                <option value="Amazon">Amazon</option>
-                                <option value="Flipkart">Flipkart</option>
-                                <option value="Samsung">Samsung</option>
-                                <option value="Realme">Realme</option>
-                                <option value="Vivo">Vivo</option>
-                                <option value="Oppo">Oppo</option>
-                                <option value="Mi">Mi</option>
-                                <option value="1+">1+</option>
-                                <option value="TataCliQ">Tata CliQ</option>
-                                <option value="RelianceDigital">Reliance Digital</option>
-                                <option value="Others">Others</option>
-                            </select>
+                        <select class="form-control" name="appName" id="appName" [(ngModel)]=currentProduct.AppName>
+                            <option value="Amazon">Amazon</option>
+                            <option value="Flipkart">Flipkart</option>
+                            <option value="Samsung">Samsung</option>
+                            <option value="Realme">Realme</option>
+                            <option value="Vivo">Vivo</option>
+                            <option value="Oppo">Oppo</option>
+                            <option value="Mi">Mi</option>
+                            <option value="1+">1+</option>
+                            <option value="TataCliQ">Tata CliQ</option>
+                            <option value="RelianceDigital">Reliance Digital</option>
+                            <option value="Others">Others</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -108,26 +108,7 @@
                     </label>
                     <div class="col">
                         <input type="number" class="form-control" id="listPrice" placeholder="Price on App (required)"
-                            required name="listPrice" [(ngModel)]=currentProduct.listPrice>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="cardAmount">
-                        Card Amount
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="cardAmount"
-                            placeholder="Amount deducted from card (required)" required name="cardAmount"
-                            [(ngModel)]=currentProduct.cardAmount>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="costToMe">
-                        Cost To Me
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="costToMe" placeholder="costToMe (required)"
-                            required name="costToMe" [(ngModel)]=currentProduct.costToMe>
+                            required name="listPrice" [(ngModel)]=listPrice>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -135,28 +116,8 @@
                         Coupon
                     </label>
                     <div class="col">
-                        <input type="number" class="form-control" id="coupon" placeholder="coupon amount (required)"
-                            required name="coupon" [(ngModel)]=currentProduct.coupon>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="giftCardAmount">
-                        Gift Card Amount
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="giftCardAmount"
-                            placeholder="Gift Card Balence Used (required)" required name="giftCardAmount"
-                            [(ngModel)]=currentProduct.giftBalence>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="distributorPrice">
-                        Distributor Price
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="distributorPrice"
-                            placeholder="Amount Received from buyer (required)" required name="distributorPrice"
-                            [(ngModel)]=currentProduct.dPrice>
+                        <input type="number" class="form-control" id="coupon" placeholder="coupon amount (default = 0)"
+                            required name="coupon" [(ngModel)]=coupon>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -166,7 +127,17 @@
                     <div class="col">
                         <input type="number" class="form-control" id="cardDiscount"
                             placeholder="Card Discount (required)" required name="cardDiscount"
-                            [(ngModel)]=currentProduct.cardDiscount>
+                            [(ngModel)]=cardDiscount>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="cardAmount">
+                        Card Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="cardAmount" disabled="true"
+                            placeholder="Amount deducted from card (required)" required name="cardAmount"
+                            [(ngModel)]=currentProduct.cardAmount>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -176,9 +147,74 @@
                     <div class="col">
                         <select class="form-control" id="cardHolder" name="cardHolder"
                             [(ngModel)]=currentProduct.cardHolder>
-                            <option *ngFor="let card of cards | filter:cardFilter" [ngValue]="card.cardName">
+                            <option *ngFor="let card of cards" [ngValue]="card.cardName">
                                 {{card.cardName}}</option>
                         </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="giftCardAmount">
+                        Gift Card Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="giftCardAmount"
+                            placeholder="Gift Card Balence Used (required)" required name="giftCardAmount"
+                            [(ngModel)]=giftBalence>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="costToMe">
+                        Cost To Me
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="costToMe" placeholder="costToMe (required)"
+                            disabled="true" required name="costToMe" [(ngModel)]=currentProduct.costToMe>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="deliveryDate">
+                        Home Delivery Date
+                    </label>
+                    <div class="col">
+                        <input type="date" class="form-control" id="buyerDate" placeholder="Delivery Date (required)"
+                            minlength="3" name="buyerDate" [(ngModel)]=currentProduct.deliveryDate>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="buyerName">
+                        Buyer Name
+                    </label>
+                    <div class="col">
+                        <input type="text" class="form-control" id="buyerName" placeholder="Buyer Name" required
+                            minlength="3" name="buyerName" [(ngModel)]=currentProduct.buyerName>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="distributorPrice">
+                        Buyer Price
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="distributorPrice"
+                            placeholder="Amount Received from buyer (required)" required name="distributorPrice"
+                            [(ngModel)]=dPrice>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="buyerDate">
+                        Buyer Date
+                    </label>
+                    <div class="col">
+                        <input type="date" class="form-control" id="buyerDate" placeholder="Buyer Date (required)"
+                            minlength="3" name="buyerDate" [(ngModel)]=currentProduct.buyerDate>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="profit">
+                        Profit
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="profit" disabled="true" placeholder="Profit"
+                            required name="profit" [(ngModel)]=currentProduct.profit>
                     </div>
                 </div>
             </fieldset>
@@ -200,4 +236,6 @@
         </div>
     </div>
     {{ currentProduct | json }}
+    <br><br>
+    {{cards | json}}
 </div>

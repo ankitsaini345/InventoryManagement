@@ -1,5 +1,6 @@
 import { InMemoryDbService, RequestInfo } from 'angular-in-memory-web-api';
 import { Observable } from 'rxjs';
+import { IProduct } from './product/product';
 
 export class InMemoryDataService implements InMemoryDbService {
 
@@ -47,14 +48,21 @@ export class InMemoryDataService implements InMemoryDbService {
         cardName: 'Ankit_AxisFL',
         billDate: 15,
         dueDate: 4,
-        amountDue: 1000
+        amountDue: 1000,
+        txns: [{
+          txnDate: '2022-11-17',
+          amount: 600,
+          orderId: 2,
+          OrderName: 'test'
+        }]
       },
       {
         id: 2,
         cardName: 'Ankit_AxisAce',
         billDate: 15,
         dueDate: 5,
-        amountDue: 3000
+        amountDue: 3000,
+        txns: []
       }
     ]
 
