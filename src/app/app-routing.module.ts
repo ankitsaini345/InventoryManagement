@@ -8,6 +8,7 @@ import { HomeComponent } from './home/home.component';
 import { ProductDetailComponent } from './product/product-detail/product-detail.component';
 import { ProductEditComponent } from './product/product-edit/product-edit.component';
 import { ProductListComponent } from './product/product-list/product-list.component';
+import { TxnListComponent } from './txn/txn-list/txn-list.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'card/:id/edit', component: CardModifyComponent},
   { path: 'card/:id/detail', component: CardOrderDetailComponent},
   { path: 'card/:id/txns', component: CardTxnsComponent},
+  { path: 'transactions', component: TxnListComponent},
 ];
 
 // {path: '**', redirectTo: 'home', pathMatch: 'full'}

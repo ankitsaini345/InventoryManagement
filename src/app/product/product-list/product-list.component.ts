@@ -12,7 +12,6 @@ export class ProductListComponent implements OnInit {
   constructor(private productService: ProductServiceService) { }
 
   products: IProduct[] = [];
-  filteredProducts: IProduct[] = [];
   filterBy = '';
 
   ngOnInit(): void {
@@ -22,29 +21,30 @@ export class ProductListComponent implements OnInit {
   getProducts() {
     this.productService.getProducts().subscribe((data) => {
       this.products = data;
+      console.log(data);
     })
   }
 
-  deleteProduct(id: any) {
-    this.productService.deleteProduct(id).subscribe({
+  deleteProduct(_id: any) {
+    this.productService.deleteProduct(_id).subscribe({
       next: () => {
-        console.log('Product with id ' + id + ' deleted');
+        console.log('Product with id ' + _id + ' deleted');
         this.getProducts();
       },
       error: (err) => {
-        console.error('Error while deleting product with id ' + id);
+        console.error('Error while deleting product with id ' + _id);
         console.error(err);
       }
     })
   }
-  cancelProduct(id: any) {
-    this.productService.deleteProduct(id).subscribe({
+  cancelProduct(_id: any) {
+    this.productService.deleteProduct(_id).subscribe({
       next: () => {
-        console.log('Product with id ' + id + ' deleted');
+        console.log('Product with id ' + _id + ' deleted');
         this.getProducts();
       },
       error: (err) => {
-        console.error('Error while deleting product with id ' + id);
+        console.error('Error while deleting product with id ' + _id);
         console.error(err);
       }
     })

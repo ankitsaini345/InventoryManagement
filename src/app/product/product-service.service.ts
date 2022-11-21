@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, Observable, of } from 'rxjs';
 import { IProduct } from './product';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +11,14 @@ export class ProductServiceService {
 
   constructor(private http: HttpClient) { }
 
-  private url = 'api/products';
-
+  private url = environment.baseUrl + 'api/orders';
+  
   getProducts(): Observable<IProduct[]> {
     return this.http.get<IProduct[]>(this.url);
   }
 
-  getProduct(id: number): Observable<IProduct> {
-    if (id == 0) {
+  getProduct(id: string): Observable<IProduct> {
+    if (id == 'new') {
       return of(this.blankProduct());
     } else {
       // return this.getProducts().pipe(                                    // use in case of json file
@@ -29,13 +30,12 @@ export class ProductServiceService {
     }
   }
 
-  addProduct(product: IProduct): Observable<IProduct> {
-    product.id = null;
-    return this.http.post<IProduct>(this.url, product);
+  addProduct(product: IProduct): Observable<any> {
+    return this.http.post(this.url, product);
   }
 
   editProduct(product: IProduct): Observable<IProduct> {
-    return this.http.put<IProduct>(this.url + '/' + product.id, product);
+    return this.http.put<IProduct>(this.url + '/' + product._id, product);
   }
 
   deleteProduct(id: number): Observable<IProduct[]> {
@@ -44,13 +44,13 @@ export class ProductServiceService {
 
   blankProduct(): IProduct {
     return {
-      id: 0,
+      _id: 'new',
       name: '',
-      date: new Date().toISOString().slice(0,10),
+      date: new Date().toISOString().slice(0, 10),
       ram: 4,
       storage: 128,
       AppName: 'Amazon',
-      status:'Ordered',
+      status: 'Ordered',
       AppAccount: '',
       listPrice: null,
       cardAmount: 0,
@@ -62,9 +62,10 @@ export class ProductServiceService {
       cardHolder: 'Ankit_AxisAce',
       deliveryDate: '',
       deliveryLoc: '',
-      buyerDate:'',
+      buyerDate: '',
       buyerName: 'AmtAryaNgr',
-      profit: 0
+      profit: 0,
+      txnId:''
     }
   }
 

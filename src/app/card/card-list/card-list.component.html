@@ -19,18 +19,18 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let card of cards">
-                        <td>{{card.id}}</td>
+                        <td>{{card._id}}</td>
                         <td>{{card.cardName}}</td>
                         <td>{{card.billDate}}</td>
                         <td>{{card.dueDate}}</td>
                         <td>{{card.amountDue}}</td>
-                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card.id, 'edit']">
+                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'edit']">
                                 Edit
                             </button></td>
-                            <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card.id, 'txns']">
+                            <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'txns']">
                                 See Txns
                             </button></td>
-                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteCard(card.id)">
+                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteCard(card._id)">
                                 Delete
                             </button></td>
                     </tr>

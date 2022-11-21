@@ -19,21 +19,17 @@ export class CardModifyComponent implements OnInit {
   originalCard!: Icard;
 
   ngOnInit(): void {
-    let id: number = this.route.snapshot.params['id'];
-    if (id == 0) {
-      this.pageTitle = 'Add Card';
-    }
+    let id: string = this.route.snapshot.params['id'];
+    if (id == 'new') this.pageTitle = 'Add Card';
     this.cardService.getCard(id).subscribe((data) => {
       this.currentCard = data;
       this.originalCard = data;
     })
-
   }
 
   saveCard() {
     console.log(this.currentCard);
-    
-    if (this.currentCard.id == 0) {
+    if (this.currentCard._id == 'new') {
       this.cardService.addCard(this.currentCard).subscribe({
         next: () => console.log(this.currentCard.cardName + ' saved.'),
         error: () => console.error('Error in saving card ' + this.currentCard.cardName)
@@ -42,7 +38,6 @@ export class CardModifyComponent implements OnInit {
       this.cardService.updateCard(this.currentCard).subscribe({
         next: () => console.log('Card ' + this.currentCard.cardName + ' edited.'),
         error: () => console.error('Error in editing card: ' + this.currentCard.cardName)
-        
       })
     }
     this.router.navigate(['/cards'])
@@ -53,6 +48,5 @@ export class CardModifyComponent implements OnInit {
     this.currentCard.billDate = 0;
     this.currentCard.dueDate = 0;
     this.currentCard.cardName = '';
-
   }
 }

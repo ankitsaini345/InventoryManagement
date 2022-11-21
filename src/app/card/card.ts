@@ -1,16 +1,8 @@
 export interface Icard {
-    id: number | null,
+    _id: string,
     cardName: string,
     billDate: number,
     dueDate: number,
-    amountDue: number,
-    txns?: IcardTxn[]
+    amountDue: number
 }
 
-export interface IcardTxn {
-    id?: number | null,
-    txnDate: string,
-    amount: number | null,
-    orderId: number | null,
-    OrderName?: string
-}

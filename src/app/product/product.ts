@@ -1,5 +1,5 @@
 export interface IProduct {
-    id: number | null,
+    _id: string,
     name: string,
     date: string,
     ram: number,
@@ -19,5 +19,6 @@ export interface IProduct {
     buyerDate:string,
     buyerName: string,
     status: string,
-    profit: number
+    profit: number,
+    txnId: string
 }

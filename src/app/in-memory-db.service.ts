@@ -5,7 +5,7 @@ import { IProduct } from './product/product';
 export class InMemoryDataService implements InMemoryDbService {
 
   createDb(reqInfo?: RequestInfo | undefined): {} | Observable<{}> | Promise<{}> {
-    const products = [
+    const orders = [
       {
         "id": 1,
         "name": "test",
@@ -66,7 +66,7 @@ export class InMemoryDataService implements InMemoryDbService {
       }
     ]
 
-    return { products, cards };
+    return { orders, cards };
 
   }
 }

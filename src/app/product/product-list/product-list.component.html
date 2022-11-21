@@ -50,7 +50,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let product of products | filter:filterBy">
-                        <td>{{product.id}}</td>
+                        <td>{{product._id}}</td>
                         <td>{{product.name}}</td>
                         <td>{{product.ram}}</td>
                         <td>{{product.storage}}</td>
@@ -71,13 +71,13 @@
                         <td>{{product.buyerDate}}</td>
                         <td>{{product.distName}}</td>
                         <td><button class="btn btn-outline-primary btn-sm"
-                                [routerLink]="['/product', product.id, 'edit']">
+                                [routerLink]="['/product', product._id, 'edit']">
                                 Edit
                             </button></td>
-                        <td><button class="btn btn-outline-danger btn-sm" (click)="cancelProduct(product.id)">
+                        <td><button class="btn btn-outline-danger btn-sm" (click)="cancelProduct(product._id)">
                                 Cancelled
                             </button></td>
-                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteProduct(product.id)">
+                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteProduct(product._id)">
                                 Delete
                             </button></td>
                     </tr>

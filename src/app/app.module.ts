@@ -17,6 +17,7 @@ import { CardModifyComponent } from './card/card-modify/card-modify.component';
 import { CardOrderDetailComponent } from './card/card-order-detail/card-order-detail.component';
 import { CardBillPaymentComponent } from './card/card-bill-payment/card-bill-payment.component';
 import { CardTxnsComponent } from './card/card-txns/card-txns.component';
+import { TxnListComponent } from './txn/txn-list/txn-list.component';
 
 @NgModule({
   declarations: [
@@ -29,15 +30,15 @@ import { CardTxnsComponent } from './card/card-txns/card-txns.component';
     CardModifyComponent,
     CardOrderDetailComponent,
     CardBillPaymentComponent,
-    CardTxnsComponent
+    CardTxnsComponent,
+    TxnListComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
-    Ng2SearchPipeModule,
-    HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService)
+    Ng2SearchPipeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
