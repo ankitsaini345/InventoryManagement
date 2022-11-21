@@ -1,13 +1,46 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 
+import { AppRoutingModule } from './app-routing.module';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { AppComponent } from './app.component';
-import { HelloComponent } from './hello.component';
+import { ProductListComponent } from './product/product-list/product-list.component';
+import { ProductEditComponent } from './product/product-edit/product-edit.component';
+import { ProductDetailComponent } from './product/product-detail/product-detail.component';
+import { HttpClientModule } from '@angular/common/http';
+import { HomeComponent } from './home/home.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { InMemoryDataService } from './in-memory-db.service';
+import { CardListComponent } from './card/card-list/card-list.component';
+import { CardModifyComponent } from './card/card-modify/card-modify.component';
+import { CardOrderDetailComponent } from './card/card-order-detail/card-order-detail.component';
+import { CardBillPaymentComponent } from './card/card-bill-payment/card-bill-payment.component';
+import { CardTxnsComponent } from './card/card-txns/card-txns.component';
+import { TxnListComponent } from './txn/txn-list/txn-list.component';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule ],
-  declarations: [ AppComponent, HelloComponent ],
-  bootstrap:    [ AppComponent ]
+  declarations: [
+    AppComponent,
+    ProductListComponent,
+    ProductEditComponent,
+    ProductDetailComponent,
+    HomeComponent,
+    CardListComponent,
+    CardModifyComponent,
+    CardOrderDetailComponent,
+    CardBillPaymentComponent,
+    CardTxnsComponent,
+    TxnListComponent
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule,
+    FormsModule,
+    Ng2SearchPipeModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

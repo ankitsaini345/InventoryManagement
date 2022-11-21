@@ -1,0 +1,91 @@
+<div class="card">
+    <div class="card-header">
+        Products List
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-1">
+                <label class="col-form-label">
+                    FilterBy:
+                </label></div>
+            <div>
+                <input [(ngModel)]=filterBy type="text" class="form-control">
+            </div>
+        </div>
+        <div class="row" *ngIf="filterBy">
+            <div class="col-md-6">
+                <label class="col-form-label">
+                    Showing products containing <b>{{filterBy}}</b>
+                </label></div>
+        </div>
+        <br>
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Ram</th>
+                        <th>Storage</th>
+                        <th>App Name</th>
+                        <th>Account</th>
+                        <th>Purchase Date</th>
+                        <th>Status</th>
+                        <th>List Price</th>
+                        <th>Coupon</th>
+                        <th>gift bal</th>
+                        <th>Card Discount</th>
+                        <th>Card Amount</th>
+                        <th>Cost ToMe</th>
+                        <th>DPrice</th>
+                        <th>Card Name</th>
+                        <th>deliveryDate</th>
+                        <th>deliveryLoc</th>
+                        <th>Buyer Date</th>
+                        <th>distName</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let product of products | filter:filterBy">
+                        <td>{{product._id}}</td>
+                        <td>{{product.name}}</td>
+                        <td>{{product.ram}}</td>
+                        <td>{{product.storage}}</td>
+                        <td>{{product.AppName}}</td>
+                        <td>{{product.AppAccount}}</td>
+                        <td>{{product.date}}</td>
+                        <td>{{product.status}}</td>
+                        <td>{{product.listPrice}}</td>
+                        <td>{{product.coupon}}</td>
+                        <td>{{product.giftBalence}}</td>
+                        <td>{{product.cardDiscount}}</td>
+                        <td>{{product.cardAmount}}</td>
+                        <td>{{product.costToMe}}</td>
+                        <td>{{product.dPrice}}</td>
+                        <td>{{product.cardHolder}}</td>
+                        <td>{{product.deliveryDate}}</td>
+                        <td>{{product.deliveryLoc}}</td>
+                        <td>{{product.buyerDate}}</td>
+                        <td>{{product.distName}}</td>
+                        <td><button class="btn btn-outline-primary btn-sm"
+                                [routerLink]="['/product', product._id, 'edit']">
+                                Edit
+                            </button></td>
+                        <td><button class="btn btn-outline-danger btn-sm" (click)="cancelProduct(product._id)">
+                                Cancelled
+                            </button></td>
+                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteProduct(product._id)">
+                                Delete
+                            </button></td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>

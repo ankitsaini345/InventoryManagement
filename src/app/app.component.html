@@ -1,4 +1,34 @@
-<hello name="{{ name }}"></hello>
-<p>
-  Start editing to see some magic happen :)
-</p>
+<div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand"><img src="../assets/images/ecomLogo.png" alt="Logo"
+        style="width:35px; padding-left: 8px;">Inventory Management</a>
+
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link " style="color: #e9ecef" routerLink="/home" routerLinkActive="active">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " style="color: #e9ecef" routerLink="/products" routerLinkActive="active">Products</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " style="color: #e9ecef" routerLink="/product/new/edit" routerLinkActive="active">Add
+          Product</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " style="color: #e9ecef" routerLink="/card/new/edit" routerLinkActive="active">Add Card</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " style="color: #e9ecef" routerLink="/cards" routerLinkActive="active">Card List</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " style="color: #e9ecef" routerLink="/transactions"
+          routerLinkActive="active">Transactions</a>
+      </li>
+    </ul>
+  </nav>
+  <br><br>
+</div>
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

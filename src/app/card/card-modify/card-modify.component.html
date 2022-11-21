@@ -1,0 +1,77 @@
+<div class="card" style="width: 90%">
+    <div class="card-header">
+        {{pageTitle}}
+    </div>
+
+    <div class="card-body" *ngIf="currentCard">
+        <form novalidate >
+            <fieldset>
+                <legend>
+                    Card Information
+                </legend>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="cardNameId">
+                        Card Name
+                    </label>
+                    <div class="col">
+                        <input type="text" class="form-control" id="cardNameId" placeholder="Name (required)"
+                            required minlength="3" name="cardName" [(ngModel)]=currentCard.cardName>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col col-form-label" for="billDate">
+                        Bill Date
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="billDate" placeholder="Bill Date(required)"
+                            required name="billDate" [(ngModel)]=currentCard.billDate>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="storage">
+                        Due Date
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="dueDate" placeholder="Due Date (required)"
+                            required minlength="3" name="dueDate" [(ngModel)]=currentCard.dueDate>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="amountDue">
+                        Amount Due
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="amountDue" placeholder="Amount Due (required)"
+                            required minlength="3" name="amountDue" [(ngModel)]=currentCard.amountDue>
+                    </div>
+                </div>
+                
+            </fieldset>
+        </form>
+        <div class="row mb-2">
+            <div class="col">
+              <button class="btn btn-primary mr-3"
+                      style="width:80px"
+                      type="button"
+                      (click)="saveCard()">
+                Save
+              </button>
+              <button class="btn btn-outline-secondary mr-3"
+                      style="width:80px"
+                      type="button"
+                      title="Cancel your edits"
+                      [routerLink]="['/cards']">
+                Cancel
+              </button>
+              <button class="btn btn-outline-warning"
+                      style="width:80px"
+                      type="button"
+                      title="Delete this card"
+                      (click)="resetCard()">
+                Delete
+              </button>
+            </div>
+          </div>
+    </div>
+</div>
