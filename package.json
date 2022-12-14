@@ -19,7 +19,7 @@
     "@angular/platform-browser": "^14.1.0",
     "@angular/platform-browser-dynamic": "^14.1.0",
     "@angular/router": "^14.1.0",
-    "bootstrap": "^4.4.1",
+    "bootstrap": "^4.6.2",
     "bson": "^4.7.0",
     "font-awesome": "^4.7.0",
     "ng2-search-filter": "^0.5.1",

@@ -4,8 +4,11 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:3000/'
+  baseUrl: 'https://inventory-management-backend-ankitsaini345.vercel.app/',
+  useInMemDB: false
 };
+
+// baseUrl: 'http://localhost:3000/',
 
 /*
  * For easier debugging in development mode, you can import the following file

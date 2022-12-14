@@ -18,6 +18,7 @@ import { CardOrderDetailComponent } from './card/card-order-detail/card-order-de
 import { CardBillPaymentComponent } from './card/card-bill-payment/card-bill-payment.component';
 import { CardTxnsComponent } from './card/card-txns/card-txns.component';
 import { TxnListComponent } from './txn/txn-list/txn-list.component';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,9 @@ import { TxnListComponent } from './txn/txn-list/txn-list.component';
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
-    Ng2SearchPipeModule
+    Ng2SearchPipeModule,
+    environment.useInMemDB ?
+      HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { delay: 100 }) : []
   ],
   providers: [],
   bootstrap: [AppComponent]
