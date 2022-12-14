@@ -14,8 +14,11 @@
                         Product Name
                     </label>
                     <div class="col">
-                        <input type="text" class="form-control" id="productNameId" placeholder="Name (required)"
-                            required minlength="3" name="productName" [(ngModel)]=currentProduct.name>
+                        <input type="text" list="id-car" class="form-control" placeholder="Name (required)"
+                            name="productName" [(ngModel)]=currentProduct.name>
+                        <datalist id="id-car" *ngFor="let product of productNamesArray">
+                            <option>{{product}}</option>
+                        </datalist>
                     </div>
                 </div>
 

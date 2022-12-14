@@ -7,7 +7,7 @@
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>SN</th>
                         <th>Card Name</th>
                         <th>Bill Date</th>
                         <th>Due Date</th>
@@ -19,7 +19,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let card of cards">
-                        <td>{{card._id}}</td>
+                        <td></td>
                         <td>{{card.cardName}}</td>
                         <td>{{card.billDate}}</td>
                         <td>{{card.dueDate}}</td>
@@ -27,7 +27,7 @@
                         <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'edit']">
                                 Edit
                             </button></td>
-                            <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'txns']">
+                            <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/transactions/', card.cardName]">
                                 See Txns
                             </button></td>
                         <td><button class="btn btn-outline-danger btn-sm" (click)="deleteCard(card._id)">

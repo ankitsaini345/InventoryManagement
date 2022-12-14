@@ -30,6 +30,7 @@ export class ProductEditComponent implements OnInit {
   currentProduct!: IProduct;
   originalProduct!: IProduct;
   cards!: Icard[];
+  productNamesArray: any = [];
 
   set listPrice(val: number) {
     this.currentProduct.listPrice = val;
@@ -71,7 +72,7 @@ export class ProductEditComponent implements OnInit {
     if (_id == 'new') this.pageTitle = 'Add Product';
     this.currentProduct = await firstValueFrom(this.productService.getProduct(_id))
     this.originalProduct = { ...this.currentProduct };
-
+    this.productNamesArray = await firstValueFrom(this.productService.getUniqueProducts('name'));
     this.cards = await firstValueFrom(this.cardService.getCards());
   }
 
@@ -80,7 +81,8 @@ export class ProductEditComponent implements OnInit {
       this.currentProduct._id = new ObjectId().toString();
       this.currentProduct.txnId = new ObjectId().toString();
       const result = await firstValueFrom(this.productService.addProduct(this.currentProduct));
-      if (result && result.acknowledged) await this.addTxn(this.currentProduct);
+      if (result && result.acknowledged)
+        await this.addTxn(this.currentProduct);
     } else {
       if (this.currentProduct != this.originalProduct) {
         await firstValueFrom(this.productService.editProduct(this.currentProduct));

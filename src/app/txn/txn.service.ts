@@ -26,7 +26,7 @@ export class TxnService {
   }
 
   getTxnByCard(cname: string): Observable<Itxn[]> {
-    return this.http.get<Itxn[]>(this.url + '?cname=' + cname);
+    return this.http.get<Itxn[]>(this.url + '/' + cname);
   }
 
   addTxn(Txn: Itxn): Observable<Itxn> {

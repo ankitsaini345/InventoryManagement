@@ -12,9 +12,14 @@ export class ProductServiceService {
   constructor(private http: HttpClient) { }
 
   private url = environment.baseUrl + 'api/orders';
-  
+
   getProducts(): Observable<IProduct[]> {
     return this.http.get<IProduct[]>(this.url);
+  }
+
+  getUniqueProducts(field: string) {
+    const uniqueProductUrl = environment.useInMemDB ? 'api/uniqueOrders' : this.url + '/unique/' + field;
+    return this.http.get(uniqueProductUrl);
   }
 
   getProduct(id: string): Observable<IProduct> {
@@ -65,7 +70,7 @@ export class ProductServiceService {
       buyerDate: '',
       buyerName: 'AmtAryaNgr',
       profit: 0,
-      txnId:''
+      txnId: ''
     }
   }
 

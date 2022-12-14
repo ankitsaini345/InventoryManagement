@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'card/:id/edit', component: CardModifyComponent},
   { path: 'card/:id/detail', component: CardOrderDetailComponent},
   { path: 'card/:id/txns', component: CardTxnsComponent},
-  { path: 'transactions', component: TxnListComponent},
+  { path: 'transactions/:cname', component: TxnListComponent},
 ];
 
 // {path: '**', redirectTo: 'home', pathMatch: 'full'}
