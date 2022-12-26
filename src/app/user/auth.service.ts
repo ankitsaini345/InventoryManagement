@@ -33,7 +33,7 @@ export class AuthService implements HttpInterceptor {
     const token = localStorage.getItem('inventoryAppToken');
     if (token) {
       const modifiedRequest = req.clone({
-        setHeaders: { 'Authorization': token }
+        setHeaders: { 'authorization': 'Bearer ' + token }
       });
       return next.handle(modifiedRequest);
     }
@@ -73,6 +73,7 @@ export class AuthService implements HttpInterceptor {
     this.currentUser = null;
     localStorage.removeItem('inventoryAppToken');
     localStorage.removeItem('inventoryAppUser');
+    this.router.navigate(['/login']);
   }
 
   async refreshToken() {

@@ -3,7 +3,7 @@
     <a class="navbar-brand"><img src="../assets/images/ecomLogo.png" alt="Logo"
         style="width:35px; padding-left: 8px;">Inventory Management</a>
 
-    <ul class="navbar-nav">
+    <ul class="navbar-nav mr-auto">
       <li class="nav-item">
         <a class="nav-link " style="color: #e9ecef" routerLink="/home" routerLinkActive="active">Home</a>
       </li>
@@ -25,6 +25,9 @@
           routerLinkActive="active">Transactions</a>
       </li>
     </ul>
+
+    <button *ngIf="isLoggedIn" class="btn btn-outline-primary my-2 my-sm-0" (click)="logout()">Logout</button>
+    <button *ngIf="!isLoggedIn" class="btn btn-outline-primary my-2 my-sm-0" routerLink="/login">LogIn</button>
   </nav>
   <br><br>
 </div>

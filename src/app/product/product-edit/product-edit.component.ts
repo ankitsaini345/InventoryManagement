@@ -35,32 +35,43 @@ export class ProductEditComponent implements OnInit {
   set listPrice(val: number) {
     this.currentProduct.listPrice = val;
     this.currentProduct.cardAmount = this.currentProduct.listPrice - this.currentProduct.coupon;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
+    if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   set coupon(val: number) {
     this.currentProduct.coupon = val;
     this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
+    if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   set cardDiscount(val: number) {
     this.currentProduct.cardDiscount = val;
     this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
+    if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   set giftBalence(val: number) {
     this.currentProduct.giftBalence = val;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
+    if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   set dPrice(val: number) {
     this.currentProduct.buyerPrice = val;
     this.currentProduct.profit = this.currentProduct.buyerPrice - this.currentProduct.costToMe;
+    if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
+  }
+
+  set cashback(val: number) {
+    this.currentProduct.cashback = val;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
+    if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   ngOnInit(): void {

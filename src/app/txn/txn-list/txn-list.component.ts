@@ -11,6 +11,7 @@ import { TxnService } from '../txn.service';
 })
 export class TxnListComponent implements OnInit, OnDestroy {
 
+  filterBy = '';
   cardName!: string;
   txns!: Itxn[];
   sub1!: Subscription;
