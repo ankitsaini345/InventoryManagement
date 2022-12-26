@@ -35,15 +35,15 @@ export class ProductEditComponent implements OnInit {
   set listPrice(val: number) {
     this.currentProduct.listPrice = val;
     this.currentProduct.cardAmount = this.currentProduct.listPrice - this.currentProduct.coupon;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   set coupon(val: number) {
     this.currentProduct.coupon = val;
-    this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
+    this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
@@ -51,14 +51,14 @@ export class ProductEditComponent implements OnInit {
   set cardDiscount(val: number) {
     this.currentProduct.cardDiscount = val;
     this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   set giftBalence(val: number) {
     this.currentProduct.giftBalence = val;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
@@ -70,7 +70,7 @@ export class ProductEditComponent implements OnInit {
 
   set cashback(val: number) {
     this.currentProduct.cashback = val;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.currentProduct.cashback;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
@@ -91,9 +91,11 @@ export class ProductEditComponent implements OnInit {
     if (this.currentProduct._id == 'new') {
       this.currentProduct._id = new ObjectId().toString();
       this.currentProduct.txnId = new ObjectId().toString();
-      const result = await firstValueFrom(this.productService.addProduct(this.currentProduct));
-      if (result && result.acknowledged)
-        await this.addTxn(this.currentProduct);
+      await firstValueFrom(this.productService.addProduct(this.currentProduct));
+      await this.addTxn(this.currentProduct);
+      let cardInfo = await firstValueFrom(this.cardService.getCard(this.currentProduct.cardHolder));
+      cardInfo.amountDue += this.currentProduct.cardAmount;
+      await firstValueFrom(this.cardService.updateCard(cardInfo));
     } else {
       if (this.currentProduct != this.originalProduct) {
         await firstValueFrom(this.productService.editProduct(this.currentProduct));
@@ -134,4 +136,10 @@ export class ProductEditComponent implements OnInit {
     }
     await firstValueFrom(this.txnService.updateTxn(txn));
   }
+
+  cashbackAmount(per: number): number {
+    if (!per) return 0;
+    else return (this.currentProduct.cardAmount * (per / 100));
+  }
 }
+

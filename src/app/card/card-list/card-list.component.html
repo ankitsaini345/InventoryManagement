@@ -42,7 +42,7 @@
                         <td>{{card.billDate}}</td>
                         <td>{{card.dueDate}}</td>
                         <td>{{card.amountDue}}</td>
-                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'edit']">
+                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card.cardName, 'edit']">
                                 Edit
                             </button></td>
                             <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/transactions/', card.cardName]">

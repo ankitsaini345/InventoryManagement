@@ -16,13 +16,9 @@ export class CardService {
     return this.http.get<Icard[]>(this.url);
   }
 
-  getCardByName(name: string): Observable<Icard[]> {
-    return this.http.get<Icard[]>(this.url + '?cardName=' + name);
-  }
-
-  getCard(_id: string): Observable<Icard> {
-    if (_id == 'new') return of(this.blankCard());
-    return this.http.get<Icard>(this.url + '/' + _id);
+  getCard(cardName: string): Observable<Icard> {
+    if (cardName == 'new') return of(this.blankCard());
+    return this.http.get<Icard>(this.url + '/' + cardName);
   }
 
   addCard(card: Icard): Observable<Icard> {
