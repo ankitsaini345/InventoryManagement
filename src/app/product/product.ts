@@ -20,5 +20,6 @@ export interface IProduct {
     buyerName: string,
     status: string,
     profit: number,
-    txnId: string
+    txnId: string,
+    cashback: number
 }

@@ -8,6 +8,7 @@ import { CardService } from '../card.service';
   styleUrls: ['./card-list.component.css']
 })
 export class CardListComponent implements OnInit {
+  filterBy = '';
   cards: Icard[] = []
   constructor( private cardService: CardService) { }
 

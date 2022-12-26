@@ -3,6 +3,24 @@
         Transactions on Card '{{cardName}}'
     </div>
     <div class="card-body">
+
+        <div class="row">
+            <div class="col-md-1">
+                <label class="col-form-label">
+                    FilterBy:
+                </label></div>
+            <div>
+                <input [(ngModel)]=filterBy type="text" class="form-control">
+            </div>
+        </div>
+        <div class="row" *ngIf="filterBy">
+            <div class="col-md-6">
+                <label class="col-form-label">
+                    Showing Transactions containing <b>{{filterBy}}</b>
+                </label></div>
+        </div>
+        <br>
+
         <div class="table-responsive">
             <table class="table table-bordered table-sm">
                 <thead>
@@ -16,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let txn of txns">
+                    <tr *ngFor="let txn of txns | filter:filterBy">
                         <td>{{txn._id}}</td>
                         <td>{{txn.OrderName}}</td>
                         <td>{{txn.txnDate}}</td>

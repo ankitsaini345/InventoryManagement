@@ -3,6 +3,24 @@
         Cards List
     </div>
     <div class="card-body">
+
+        <div class="row">
+            <div class="col-md-1">
+                <label class="col-form-label">
+                    FilterBy:
+                </label></div>
+            <div>
+                <input [(ngModel)]=filterBy type="text" class="form-control">
+            </div>
+        </div>
+        <div class="row" *ngIf="filterBy">
+            <div class="col-md-6">
+                <label class="col-form-label">
+                    Showing cards containing <b>{{filterBy}}</b>
+                </label></div>
+        </div>
+        <br>
+
         <div class="table-responsive">
             <table class="table table-bordered table-sm">
                 <thead>
@@ -18,13 +36,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let card of cards">
+                    <tr *ngFor="let card of cards | filter:filterBy">
                         <td></td>
                         <td>{{card.cardName}}</td>
                         <td>{{card.billDate}}</td>
                         <td>{{card.dueDate}}</td>
                         <td>{{card.amountDue}}</td>
-                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'edit']">
+                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card.cardName, 'edit']">
                                 Edit
                             </button></td>
                             <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/transactions/', card.cardName]">

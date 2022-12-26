@@ -70,7 +70,8 @@ export class ProductServiceService {
       buyerDate: '',
       buyerName: 'AmtAryaNgr',
       profit: 0,
-      txnId: ''
+      txnId: '',
+      cashback: 0
     }
   }
 
