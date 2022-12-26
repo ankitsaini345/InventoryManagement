@@ -1,0 +1,65 @@
+<div class="card">
+    <div class="card-header">
+        Log In
+    </div>
+
+    <div class="card-body">
+        <form novalidate (ngSubmit)="save(loginForm)" #loginForm="ngForm">
+            <div class="form-group row mb-2">
+                <label class="col-form-label col-md-3">
+                    Email
+                </label>
+                <div class="col-md-8">
+                    <input class="form-control" id="emailid" type="email" placeholder="Email (Required)" required
+                        minlength="3" name="email" [(ngModel)]=customer.email #emailVar="ngModel"
+                        [ngClass]="{'is-invalid': (emailVar.touched || emailVar.dirty) && !emailVar.valid}">
+                    <!-- <span class="invalid-feedback">
+                        <span *ngIf="emailVar.errors?.required">
+                            Please enter your email address.
+                        </span>
+                        <span *ngIf="emailVar.errors?.email">
+                            Please enter a valid email address.
+                        </span>
+                    </span> -->
+                </div>
+            </div>
+
+            <div class="form-group row mb-2">
+                <label class="col-form-label col-md-3">
+                    Password
+                </label>
+                <div class="col-md-8">
+                    <input class="form-control" id="pswd" type="password" placeholder="Password (Required)" required
+                        minlength="3" name="password" [(ngModel)]=customer.pass #passwordVar="ngModel"
+                        [ngClass]="{'is-invalid': (passwordVar.touched || passwordVar.dirty) && !passwordVar.valid }">
+                    <!-- <span class="invalid-feedback">
+                        <span *ngIf="passwordVar.errors?.required">
+                            Please enter Password.
+                        </span>
+                        <span *ngIf="passwordVar.errors?.minlength">
+                            The Password must be longer than 5 characters.
+                        </span>
+                    </span> -->
+                </div>
+            </div>
+            <div class="form-group row mb-2">
+                <div class="offset-md-3 col-md-4">
+                    <button class="btn btn-primary mr-3" type="submit" style="width:80px"
+                        [title]="loginForm.valid ? 'Save your entered data' : 'Disabled until the form data is valid'"
+                        [disabled]="!loginForm.valid">
+                        Login
+                    </button>
+                </div>
+                <div *ngIf="errorMessage" style="color: red; text-decoration: solid;">
+                    <br>
+                    {{errorMessage}}
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<br>
+{{loginForm.value | json}}

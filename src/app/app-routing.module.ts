@@ -9,20 +9,24 @@ import { ProductDetailComponent } from './product/product-detail/product-detail.
 import { ProductEditComponent } from './product/product-edit/product-edit.component';
 import { ProductListComponent } from './product/product-list/product-list.component';
 import { TxnListComponent } from './txn/txn-list/txn-list.component';
+import { AuthGuard } from './user/auth.guard';
+import { LoginComponent } from './user/login/login.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent },
-  { path: 'products', component: ProductListComponent },
-  { path: 'product/:id/edit', component: ProductEditComponent},
-  { path: 'product/:id/detail', component: ProductDetailComponent},
-  { path: 'cards', component: CardListComponent },
-  { path: 'card/:id/edit', component: CardModifyComponent},
-  { path: 'card/:id/detail', component: CardOrderDetailComponent},
-  { path: 'card/:id/txns', component: CardTxnsComponent},
-  { path: 'transactions/:cname', component: TxnListComponent},
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: 'products', component: ProductListComponent, canActivate: [AuthGuard] },
+  { path: 'product/:id/edit', component: ProductEditComponent, canActivate: [AuthGuard] },
+  { path: 'product/:id/detail', component: ProductDetailComponent, canActivate: [AuthGuard] },
+  { path: 'cards', component: CardListComponent, canActivate: [AuthGuard] },
+  { path: 'card/:id/edit', component: CardModifyComponent, canActivate: [AuthGuard] },
+  { path: 'card/:id/detail', component: CardOrderDetailComponent, canActivate: [AuthGuard] },
+  { path: 'card/:id/txns', component: CardTxnsComponent },
+  { path: 'transactions/:cname', component: TxnListComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: 'home', pathMatch: 'full' }
 ];
 
-// {path: '**', redirectTo: 'home', pathMatch: 'full'}
+
 
 
 @NgModule({

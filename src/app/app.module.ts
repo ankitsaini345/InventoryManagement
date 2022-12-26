@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { ProductListComponent } from './product/product-list/product-list.component';
 import { ProductEditComponent } from './product/product-edit/product-edit.component';
 import { ProductDetailComponent } from './product/product-detail/product-detail.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomeComponent } from './home/home.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
@@ -19,6 +19,8 @@ import { CardBillPaymentComponent } from './card/card-bill-payment/card-bill-pay
 import { CardTxnsComponent } from './card/card-txns/card-txns.component';
 import { TxnListComponent } from './txn/txn-list/txn-list.component';
 import { environment } from 'src/environments/environment';
+import { LoginComponent } from './user/login/login.component';
+import { AuthService } from './user/auth.service';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { environment } from 'src/environments/environment';
     CardOrderDetailComponent,
     CardBillPaymentComponent,
     CardTxnsComponent,
-    TxnListComponent
+    TxnListComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +46,9 @@ import { environment } from 'src/environments/environment';
     environment.useInMemDB ?
       HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { delay: 100 }) : []
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
