@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { User } from './user';
 // import { AlertService } from '../shared/alert/alert.service';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpClient } from '@angular/common/http';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpClient, HttpResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, retry, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -30,18 +30,34 @@ export class AuthService implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const token = localStorage.getItem('inventoryAppToken');
-    if (token) {
-      const modifiedRequest = req.clone({
-        setHeaders: { 'authorization': 'Bearer ' + token }
-      });
-      return next.handle(modifiedRequest);
-    }
-    else {
-      console.log('auth token not found in browser.');
-      return next.handle(req);
-    }
+    let token = localStorage.getItem('inventoryAppToken');
+  if (token) {
+    const modifiedRequest = req.clone({
+      setHeaders: { 'authorization': 'Bearer ' + token }
+    });
+    return next.handle(modifiedRequest)
+      .pipe(
+        tap({
+          next: (event) => {
+            if (event instanceof HttpResponse) {
+
+            }
+            return event;
+          },
+          error: async (error) => {
+            if (error.status === 401 && error.error?.message == 'jwt expired') {
+              console.log('Token Expired. Generating new token...');
+              await this.refreshToken();
+              token = localStorage.getItem('inventoryAppToken');
+            }
+          }
+        }), retry(1));
   }
+  else {
+    console.log('auth token not found in browser.');
+    return next.handle(req);
+  }
+}
 
   async login(userId: string, password: string) {
     this.errorMessage = '';
@@ -79,13 +95,13 @@ export class AuthService implements HttpInterceptor {
   async refreshToken() {
     try {
       const result: any = await firstValueFrom(this.http.get(environment.baseUrl + 'api/refresh'));
-      if (result && result.userId) {
+      if (result && result.id) {
         localStorage.removeItem('inventoryAppToken');
         localStorage.removeItem('inventoryAppUser');
 
-        localStorage.setItem('inventoryAppToken', result.authToken);
-        localStorage.setItem('inventoryAppUser', result.userId);
-        this.currentUser = result.userId;
+        localStorage.setItem('inventoryAppToken', result.newToken);
+        localStorage.setItem('inventoryAppUser', result.id);
+        this.currentUser = result.id;
       } else if (result.error) throw result.message;
       else throw 'unknown error while refreshing token. redirecting to login page.'
     }
