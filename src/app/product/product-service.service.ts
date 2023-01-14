@@ -71,7 +71,8 @@ export class ProductServiceService {
       buyerName: 'AmtAryaNgr',
       profit: 0,
       txnId: '',
-      cashback: 0
+      cashback: 0,
+      delivery: 0
     }
   }
 

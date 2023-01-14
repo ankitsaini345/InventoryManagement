@@ -125,26 +125,6 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col col-form-label" for="cardDiscount">
-                        Card Discount
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="cardDiscount"
-                            placeholder="Card Discount (required)" required name="cardDiscount"
-                            [(ngModel)]=cardDiscount>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="cardAmount">
-                        Card Amount
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="cardAmount" disabled="true"
-                            placeholder="Amount deducted from card (required)" required name="cardAmount"
-                            [(ngModel)]=currentProduct.cardAmount>
-                    </div>
-                </div>
-                <div class="form-group row">
                     <label class="col col-form-label" for="cardHolder">
                         Card Name
                     </label>
@@ -157,7 +137,38 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col col-form-label" for="giftCardAmount">
+                    <label class="col col-form-label" for="cardDiscount">
+                        Card Discount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="cardDiscount"
+                            placeholder="Card Discount (required)" required name="cardDiscount"
+                            [(ngModel)]=cardDiscount>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="DeliveryAmount">
+                        Packaging/Delivery Charges
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="DeliveryAmount"
+                            placeholder="Packaging/Delivery Charges" required name="DeliveryAmount"
+                            [(ngModel)]=delivery>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="cardAmount">
+                        Card Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="cardAmount" disabled="true"
+                            placeholder="Amount deducted from card (required)" required name="cardAmount"
+                            [(ngModel)]=currentProduct.cardAmount>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col col-form-label" for="cashback">
                         Cashback
                     </label>
                     <div class="col">
@@ -244,7 +255,7 @@
             </button>
             <button class="btn btn-outline-warning" style="width:80px" type="button" title="Delete this product"
                 (click)="resetProduct()">
-                Delete
+                Reset
             </button>
             <!-- </div> -->
         </div>

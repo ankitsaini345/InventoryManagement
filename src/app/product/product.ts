@@ -21,5 +21,6 @@ export interface IProduct {
     status: string,
     profit: number,
     txnId: string,
-    cashback: number
+    cashback: number,
+    delivery: number
 }
