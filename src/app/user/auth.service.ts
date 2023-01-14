@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { User } from './user';
-// import { AlertService } from '../shared/alert/alert.service';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpClient, HttpResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { firstValueFrom, retry, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,8 @@ export class AuthService implements HttpInterceptor {
 
   constructor(
     private http: HttpClient,
-    private router: Router) {
+    private router: Router,
+    private toastService: ToastrService ) {
     this.errorMessage = '';
   }
 
@@ -45,13 +46,16 @@ export class AuthService implements HttpInterceptor {
             return event;
           },
           error: async (error) => {
+            this.toastService.error(error.status + ' ' + error.message)
             if (error.status === 401 && error.error?.message == 'jwt expired') {
               console.log('Token Expired. Generating new token...');
+              this.toastService.error('Token Expired. Generating new token...')
               await this.refreshToken();
               token = localStorage.getItem('inventoryAppToken');
-            }
+              window.location.reload();
+            } else console.log(error);
           }
-        }), retry(1));
+        }));
   }
   else {
     console.log('auth token not found in browser.');

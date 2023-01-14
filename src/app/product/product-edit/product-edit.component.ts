@@ -11,6 +11,7 @@ import { Itxn } from 'src/app/txn/transaction';
 import { TxnService } from 'src/app/txn/txn.service';
 import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-product-edit',
@@ -24,6 +25,7 @@ export class ProductEditComponent implements OnInit {
     private cardService: CardService,
     private txnService: TxnService,
     private common: CommonService,
+    private toastService: ToastrService,
     private productService: ProductServiceService) { }
 
   pageTitle = 'Edit Product';
@@ -34,24 +36,31 @@ export class ProductEditComponent implements OnInit {
 
   set listPrice(val: number) {
     this.currentProduct.listPrice = val;
-    this.currentProduct.cardAmount = this.currentProduct.listPrice - this.currentProduct.coupon;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
+    this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount + this.currentProduct.delivery;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback) + this.currentProduct.delivery;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   set coupon(val: number) {
     this.currentProduct.coupon = val;
-    this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
+    this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount + this.currentProduct.delivery;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback) + this.currentProduct.delivery;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
   set cardDiscount(val: number) {
     this.currentProduct.cardDiscount = val;
-    this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
+    this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount + this.currentProduct.delivery;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback) + this.currentProduct.delivery;
+    if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
+    if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
+  }
+  set delivery(val: number) {
+    this.currentProduct.delivery = val;
+    this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount + this.currentProduct.delivery;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback) + this.currentProduct.delivery;
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
@@ -61,7 +70,7 @@ export class ProductEditComponent implements OnInit {
     this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
-
+  
   set dPrice(val: number) {
     this.currentProduct.buyerPrice = val;
     this.currentProduct.profit = this.currentProduct.buyerPrice - this.currentProduct.costToMe;
@@ -79,62 +88,84 @@ export class ProductEditComponent implements OnInit {
   }
 
   async initialiseData() {
-    let _id = this.route.snapshot.params['id'];
-    if (_id == 'new') this.pageTitle = 'Add Product';
-    this.currentProduct = await firstValueFrom(this.productService.getProduct(_id))
-    this.originalProduct = { ...this.currentProduct };
-    this.productNamesArray = await firstValueFrom(this.productService.getUniqueProducts('name'));
-    this.cards = await firstValueFrom(this.cardService.getCards());
+    try {
+      let _id = this.route.snapshot.params['id'];
+      if (_id == 'new') this.pageTitle = 'Add Product';
+      this.currentProduct = await firstValueFrom(this.productService.getProduct(_id))
+      this.originalProduct = { ...this.currentProduct };
+      this.productNamesArray = await firstValueFrom(this.productService.getUniqueProducts('name'));
+      this.cards = await firstValueFrom(this.cardService.getCards());
+    } catch (error: any) {
+      this.toastService.error(error.message)
+    }
   }
 
   async saveProduct() {
-    if (this.currentProduct._id == 'new') {
-      this.currentProduct._id = new ObjectId().toString();
-      this.currentProduct.txnId = new ObjectId().toString();
-      await firstValueFrom(this.productService.addProduct(this.currentProduct));
-      await this.addTxn(this.currentProduct);
-      let cardInfo = await firstValueFrom(this.cardService.getCard(this.currentProduct.cardHolder));
-      cardInfo.amountDue += this.currentProduct.cardAmount;
-      await firstValueFrom(this.cardService.updateCard(cardInfo));
-    } else {
-      if (this.currentProduct != this.originalProduct) {
-        await firstValueFrom(this.productService.editProduct(this.currentProduct));
-        if (this.currentProduct.cardAmount != this.originalProduct.cardAmount)
-          this.updateTxn(this.currentProduct);
+    try {
+      if (this.currentProduct._id == 'new') {
+        this.currentProduct._id = new ObjectId().toString();
+        this.currentProduct.txnId = new ObjectId().toString();
+        await firstValueFrom(this.productService.addProduct(this.currentProduct));
+        await this.addTxn(this.currentProduct);
+        let cardInfo = await firstValueFrom(this.cardService.getCard(this.currentProduct.cardHolder));
+        cardInfo.amountDue += this.currentProduct.cardAmount;
+        await firstValueFrom(this.cardService.updateCard(cardInfo));
+        this.toastService.success('Product ' + this.currentProduct.name + ' added.')
+      } else {
+        if (this.currentProduct != this.originalProduct) {
+          await firstValueFrom(this.productService.editProduct(this.currentProduct));
+          if (this.currentProduct.cardAmount != this.originalProduct.cardAmount)
+            this.updateTxn(this.currentProduct);
+        }
+        this.toastService.success('Product ' + this.currentProduct.name + ' updated.')
       }
+      this.router.navigate(['/products']);
+    } catch (error: any) {
+      this.toastService.error(error.message)
     }
-    this.router.navigate(['/products']);
   }
 
   resetProduct() {
-    this.productService.getProduct('new').subscribe((product) => {
-      this.currentProduct = product;
-      this.originalProduct = product;
-    });
+    try {
+      this.productService.getProduct('new').subscribe((product) => {
+        this.currentProduct = product;
+        this.originalProduct = product;
+      });
+    } catch (error: any) {
+      this.toastService.error(error.message)
+    }
   }
 
   async addTxn(product: IProduct) {
-    const txn: Itxn = {
-      _id: product.txnId,
-      amount: product.cardAmount,
-      orderId: product._id,
-      txnDate: product.date,
-      cardName: product.cardHolder,
-      OrderName: product.name
+    try {
+      const txn: Itxn = {
+        _id: product.txnId,
+        amount: product.cardAmount,
+        orderId: product._id,
+        txnDate: product.date,
+        cardName: product.cardHolder,
+        OrderName: product.name
+      }
+      await firstValueFrom(this.txnService.addTxn(txn));
+    } catch (error: any) {
+      this.toastService.error(error.message)
     }
-    await firstValueFrom(this.txnService.addTxn(txn));
   }
 
   async updateTxn(product: IProduct) {
-    const txn: Itxn = {
-      _id: product.txnId,
-      amount: product.cardAmount,
-      orderId: product._id,
-      txnDate: product.date,
-      cardName: product.cardHolder,
-      OrderName: product.name
+    try {
+      const txn: Itxn = {
+        _id: product.txnId,
+        amount: product.cardAmount,
+        orderId: product._id,
+        txnDate: product.date,
+        cardName: product.cardHolder,
+        OrderName: product.name
+      }
+      await firstValueFrom(this.txnService.updateTxn(txn));
+    } catch (error: any) {
+      this.toastService.error(error.message)
     }
-    await firstValueFrom(this.txnService.updateTxn(txn));
   }
 
   cashbackAmount(per: number): number {

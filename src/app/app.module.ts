@@ -21,6 +21,7 @@ import { TxnListComponent } from './txn/txn-list/txn-list.component';
 import { environment } from 'src/environments/environment';
 import { LoginComponent } from './user/login/login.component';
 import { AuthService } from './user/auth.service';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { AuthService } from './user/auth.service';
     AppRoutingModule,
     FormsModule,
     Ng2SearchPipeModule,
+    ToastrModule.forRoot(),
     environment.useInMemDB ?
       HttpClientInMemoryWebApiModule.forRoot(InMemoryDataService, { delay: 100 }) : []
   ],
