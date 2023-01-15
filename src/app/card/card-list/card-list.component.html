@@ -30,6 +30,7 @@
                         <th>Bill Date</th>
                         <th>Due Date</th>
                         <th>Amount Due</th>
+                        <th>Total Amount</th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -42,6 +43,7 @@
                         <td>{{card.billDate}}</td>
                         <td>{{card.dueDate}}</td>
                         <td>{{card.amountDue}}</td>
+                        <td>{{card.totalAmount}}</td>
                         <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card.cardName, 'edit']">
                                 Edit
                             </button></td>

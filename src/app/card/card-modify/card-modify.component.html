@@ -46,6 +46,16 @@
                             required minlength="3" name="amountDue" [(ngModel)]=currentCard.amountDue>
                     </div>
                 </div>
+
+                <div class="form-group row">
+                    <label class="col col-form-label" for="totalAmount">
+                        Total Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="totalAmount" placeholder="Total Amount"
+                            required minlength="3" name="totalAmount" [(ngModel)]=currentCard.totalAmount>
+                    </div>
+                </div>
                 
             </fieldset>
         </form>
