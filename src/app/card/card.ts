@@ -3,6 +3,7 @@ export interface Icard {
     cardName: string,
     billDate: number,
     dueDate: number,
-    amountDue: number
+    amountDue: number,
+    totalAmount: number
 }
 

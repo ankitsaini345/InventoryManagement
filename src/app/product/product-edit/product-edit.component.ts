@@ -109,13 +109,20 @@ export class ProductEditComponent implements OnInit {
         await this.addTxn(this.currentProduct);
         let cardInfo = await firstValueFrom(this.cardService.getCard(this.currentProduct.cardHolder));
         cardInfo.amountDue += this.currentProduct.cardAmount;
+        cardInfo.totalAmount += this.currentProduct.cardAmount;
         await firstValueFrom(this.cardService.updateCard(cardInfo));
         this.toastService.success('Product ' + this.currentProduct.name + ' added.')
       } else {
         if (this.currentProduct != this.originalProduct) {
           await firstValueFrom(this.productService.editProduct(this.currentProduct));
           if (this.currentProduct.cardAmount != this.originalProduct.cardAmount)
-            this.updateTxn(this.currentProduct);
+            await this.updateTxn(this.currentProduct);
+            let cardInfo = await firstValueFrom(this.cardService.getCard(this.currentProduct.cardHolder));
+            cardInfo.amountDue -= this.originalProduct.cardAmount;
+            cardInfo.amountDue += this.currentProduct.cardAmount;
+            cardInfo.totalAmount -= this.originalProduct.cardAmount;
+            cardInfo.totalAmount += this.currentProduct.cardAmount;
+            await firstValueFrom(this.cardService.updateCard(cardInfo));
         }
         this.toastService.success('Product ' + this.currentProduct.name + ' updated.')
       }

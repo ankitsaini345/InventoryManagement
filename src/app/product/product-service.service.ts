@@ -43,7 +43,7 @@ export class ProductServiceService {
     return this.http.put<IProduct>(this.url + '/' + product._id, product);
   }
 
-  deleteProduct(id: number): Observable<IProduct[]> {
+  deleteProduct(id: string): Observable<IProduct[]> {
     return this.http.delete<IProduct[]>(this.url + '/' + id);
   }
 
@@ -57,14 +57,14 @@ export class ProductServiceService {
       AppName: 'Amazon',
       status: 'Ordered',
       AppAccount: '',
-      listPrice: null,
+      listPrice: 0,
       cardAmount: 0,
       costToMe: 0,
-      buyerPrice: null,
+      buyerPrice: 0,
       coupon: 0,
       giftBalence: 0,
       cardDiscount: 0,
-      cardHolder: 'Ankit_AxisAce',
+      cardHolder: '',
       deliveryDate: '',
       deliveryLoc: '',
       buyerDate: '',

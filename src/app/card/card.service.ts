@@ -39,7 +39,8 @@ export class CardService {
       cardName: '',
       dueDate: 0,
       amountDue: 0,
-      billDate: 0
+      billDate: 0,
+      totalAmount: 0
     }
   }
 
