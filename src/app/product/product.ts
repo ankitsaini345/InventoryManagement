@@ -9,7 +9,7 @@ export interface IProduct {
     listPrice: number | null,
     cardAmount: number,
     costToMe: number,
-    buyerPrice: number | null,
+    buyerPrice: number,
     coupon: number,
     giftBalence: number,
     cardDiscount: number,

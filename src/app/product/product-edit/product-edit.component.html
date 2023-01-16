@@ -15,7 +15,7 @@
                     </label>
                     <div class="col">
                         <input type="text" list="id-car" class="form-control" placeholder="Name (required)"
-                            name="productName" [(ngModel)]=currentProduct.name>
+                        name="productName" [(ngModel)]=currentProduct.name>
                         <datalist id="id-car" *ngFor="let product of productNamesArray">
                             <option>{{product}}</option>
                         </datalist>
@@ -215,6 +215,15 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label class="col col-form-label" for="profit">
+                        Profit
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="profit" placeholder="Profit"
+                            required name="profit" [(ngModel)]=profit>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col col-form-label" for="distributorPrice">
                         Buyer Price
                     </label>
@@ -231,15 +240,6 @@
                     <div class="col">
                         <input type="date" class="form-control" id="buyerDate" placeholder="Buyer Date (required)"
                             minlength="3" name="buyerDate" [(ngModel)]=currentProduct.buyerDate>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="profit">
-                        Profit
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="profit" disabled="true" placeholder="Profit"
-                            required name="profit" [(ngModel)]=currentProduct.profit>
                     </div>
                 </div>
             </fieldset>

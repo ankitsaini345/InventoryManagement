@@ -60,7 +60,7 @@ export class ProductEditComponent implements OnInit {
   set delivery(val: number) {
     this.currentProduct.delivery = val;
     this.currentProduct.cardAmount = this.currentProduct.listPrice! - this.currentProduct.coupon - this.currentProduct.cardDiscount + this.currentProduct.delivery;
-    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback) + this.currentProduct.delivery;
+    this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);
     if (this.currentProduct.cardAmount < 0) this.currentProduct.cardAmount = 0;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
@@ -77,11 +77,26 @@ export class ProductEditComponent implements OnInit {
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
 
+  set profit(val: number) {
+    this.currentProduct.profit = val;
+    this.currentProduct.buyerPrice = this.currentProduct.profit +  this.currentProduct.costToMe;
+    if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
+  }
+
   set cashback(val: number) {
     this.currentProduct.cashback = val;
     this.currentProduct.costToMe = this.currentProduct.cardAmount + this.currentProduct.giftBalence - this.cashbackAmount(this.currentProduct.cashback);;
     if (this.currentProduct.costToMe < 0) this.currentProduct.costToMe = 0;
   }
+
+  get dPrice() {
+    return this.currentProduct.buyerPrice;
+  }
+
+  get profit() {
+    return this.currentProduct.profit;
+  }
+
 
   ngOnInit(): void {
     this.initialiseData();
