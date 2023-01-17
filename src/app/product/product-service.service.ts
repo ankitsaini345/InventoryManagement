@@ -1,15 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, Observable, of } from 'rxjs';
+import { firstValueFrom, map, Observable, of } from 'rxjs';
 import { IProduct } from './product';
 import { environment } from 'src/environments/environment';
+import { CardService } from '../card/card.service';
+import { ToastrService } from 'ngx-toastr';
+import { TxnService } from '../txn/txn.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductServiceService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private cardService: CardService,
+    private txnService: TxnService,
+    private toastService: ToastrService,
+  ) { }
 
   private url = environment.baseUrl + 'api/orders';
 
@@ -35,12 +42,30 @@ export class ProductServiceService {
     }
   }
 
-  addProduct(product: IProduct): Observable<any> {
-    return this.http.post(this.url, product);
+  async addProduct(currentProduct: IProduct) {
+    await firstValueFrom(this.http.post(this.url, currentProduct));
+    this.toastService.success('Product ' + currentProduct.name + ' added.')
+    await this.txnService.addTxnfromProduct(currentProduct);
+    this.toastService.success('Product ' + currentProduct.name + ' added in Txns')
+    let cardInfo = await firstValueFrom(this.cardService.getCard(currentProduct.cardHolder));
+    cardInfo.amountDue += currentProduct.cardAmount;
+    cardInfo.totalAmount += currentProduct.cardAmount;
+    await firstValueFrom(this.cardService.updateCard(cardInfo));
+    this.toastService.success('Amount for ' + currentProduct.name + ' Updated in ' + currentProduct.cardHolder)
   }
 
-  editProduct(product: IProduct): Observable<IProduct> {
-    return this.http.put<IProduct>(this.url + '/' + product._id, product);
+  async editProduct(currentProduct: IProduct, originalProduct: IProduct) {
+    await firstValueFrom(this.http.put<IProduct>(this.url + '/' + currentProduct._id, currentProduct))
+    if (currentProduct.cardAmount != originalProduct.cardAmount) {
+      await this.txnService.updateTxnUsingProduct(currentProduct);
+      let cardInfo = await firstValueFrom(this.cardService.getCard(currentProduct.cardHolder));
+      cardInfo.amountDue -= originalProduct.cardAmount;
+      cardInfo.amountDue += currentProduct.cardAmount;
+      cardInfo.totalAmount -= originalProduct.cardAmount;
+      cardInfo.totalAmount += currentProduct.cardAmount;
+      await firstValueFrom(this.cardService.updateCard(cardInfo));
+    }
+
   }
 
   deleteProduct(id: string): Observable<IProduct[]> {

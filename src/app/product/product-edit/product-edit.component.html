@@ -1,7 +1,7 @@
 <app-spinner *ngIf="isLoading"></app-spinner>
 <div class="card" style="width: 90%">
     <div class="card-header">
-        {{pageTitle}}   
+        {{pageTitle}}
     </div>
 
     <div class="card-body" *ngIf="currentProduct">
@@ -16,7 +16,7 @@
                     </label>
                     <div class="col">
                         <input type="text" list="id-car" class="form-control" placeholder="Name (required)"
-                        name="productName" [(ngModel)]=currentProduct.name>
+                            name="productName" [(ngModel)]=currentProduct.name>
                         <datalist id="id-car" *ngFor="let product of productNamesArray">
                             <option>{{product}}</option>
                         </datalist>
@@ -158,6 +158,16 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label class="col col-form-label" for="giftCardAmount">
+                        Wallet/Gift Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="giftCardAmount"
+                            placeholder="Gift Card Balence Used (required)" required name="giftCardAmount"
+                            [(ngModel)]=giftBalence>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col col-form-label" for="cardAmount">
                         Card Amount
                     </label>
@@ -173,19 +183,13 @@
                         Cashback
                     </label>
                     <div class="col">
-                        <input type="number" class="form-control" id="cashback"
-                            placeholder="Cashback (default 0)" required name="cashback"
-                            [(ngModel)]=cashback>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="giftCardAmount">
-                        Gift Card Amount
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="giftCardAmount"
-                            placeholder="Gift Card Balence Used (required)" required name="giftCardAmount"
-                            [(ngModel)]=giftBalence>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="cashback" placeholder="Cashback in %" required
+                                name="cashback" [(ngModel)]=cashback>
+                            <div class="input-group-append">
+                                <span class="input-group-text">{{currentProduct.cashback}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -220,8 +224,8 @@
                         Profit
                     </label>
                     <div class="col">
-                        <input type="number" class="form-control" id="profit" placeholder="Profit"
-                            required name="profit" [(ngModel)]=profit>
+                        <input type="number" class="form-control" id="profit" placeholder="Profit" required
+                            name="profit" [(ngModel)]=profit>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -248,22 +252,23 @@
         <div class="row mb-2 form-group">
             <div class="col-md-4">
                 <div class="form-check form-switch" style="padding-left: 50%;">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" [(ngModel)]=addMoreProduct>
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                        [(ngModel)]=addMoreProduct>
                     <label class="form-check-label" for="flexSwitchCheckDefault">Add More Products</label>
-                  </div>
+                </div>
             </div>
             <div class="col-md-4">
-            <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="saveProduct()">
-                Save
-            </button>
-            <button class="btn btn-outline-secondary mr-3" style="width:80px" type="button" title="Cancel your edits"
-                [routerLink]="['/products']">
-                Cancel
-            </button>
-            <button class="btn btn-outline-warning" style="width:80px" type="button" title="Delete this product"
-                (click)="resetProduct()">
-                Reset
-            </button>
+                <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="saveProduct()">
+                    Save
+                </button>
+                <button class="btn btn-outline-secondary mr-3" style="width:80px" type="button"
+                    title="Cancel your edits" [routerLink]="['/products']">
+                    Cancel
+                </button>
+                <button class="btn btn-outline-warning" style="width:80px" type="button" title="Delete this product"
+                    (click)="resetProduct()">
+                    Reset
+                </button>
             </div>
         </div>
     </div>

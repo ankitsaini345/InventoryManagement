@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { IProduct } from '../product/product';
 import { Itxn } from './transaction';
 
 @Injectable({
@@ -9,7 +11,8 @@ import { Itxn } from './transaction';
 })
 export class TxnService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private toastService: ToastrService,
+    private http: HttpClient) { }
 
   private url = environment.baseUrl + 'api/txns'
 
@@ -31,6 +34,38 @@ export class TxnService {
 
   addTxn(Txn: Itxn): Observable<Itxn> {
     return this.http.post<Itxn>(this.url, Txn);
+  }
+
+  async addTxnfromProduct(product: IProduct) {
+    try {
+      const txn: Itxn = {
+        _id: product.txnId,
+        amount: product.cardAmount,
+        orderId: product._id,
+        txnDate: product.date,
+        cardName: product.cardHolder,
+        OrderName: product.name
+      }
+      await firstValueFrom(this.addTxn(txn));
+    } catch (error: any) {
+      this.toastService.error(error.message)
+    }
+  }
+
+  async updateTxnUsingProduct(product: IProduct) {
+    try {
+      const txn: Itxn = {
+        _id: product.txnId,
+        amount: product.cardAmount,
+        orderId: product._id,
+        txnDate: product.date,
+        cardName: product.cardHolder,
+        OrderName: product.name
+      }
+      await firstValueFrom(this.updateTxn(txn));
+    } catch (error: any) {
+      this.toastService.error(error.message)
+    }
   }
 
   updateTxn(Txn: Itxn): Observable<Itxn> {
