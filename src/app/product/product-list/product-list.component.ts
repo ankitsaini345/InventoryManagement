@@ -20,6 +20,7 @@ export class ProductListComponent implements OnInit {
 
   products: IProduct[] = [];
   filterBy = '';
+  aggregate:any = {};
 
   ngOnInit(): void {
     this.getProducts();
@@ -33,6 +34,22 @@ export class ProductListComponent implements OnInit {
 
     try {
       this.products = await firstValueFrom(this.productService.getProducts());
+
+      this.products.forEach((item) => {
+        this.aggregate.listPrice ?  this.aggregate.listPrice += item.listPrice : this.aggregate.listPrice = item.listPrice;
+        this.aggregate.cardAmount ?  this.aggregate.cardAmount += item.cardAmount : this.aggregate.cardAmount = item.cardAmount;
+        this.aggregate.buyerPrice ?  this.aggregate.buyerPrice += item.buyerPrice : this.aggregate.buyerPrice = item.buyerPrice;
+        this.aggregate.coupon ?  this.aggregate.coupon += item.coupon : this.aggregate.coupon = item.coupon;
+        this.aggregate.giftBalence ?  this.aggregate.giftBalence += item.giftBalence : this.aggregate.giftBalence = item.giftBalence;
+        this.aggregate.cardDiscount ?  this.aggregate.cardDiscount += item.cardDiscount : this.aggregate.cardDiscount = item.cardDiscount;
+        this.aggregate.profit ?  this.aggregate.profit += item.profit : this.aggregate.profit = item.profit;
+        this.aggregate.cashback ?  this.aggregate.cashback += item.cashback : this.aggregate.cashback = item.cashback;
+        this.aggregate.delivery ?  this.aggregate.delivery += item.delivery : this.aggregate.delivery = item.delivery;
+        this.aggregate.costToMe ?  this.aggregate.costToMe += item.costToMe : this.aggregate.costToMe = item.costToMe;
+      })
+      this.aggregate.buyerPrice = Math.round(this.aggregate.buyerPrice);
+      this.aggregate.costToMe = Math.round(this.aggregate.costToMe);
+      
     } catch (error: any) {
       this.toastService.error(error.message);
     }

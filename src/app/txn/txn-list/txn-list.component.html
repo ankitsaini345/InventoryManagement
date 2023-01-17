@@ -25,6 +25,7 @@
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr>
+                        <th>SN</th>
                         <th>TxnId</th>
                         <th>Order Name</th>
                         <th>Purchase Date</th>
@@ -35,6 +36,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let txn of txns | filter:filterBy">
+                        <td></td>
                         <td>{{txn._id}}</td>
                         <td>{{txn.OrderName}}</td>
                         <td>{{txn.txnDate}}</td>

@@ -23,6 +23,7 @@ import { environment } from 'src/environments/environment';
 import { LoginComponent } from './user/login/login.component';
 import { AuthService } from './user/auth.service';
 import { ToastrModule } from 'ngx-toastr';
+import { SpinnerComponent } from './spinner/spinner.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { ToastrModule } from 'ngx-toastr';
     CardBillPaymentComponent,
     CardTxnsComponent,
     TxnListComponent,
-    LoginComponent
+    LoginComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,

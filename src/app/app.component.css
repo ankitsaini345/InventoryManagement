@@ -40,3 +40,9 @@
           transform: rotate(359deg);
       }
   }
+
+body {
+    font-size: .9rem;
+    font-weight: 450;
+    line-height: 1.2;
+}
