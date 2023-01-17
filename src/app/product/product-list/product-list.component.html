@@ -19,9 +19,9 @@
                 </label></div>
         </div>
         <br>
-        <div class="table-responsive">
-            <table class="table table-bordered table-sm">
-                <thead>
+        <div class="table-responsive tableFixHead">
+            <table class="table table-bordered table-sm table-striped">
+                <thead sticky-top>
                     <tr>
                         <th>S.No.</th>
                         <th>Name</th>
@@ -29,7 +29,7 @@
                         <th>Storage</th>
                         <th>App Name</th>
                         <th>Account</th>
-                        <th>Purchase Date</th>
+                        <th>PurchaseDate</th>
                         <th>Status</th>
                         <th>List Price</th>
                         <th>Coupon</th>
@@ -39,6 +39,7 @@
                         <th>Cashback</th>
                         <th>Cost ToMe</th>
                         <th>DPrice</th>
+                        <th>Profit</th>
                         <th>Card Name</th>
                         <th>deliveryDate</th>
                         <th>deliveryLoc</th>
@@ -66,7 +67,8 @@
                         <td>{{product.cardAmount}}</td>
                         <td>{{product.cashback}}</td>
                         <td>{{product.costToMe}}</td>
-                        <td>{{product.dPrice}}</td>
+                        <td>{{product.buyerPrice}}</td>
+                        <td>{{product.profit}}</td>
                         <td>{{product.cardHolder}}</td>
                         <td>{{product.deliveryDate}}</td>
                         <td>{{product.deliveryLoc}}</td>
@@ -76,12 +78,37 @@
                                 [routerLink]="['/product', product._id, 'edit']">
                                 Edit
                             </button></td>
+                            <td></td>
                         <!-- <td><button class="btn btn-outline-danger btn-sm" (click)="cancelProduct(product._id)">
                                 Cancelled
                             </button></td> -->
                         <td><button class="btn btn-outline-danger btn-sm" (click)="deleteProduct(product)">
                                 Delete
                             </button></td>
+                    </tr>
+                    <tr> 
+                        <td></td>
+                        <td style="color: blue;">Total</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{aggregate.listPrice}}</td>
+                        <td>{{aggregate.coupon}}</td>
+                        <td>{{aggregate.giftBalence}}</td>
+                        <td>{{aggregate.cardDiscount}}</td>
+                        <td>{{aggregate.cardAmount}}</td>
+                        <td>{{aggregate.cashback}}</td>
+                        <td>{{aggregate.costToMe}}</td>
+                        <td>{{aggregate.buyerPrice}}</td>
+                        <td>{{aggregate.profit}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
 
                 </tbody>

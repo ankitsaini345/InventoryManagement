@@ -1,6 +1,16 @@
 thead {
   color: #337AB7;
 }
+.table-responsive {
+  max-height:300px;
+}
+
+.tableFixHead          { overflow: auto; height: 55vh; }
+.tableFixHead thead th { position: sticky; top: 0; z-index: 1; }
+
+/* Just common table stuff. Really. */
+table  { border-collapse: collapse; width: 100%; }
+th     { background:#eee; }
 
 .table {
   text-align: center;
@@ -22,4 +32,11 @@ table tr td:first-child::before {
   content: counter(rowNumber);
   min-width: 1em;
   margin-right: 0.5em;
+}
+.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl {
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
+  max-width: 99%;
 }

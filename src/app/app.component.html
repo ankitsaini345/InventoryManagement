@@ -29,9 +29,9 @@
     <button *ngIf="isLoggedIn" class="btn btn-outline-primary my-2 my-sm-0" (click)="logout()">Logout</button>
     <button *ngIf="!isLoggedIn" class="btn btn-outline-primary my-2 my-sm-0" routerLink="/login">LogIn</button>
   </nav>
-  <br><br>
+  <br>
 </div>
 
-<div class="container">
+<div class="container-xl">
   <router-outlet></router-outlet>
 </div>
