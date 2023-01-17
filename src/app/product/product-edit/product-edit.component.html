@@ -1,6 +1,7 @@
+<app-spinner *ngIf="isLoading"></app-spinner>
 <div class="card" style="width: 90%">
     <div class="card-header">
-        {{pageTitle}}
+        {{pageTitle}}   
     </div>
 
     <div class="card-body" *ngIf="currentProduct">
@@ -245,7 +246,13 @@
             </fieldset>
         </form>
         <div class="row mb-2 form-group">
-            <!-- <div class="col-md-4"> -->
+            <div class="col-md-4">
+                <div class="form-check form-switch" style="padding-left: 50%;">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" [(ngModel)]=addMoreProduct>
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Add More Products</label>
+                  </div>
+            </div>
+            <div class="col-md-4">
             <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="saveProduct()">
                 Save
             </button>
@@ -257,7 +264,7 @@
                 (click)="resetProduct()">
                 Reset
             </button>
-            <!-- </div> -->
+            </div>
         </div>
     </div>
     {{ currentProduct | json }}

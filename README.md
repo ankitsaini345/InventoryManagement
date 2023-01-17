@@ -7,7 +7,7 @@
 ## Enhancements
  convert to angular reactive forms, add validation
  add route resolver and animation
- 
+ Spinner change
 
  ## Test
  
