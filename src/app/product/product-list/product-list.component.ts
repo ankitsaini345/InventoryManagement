@@ -33,7 +33,7 @@ export class ProductListComponent implements OnInit {
     // })
 
     try {
-      this.products = await firstValueFrom(this.productService.getProducts());
+      this.products = await this.productService.getProducts();
 
       this.products.forEach((item) => {
         this.aggregate.listPrice ?  this.aggregate.listPrice += item.listPrice : this.aggregate.listPrice = item.listPrice;
@@ -72,7 +72,7 @@ export class ProductListComponent implements OnInit {
       this.toastService.success('Product ' + product.name + ' deleted.');
       await this.getProducts();
       await firstValueFrom(this.txnService.deleteTxn(product.txnId));
-      let cardInfo = await firstValueFrom(this.cardService.getCard(product.cardHolder));
+      let cardInfo = await this.cardService.getCard(product.cardHolder);
         cardInfo.amountDue -= product.cardAmount;
         cardInfo.totalAmount -= product.cardAmount;
         await firstValueFrom(this.cardService.updateCard(cardInfo));

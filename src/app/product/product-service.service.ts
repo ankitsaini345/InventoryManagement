@@ -12,6 +12,10 @@ import { TxnService } from '../txn/txn.service';
 })
 export class ProductServiceService {
 
+  private productStorageString = 'inventoryProducts';
+  private cardStorageString = 'inventoryCards';
+  private txnStorageString = 'inventoryTxns';
+
   constructor(private http: HttpClient,
     private cardService: CardService,
     private txnService: TxnService,
@@ -20,8 +24,16 @@ export class ProductServiceService {
 
   private url = environment.baseUrl + 'api/orders';
 
-  getProducts(): Observable<IProduct[]> {
-    return this.http.get<IProduct[]>(this.url);
+  async getProducts(): Promise<IProduct[]> {
+    let products = localStorage.getItem(this.productStorageString);
+    let productArray: IProduct[];
+    if (products) {
+      productArray = JSON.parse(products);
+    } else {
+      productArray = await firstValueFrom(this.http.get<IProduct[]>(this.url));
+      localStorage.setItem(this.productStorageString, JSON.stringify(productArray));
+    }
+    return productArray;
   }
 
   getUniqueProducts(field: string) {
@@ -29,25 +41,24 @@ export class ProductServiceService {
     return this.http.get(uniqueProductUrl);
   }
 
-  getProduct(id: string): Observable<IProduct> {
-    if (id == 'new') {
-      return of(this.blankProduct());
-    } else {
-      // return this.getProducts().pipe(                                    // use in case of json file
-      //   map((products: IProduct[]) => products.find(p => p.id == id))
-      // );
-
-      // for in mem db or backend service
-      return this.http.get<IProduct>(this.url + '/' + id);
+  async getProduct(_id: string): Promise<IProduct> {
+    if (_id == 'new') return this.blankProduct();
+    else {
+      let productArray = await this.getProducts();
+      let product = productArray.find(p => p._id == _id);
+      return product!;
     }
   }
 
   async addProduct(currentProduct: IProduct) {
+    localStorage.removeItem(this.productStorageString);
+    localStorage.removeItem(this.cardStorageString);
+    localStorage.removeItem(this.txnStorageString);
     await firstValueFrom(this.http.post(this.url, currentProduct));
     this.toastService.success('Product ' + currentProduct.name + ' added.')
     await this.txnService.addTxnfromProduct(currentProduct);
     this.toastService.success('Product ' + currentProduct.name + ' added in Txns')
-    let cardInfo = await firstValueFrom(this.cardService.getCard(currentProduct.cardHolder));
+    let cardInfo = await this.cardService.getCard(currentProduct.cardHolder);
     cardInfo.amountDue += currentProduct.cardAmount;
     cardInfo.totalAmount += currentProduct.cardAmount;
     await firstValueFrom(this.cardService.updateCard(cardInfo));
@@ -55,10 +66,13 @@ export class ProductServiceService {
   }
 
   async editProduct(currentProduct: IProduct, originalProduct: IProduct) {
+    localStorage.removeItem(this.productStorageString);
+    localStorage.removeItem(this.cardStorageString);
+    localStorage.removeItem(this.txnStorageString);
     await firstValueFrom(this.http.put<IProduct>(this.url + '/' + currentProduct._id, currentProduct))
     if (currentProduct.cardAmount != originalProduct.cardAmount) {
       await this.txnService.updateTxnUsingProduct(currentProduct);
-      let cardInfo = await firstValueFrom(this.cardService.getCard(currentProduct.cardHolder));
+      let cardInfo = await this.cardService.getCard(currentProduct.cardHolder);
       cardInfo.amountDue -= originalProduct.cardAmount;
       cardInfo.amountDue += currentProduct.cardAmount;
       cardInfo.totalAmount -= originalProduct.cardAmount;
@@ -69,6 +83,9 @@ export class ProductServiceService {
   }
 
   deleteProduct(id: string): Observable<IProduct[]> {
+    localStorage.removeItem(this.productStorageString);
+    localStorage.removeItem(this.cardStorageString);
+    localStorage.removeItem(this.txnStorageString);
     return this.http.delete<IProduct[]>(this.url + '/' + id);
   }
 

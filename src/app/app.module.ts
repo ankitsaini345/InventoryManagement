@@ -25,6 +25,9 @@ import { AuthService } from './user/auth.service';
 import { ToastrModule } from 'ngx-toastr';
 import { SpinnerComponent } from './spinner/spinner.component';
 
+import {TableModule} from 'primeng/table';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -47,6 +50,7 @@ import { SpinnerComponent } from './spinner/spinner.component';
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
+    TableModule,
     Ng2SearchPipeModule,
     ToastrModule.forRoot(),
     environment.useInMemDB ?

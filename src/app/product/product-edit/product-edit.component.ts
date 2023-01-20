@@ -107,9 +107,9 @@ export class ProductEditComponent implements OnInit {
     try {
       let _id = this.route.snapshot.params['id'];
       if (_id == 'new') this.pageTitle = 'Add Product';
-      this.currentProduct = await firstValueFrom(this.productService.getProduct(_id))
+      this.currentProduct = await this.productService.getProduct(_id);
       this.originalProduct = { ...this.currentProduct };
-      this.cards = await firstValueFrom(this.cardService.getCards());
+      this.cards = await this.cardService.getCards();
       this.productNamesArray = await firstValueFrom(this.productService.getUniqueProducts('name'));
     } catch (error: any) {
       this.toastService.error(error.message)
@@ -130,7 +130,7 @@ export class ProductEditComponent implements OnInit {
         else this.toastService.success('No Change in Product to save')
       }
       if (this.addMoreProduct) {
-        this.currentProduct = await firstValueFrom(this.productService.getProduct('new'))
+        this.currentProduct = await this.productService.getProduct('new');
         this.originalProduct = { ...this.currentProduct };
         this.isLoading = true;
         setTimeout(() => {
@@ -142,12 +142,10 @@ export class ProductEditComponent implements OnInit {
     }
   }
 
-  resetProduct() {
+  async resetProduct() {
     try {
-      this.productService.getProduct('new').subscribe((product) => {
-        this.currentProduct = product;
-        this.originalProduct = product;
-      });
+      this.currentProduct = await this.productService.getProduct('new');
+      this.originalProduct = { ...this.currentProduct };
     } catch (error: any) {
       this.toastService.error(error.message)
     }
@@ -155,7 +153,7 @@ export class ProductEditComponent implements OnInit {
 
   cashbackAmount(per: number): number {
     if (!per) return 0;
-    else return (this.currentProduct.cardAmount * (per / 100));
+    else return Math.round((this.currentProduct.cardAmount * (per / 100)));
   }
 }
 
