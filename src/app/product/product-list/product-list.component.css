@@ -1,42 +1,9 @@
-thead {
-  color: #337AB7;
-}
-.table-responsive {
-  max-height:300px;
+:host ::ng-deep .p-cell-editing {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
-.tableFixHead          { overflow: auto; height: 55vh; }
-.tableFixHead thead th { position: sticky; top: 0; z-index: 1; }
-
-/* Just common table stuff. Really. */
-table  { border-collapse: collapse; width: 100%; }
-th     { background:#eee; }
-
-.table {
-  text-align: center;
-}
-
-.card-header {
-  font-weight: bold;
-}
-
-table {
-  counter-reset: rowNumber -1;
-}
-
-table tr {
-  counter-increment: rowNumber;
-}
-
-table tr td:first-child::before {
-  content: counter(rowNumber);
-  min-width: 1em;
-  margin-right: 0.5em;
-}
-.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl {
-  padding-right: 10px;
-  padding-left: 10px;
-  margin-right: 5px;
-  margin-left: 5px;
-  max-width: 99%;
+:host ::ng-deep .p-datatable .p-datatable-tbody tr td {
+    text-align: center !important;
+    padding: 0rem 0rem !important;
 }
