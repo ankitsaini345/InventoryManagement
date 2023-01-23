@@ -20,12 +20,15 @@ export class CardModifyComponent implements OnInit {
   originalCard!: Icard;
 
   ngOnInit(): void {
+    this.initialise();
+  }
+
+  async initialise() {
     let name: string = this.route.snapshot.params['name'];
     if (name == 'new') this.pageTitle = 'Add Card';
-    this.cardService.getCard(name).subscribe((data) => {
-      this.currentCard = data;
-      this.originalCard = data;
-    })
+    this.currentCard = await this.cardService.getCard(name);
+    this.originalCard = { ...this.currentCard };
+
   }
 
   saveCard() {

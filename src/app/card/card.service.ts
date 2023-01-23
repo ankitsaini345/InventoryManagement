@@ -10,26 +10,49 @@ import { Icard } from './card';
 export class CardService {
   constructor(private http: HttpClient) { }
 
+  private cardStorageString = 'inventoryCards';
+  private txnStorageString = 'inventoryTxns';
   private url = environment.baseUrl + 'api/cards'
 
-  getCards(): Observable<Icard[]> {
-    return this.http.get<Icard[]>(this.url);
+  async getCards(): Promise<Icard[]> {
+    // return this.http.get<Icard[]>(this.url);
+
+    let cards = localStorage.getItem(this.cardStorageString);
+    let cardsArray: Icard[];
+    if (cards) {
+      cardsArray = JSON.parse(cards);
+    } else {
+      cardsArray = await firstValueFrom(this.http.get<Icard[]>(this.url));
+      localStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
+    }
+    return cardsArray;
   }
 
-  getCard(cardName: string): Observable<Icard> {
-    if (cardName == 'new') return of(this.blankCard());
-    return this.http.get<Icard>(this.url + '/' + cardName);
+  async getCard(cardName: string): Promise<Icard> {
+    if (cardName == 'new') return this.blankCard();
+    else {
+      let cardsArray = await this.getCards();
+      let card = cardsArray.find(p => p.cardName == cardName);
+      return card!;
+    }
+    // return this.http.get<Icard>(this.url + '/' + cardName);
   }
 
   addCard(card: Icard): Observable<Icard> {
+    localStorage.removeItem(this.cardStorageString);
+    localStorage.removeItem(this.txnStorageString);
     return this.http.post<Icard>(this.url, card);
   }
 
   updateCard(card: Icard): Observable<Icard> {
+    localStorage.removeItem(this.cardStorageString);
+    localStorage.removeItem(this.txnStorageString);
     return this.http.put<Icard>(this.url + '/' + card._id, card);
   }
 
   deleteCard(id: any): Observable<Icard> {
+    localStorage.removeItem(this.cardStorageString);
+    localStorage.removeItem(this.txnStorageString);
     return this.http.delete<Icard>(this.url + '/' + id);
   }
 

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
 import { Icard } from '../card';
 import { CardService } from '../card.service';
 
@@ -18,7 +17,7 @@ export class CardListComponent implements OnInit {
   }
 
   async getCards() {
-    this.cards = await firstValueFrom(this.cardService.getCards());
+    this.cards = await this.cardService.getCards();
   }
 
   deleteCard(id: any) {

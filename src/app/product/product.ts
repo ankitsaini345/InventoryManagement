@@ -6,7 +6,7 @@ export interface IProduct {
     storage: number,
     AppName: string,
     AppAccount: string,
-    listPrice: number | null,
+    listPrice: number,
     cardAmount: number,
     costToMe: number,
     buyerPrice: number,
