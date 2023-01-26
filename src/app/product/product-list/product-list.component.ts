@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { table } from 'table';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom } from 'rxjs';
 import { CardService } from 'src/app/card/card.service';
@@ -35,7 +36,7 @@ export class ProductListComponent implements OnInit {
   aggregate: any = {};
   orgProduct: IProduct | null;
 
-  appName = ["Amazon", "Flipkart", "Samsung", "Realme", "Vivo", "Oppo", "Mi", "1", "TataCliQ", "RelianceDigital", "Others"];
+  appName = ["Amazon", "Flipkart", "Samsung", "Realme", "Vivo", "Oppo", "Mi", "1+", "TataCliQ", "Reliance", "Others"];
   orderStatus = ['Ordered', 'Shipped', 'DeliveredToLoc', 'DeliveredHome', 'Distributor', 'Cancelled']
   cardHolder = ['test'];
   // clonedProducts: { [s: string]: IProduct; } = {};
@@ -146,17 +147,12 @@ export class ProductListComponent implements OnInit {
 
   }
   schange(event: any) {
-    // console.log('schange');
-
-    // console.log(event);
-
     console.log(this.selectedProduct);
-
   }
 
   async exportText() {
     console.log(this.selectedProduct);
-    
+
     if (!this.selectedProduct.length) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
     } else {
@@ -165,14 +161,15 @@ export class ProductListComponent implements OnInit {
       let totalQty = 0;
       this.selectedProduct.forEach((item) => {
         let name = item.name + ' ' + item.ram + ' ' + item.storage;
+        item.buyerPrice = Math.round(item.buyerPrice);
         if (exportData.hasOwnProperty(name) && exportData[name].cost == item.buyerPrice) {
           exportData[name].qty += 1;
-          exportData[name].totalCost = Math.round(exportData[name].qty * exportData[name].cost);
+          exportData[name].totalCost = exportData[name].qty * exportData[name].cost;
         } else {
           exportData[name] = {
             qty: 1,
-            cost: Math.round(item.buyerPrice),
-            totalCost: Math.round(item.buyerPrice)
+            cost: item.buyerPrice,
+            totalCost: item.buyerPrice
           }
         }
         totalAmount += item.buyerPrice;
@@ -183,19 +180,23 @@ export class ProductListComponent implements OnInit {
       for (const key in exportData) {
         tableArray.push([key, exportData[key].cost, exportData[key].qty, exportData[key].totalCost])
       }
-      tableArray.push(['Total', '', totalQty, Math.round(totalAmount)])
+      tableArray.push(['Total', '', totalQty, totalAmount])
 
-      let cdata = table(tableArray)
+      let cdata = table(tableArray);
 
       this.clipboard.copy(cdata);
-      const shareMessage: any = await this.shareService.share({
-        title: 'Invoice',
-        text: cdata
-      })
-      if (shareMessage.error) {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
-      }
+      // const shareMessage: any = await this.shareService.share({
+      //   title: 'Invoice',
+      //   text: cdata
+      // })
+      // if (shareMessage.error) {
+      //   this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+      // }
     }
   }
+  // async exportImage() {
+  //   const dataUrl = await toPng(document.getElementById('my-table')!)
+  //   this.clipboard.copy(dataUrl);
+  // }
 
 }

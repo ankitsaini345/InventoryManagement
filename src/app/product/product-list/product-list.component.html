@@ -18,7 +18,8 @@
                 Showing products containing <b>{{filterBy}}</b>
             </label></div>
     </div>
-<button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()" class="mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
+<button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()" class="mr-2" pTooltip="Export Data" tooltipPosition="top"></button>
+<!-- <button type="button" pButton pRipple icon="pi pi-image" (click)="exportImage()" class="mr-2" pTooltip="Export Image" tooltipPosition="top"></button> -->
 <div class="card">
     <p-table [value]="products| filter:filterBy" dataKey="_id" editMode="row" [scrollable]="true" scrollHeight="80vh"
         styleClass="p-datatable-sm" styleClass="p-datatable-gridlines" (selectionChange)="schange($event)"
@@ -29,15 +30,15 @@
                 <th pFrozenColumn style="width: 4rem">
                     <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
-                <th pFrozenColumn pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                <th pFrozenColumn>ProductName</th>
                 <th pFrozenColumn></th>
                 <th>Size</th>
                 <th>Status</th>
-                <th>App Name</th>
+                <th>App</th>
                 <th>Account</th>
-                <th pSortableColumn="date">PurchaseDate <p-sortIcon field="date"></p-sortIcon></th>
-                <th>Card Name</th>
-                <th>List Price</th>
+                <th>PurchaseDate </th>
+                <th>CardName</th>
+                <th>ListPrice</th>
                 <th>Coupon</th>
                 <th>gift bal</th>
                 <th>Card Discount</th>
@@ -61,7 +62,7 @@
                 <td pFrozenColumn>
                     {{product.name}}
                 </td>
-                <td pFrozenColumn>
+                <td pFrozenColumn style="min-width: 100px;">
                     <div class="flex align-items-center justify-content-center gap-2">
                         <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                             (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
