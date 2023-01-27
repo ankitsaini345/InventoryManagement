@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ObjectId } from 'bson';
+import { Subscription } from 'rxjs';
 import { Icard } from '../card';
 import { CardService } from '../card.service';
 
@@ -10,6 +11,7 @@ import { CardService } from '../card.service';
   styleUrls: ['./card-modify.component.css']
 })
 export class CardModifyComponent implements OnInit {
+  subArray: Subscription[] = []
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -24,27 +26,22 @@ export class CardModifyComponent implements OnInit {
   }
 
   async initialise() {
-    let name: string = this.route.snapshot.params['name'];
-    if (name == 'new') this.pageTitle = 'Add Card';
-    this.currentCard = await this.cardService.getCard(name);
-    this.originalCard = { ...this.currentCard };
-
+    let sub1 = this.route.params.subscribe(async (param) => {
+      let _id: string = param['_id'];
+      if (_id == 'new') this.pageTitle = 'Add Card';
+      this.currentCard = await this.cardService.getCardById(_id);
+      this.originalCard = { ...this.currentCard };
+    })
+    this.subArray.push(sub1);
   }
 
-  saveCard() {
-    if (this.currentCard.cardName == 'new') {
-      this.currentCard._id = new ObjectId().toString()
-      this.cardService.addCard(this.currentCard).subscribe({
-        next: () => console.log(this.currentCard.cardName + ' saved.'),
-        error: () => console.error('Error in saving card ' + this.currentCard.cardName)
-      });
+  async saveCard() {
+    if (this.currentCard._id == 'new') {
+      this.currentCard._id = new ObjectId().toString();
+      await this.cardService.addCard(this.currentCard);
     } else {
-      this.cardService.updateCard(this.currentCard).subscribe({
-        next: () => console.log('Card ' + this.currentCard.cardName + ' edited.'),
-        error: () => console.error('Error in editing card: ' + this.currentCard.cardName)
-      })
+      await this.cardService.updateCard(this.currentCard);
     }
-    console.log(this.currentCard);
     this.router.navigate(['/cards'])
   }
 
@@ -53,5 +50,11 @@ export class CardModifyComponent implements OnInit {
     this.currentCard.billDate = 0;
     this.currentCard.dueDate = 0;
     this.currentCard.cardName = '';
+  }
+
+  ngOnDestroy(): void {
+    this.subArray.forEach((sub: Subscription) => {
+      sub.unsubscribe();
+    })
   }
 }

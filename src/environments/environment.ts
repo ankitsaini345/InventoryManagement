@@ -2,14 +2,13 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
+export let environment:any = {
   production: false,
-  baseUrl: 'https://inventory-management-backend-ankitsaini345.vercel.app/',
   useInMemDB: false
 };
 
-// baseUrl: 'http://localhost:3000/',
-// baseUrl: 'https://inventory-management-backend-ankitsaini345.vercel.app/',
+// environment.baseUrl= 'http://localhost:3000/';
+environment.baseUrl= 'https://inventory-management-backend-ankitsaini345.vercel.app/';
 
 /*
  * For easier debugging in development mode, you can import the following file

@@ -37,6 +37,7 @@ import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {InputTextModule} from 'primeng/inputtext';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,7 @@ import {InputTextModule} from 'primeng/inputtext';
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true
-  }],
+  }, MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

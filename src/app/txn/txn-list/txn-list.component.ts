@@ -14,7 +14,7 @@ export class TxnListComponent implements OnInit, OnDestroy {
   filterBy = '';
   cardName!: string;
   txns!: Itxn[];
-  sub1!: Subscription;
+  subArray: Subscription[] = [];
   constructor(private route: ActivatedRoute,
     private txnService: TxnService) { }
 
@@ -24,19 +24,23 @@ export class TxnListComponent implements OnInit, OnDestroy {
   }
 
   async initialise() {
-    this.sub1 = this.route.params.subscribe(async (param) => {
+    let sub1: Subscription = this.route.params.subscribe(async (param) => {
       this.cardName = param['cname'];
       if (this.cardName == 'All') {
-        this.txns = await this.txnService.getTxns();
+        let sub2: Subscription = this.txnService.getTxns().subscribe((txns)=> {
+          this.txns = txns;
+        });
+        this.subArray.push(sub2);
       } else {
         this.txns = await this.txnService.getTxnByCard(this.cardName);
       }
     })
-
+    this.subArray.push(sub1);
   }
 
   ngOnDestroy(): void {
-    this.sub1.unsubscribe();
+   this.subArray.forEach((sub: Subscription) => {
+    sub.unsubscribe();
+   })
   }
-
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Icard } from '../card';
 import { CardService } from '../card.service';
 
@@ -7,24 +8,27 @@ import { CardService } from '../card.service';
   templateUrl: './card-list.component.html',
   styleUrls: ['./card-list.component.css']
 })
-export class CardListComponent implements OnInit {
+export class CardListComponent implements OnInit, OnDestroy {
   filterBy = '';
   cards: Icard[] = []
+  sub!: Subscription;
   constructor( private cardService: CardService) { }
 
   ngOnInit(): void {
-    this.getCards();
+    this.initialise();
   }
 
-  async getCards() {
-    this.cards = await this.cardService.getCards();
-  }
-
-  deleteCard(id: any) {
-    this.cardService.deleteCard(id).subscribe(() => {
-      console.log('card with id '+ id + ' deleted.');
-      this.getCards();
+  async initialise() {
+    this.sub = this.cardService.getCards().subscribe((cards)=> {
+      this.cards = cards;
     })
   }
 
+  async deleteCard(card: Icard) {
+    await this.cardService.deleteCard(card);
+  }
+
+  ngOnDestroy(): void {
+   this.sub.unsubscribe();
+  }
 }

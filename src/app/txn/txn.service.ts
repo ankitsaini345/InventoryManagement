@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { firstValueFrom, Observable, of } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Icard } from '../card/card';
 import { IProduct } from '../product/product';
 import { Itxn } from './transaction';
 
@@ -11,24 +13,33 @@ import { Itxn } from './transaction';
 })
 export class TxnService {
 
-  constructor(private toastService: ToastrService,
-    private http: HttpClient) { }
-
   private url = environment.baseUrl + 'api/txns'
   private txnStorageString = 'inventoryTxns';
   private cardStorageString = 'inventoryCards';
 
-  async getTxns(): Promise<Itxn[]> {
-    // return this.http.get<Itxn[]>(this.url);
+  private txnData$ = new BehaviorSubject<Itxn[]>([]);
+
+  constructor(private http: HttpClient,
+    private messageService: MessageService) {
+    this.initialiseTxnData();
+  }
+
+  getTxns(): Observable<Itxn[]> {
+    return this.txnData$.asObservable();
+  }
+
+  async initialiseTxnData() {
     let txns = localStorage.getItem(this.txnStorageString);
-    let txnArray: Itxn[];
+    let txnsArray: Itxn[];
     if (txns) {
-      txnArray = JSON.parse(txns);
+      txnsArray = JSON.parse(txns);
+      this.txnData$.next(txnsArray);
     } else {
-      txnArray = await firstValueFrom(this.http.get<Itxn[]>(this.url));
-      localStorage.setItem(this.txnStorageString, JSON.stringify(txnArray));
+      txnsArray = await firstValueFrom(this.http.get<Itxn[]>(this.url));
+      localStorage.setItem(this.txnStorageString, JSON.stringify(txnsArray));
+      this.txnData$.next(txnsArray);
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn Data Initialised' });
     }
-    return txnArray;
   }
 
   // getTxnByCardName(name: string): Observable<Itxn[]> {
@@ -36,49 +47,46 @@ export class TxnService {
   // }
 
   async getTxn(id: string): Promise<Itxn> {
-    // return this.http.get<Itxn>(this.url + '?id=' + id);
-
-    let txnArray = await this.getTxns();
-    let txn = txnArray.find(p => p._id == id);
+    let txns = await firstValueFrom(this.getTxns());
+    let txn = txns.find(p => p._id == id);
     return txn!;
+    // return this.http.get<Itxn>(this.url + '?id=' + id);
   }
 
   async getTxnByCard(cname: string): Promise<Itxn[]> {
+    let txnArray = await firstValueFrom(this.getTxns());
+    let txns = txnArray.filter(p => p.cardName == cname);
+    return txns!;
     // return this.http.get<Itxn[]>(this.url + '/' + cname);
-
-    let txnArray = await this.getTxns();
-    let txn = txnArray.filter(p => p.cardName == cname);
-    return txn!;
   }
 
-  addTxn(Txn: Itxn): Observable<Itxn> {
-    localStorage.removeItem(this.txnStorageString);
-    localStorage.removeItem(this.cardStorageString);
-    return this.http.post<Itxn>(this.url, Txn);
+  async addTxn(Txn: Itxn) {
+    try {
+      let res: any = await firstValueFrom(this.http.post<Itxn>(this.url, Txn));
+      if (res.acknowledged) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' added.' });
+        localStorage.removeItem(this.txnStorageString);
+        this.initialiseTxnData();
+      } else throw res;
+    } catch (error: any) {
+      console.error(error);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add txn: ' + Txn.OrderName + ' Error: ' + error.message });
+    }
   }
 
   async addTxnfromProduct(product: IProduct) {
-    localStorage.removeItem(this.txnStorageString);
-    localStorage.removeItem(this.cardStorageString);
-    try {
-      const txn: Itxn = {
-        _id: product.txnId,
-        amount: product.cardAmount,
-        orderId: product._id,
-        txnDate: product.date,
-        cardName: product.cardHolder,
-        OrderName: product.name
-      }
-      await firstValueFrom(this.addTxn(txn));
-    } catch (error: any) {
-      this.toastService.error(error.message)
+    const txn: Itxn = {
+      _id: product.txnId,
+      amount: product.cardAmount,
+      orderId: product._id,
+      txnDate: product.date,
+      cardName: product.cardHolder,
+      OrderName: product.name
     }
+    await this.addTxn(txn);
   }
 
   async updateTxnUsingProduct(product: IProduct) {
-    localStorage.removeItem(this.txnStorageString);
-    localStorage.removeItem(this.cardStorageString);
-    try {
       const txn: Itxn = {
         _id: product.txnId,
         amount: product.cardAmount,
@@ -87,21 +95,34 @@ export class TxnService {
         cardName: product.cardHolder,
         OrderName: product.name
       }
-      await firstValueFrom(this.updateTxn(txn));
+      await this.updateTxn(txn);
+  }
+
+  async updateTxn(Txn: Itxn) {
+    try {
+      let res: any = await firstValueFrom(this.http.put<Itxn>(this.url + '/' + Txn._id, Txn));
+      if (res.acknowledged) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' updated.' });
+        localStorage.removeItem(this.txnStorageString);
+        this.initialiseTxnData();
+      } else throw res;
     } catch (error: any) {
-      this.toastService.error(error.message)
+      console.error(error);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to update txn: ' + Txn.OrderName + ' Error: ' + error.message });
     }
   }
 
-  updateTxn(Txn: Itxn): Observable<Itxn> {
-    localStorage.removeItem(this.txnStorageString);
-    localStorage.removeItem(this.cardStorageString);
-    return this.http.put<Itxn>(this.url + '/' + Txn._id, Txn);
-  }
-
-  deleteTxn(id: any): Observable<Itxn> {
-    localStorage.removeItem(this.txnStorageString);
-    localStorage.removeItem(this.cardStorageString);
-    return this.http.delete<Itxn>(this.url + '/' + id);
+  async deleteTxn(_id: string) {
+    try {
+      let res: any = await firstValueFrom(this.http.delete<Itxn>(this.url + '/' + _id));
+      if (res.acknowledged) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + _id + ' deleted.' });
+        localStorage.removeItem(this.txnStorageString);
+        this.initialiseTxnData();
+      } else throw res;
+    } catch (error: any) {
+      console.error(error);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete txn: ' + _id + ' Error: ' + error.message });
+    }
   }
 }

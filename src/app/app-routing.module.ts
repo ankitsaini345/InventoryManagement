@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'product/:id/edit', component: ProductEditComponent, canActivate: [AuthGuard] },
   { path: 'product/:id/detail', component: ProductDetailComponent, canActivate: [AuthGuard] },
   { path: 'cards', component: CardListComponent, canActivate: [AuthGuard] },
-  { path: 'card/:name/edit', component: CardModifyComponent, canActivate: [AuthGuard] },
+  { path: 'card/:_id/edit', component: CardModifyComponent, canActivate: [AuthGuard] },
   { path: 'card/:name/detail', component: CardOrderDetailComponent, canActivate: [AuthGuard] },
   { path: 'card/:name/txns', component: CardTxnsComponent },
   { path: 'transactions/:cname', component: TxnListComponent, canActivate: [AuthGuard] },
