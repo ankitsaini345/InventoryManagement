@@ -1,232 +1,242 @@
 <app-spinner *ngIf="!products.length"></app-spinner>
-<p-toast></p-toast>
-
-<h5>Product List</h5>
-<div class="card-body">
-    <div class="row">
-        <div class="col-md-1">
-            <label class="col-form-label">
-                FilterBy:
-            </label></div>
+<div class="card">
+    <div class="card-header">
+        Product List
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-1">
+                <label>
+                    FilterBy:
+                </label>
+            </div>
+            <div class="col-md-3">
+                <input [(ngModel)]=filterBy type="text" class="form-control">
+            </div>
+            <div class="col-md-7">
+                <label class="col-form-label" *ngIf="filterBy">
+                    Showing products containing <b>{{filterBy}}</b>
+                </label>
+            </div>
+            <div class="col-md-1">
+                <button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()" class="mr-2"
+                    pTooltip="Export Data" tooltipPosition="top"></button>
+                <!-- <button type="button" pButton pRipple icon="pi pi-image" (click)="exportImage()" class="mr-2" pTooltip="Export Image" tooltipPosition="top"></button> -->
+            </div>
+        </div>
         <div>
-            <input [(ngModel)]=filterBy type="text" class="form-control">
+            <p-table [value]="products| filter:filterBy" dataKey="_id" editMode="row" [scrollable]="true"
+                scrollHeight="80vh" styleClass="p-datatable-sm" styleClass="p-datatable-gridlines"
+                (selectionChange)="schange($event)" [(selection)]="selectedProduct">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pFrozenColumn>SN</th>
+                        <th pFrozenColumn style="width: 4rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pFrozenColumn>ProductName</th>
+                        <th pFrozenColumn></th>
+                        <th>Size</th>
+                        <th>Status</th>
+                        <th>App</th>
+                        <th>Account</th>
+                        <th>PurchaseDate </th>
+                        <th>CardName</th>
+                        <th>ListPrice</th>
+                        <th>Coupon</th>
+                        <th>gift bal</th>
+                        <th>Card Discount</th>
+                        <th>Card Amount</th>
+                        <th>Cashback</th>
+                        <th>Cost ToMe</th>
+                        <th>DPrice</th>
+                        <th>Profit</th>
+                        <th>deliveryDate</th>
+                        <th>deliveryLoc</th>
+                        <th>Buyer Date</th>
+                        <th>BuyerName</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
+                    <tr [pEditableRow]="product">
+                        <td pFrozenColumn>{{ri+1}}</td>
+                        <td pFrozenColumn>
+                            <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                        </td>
+                        <td pFrozenColumn>
+                            {{product.name}}
+                        </td>
+                        <td pFrozenColumn style="min-width: 100px;">
+                            <div class="flex align-items-center justify-content-center gap-2">
+                                <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow
+                                    icon="pi pi-pencil" (click)="onRowEditInit(product)"
+                                    class="p-button-rounded p-button-text"></button>
+                                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow
+                                    icon="pi pi-check" (click)="onRowEditSave(product)"
+                                    class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow
+                                    icon="pi pi-times" (click)="onRowEditCancel(product, ri)"
+                                    class="p-button-rounded p-button-text p-button-danger"></button>
+                                <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-trash"
+                                    (click)="deleteProduct(product)"
+                                    class="p-button-rounded p-button-text p-button-danger"></button>
+                                <button [routerLink]="['/product', product._id, 'edit']" *ngIf="!editing" pButton
+                                    pRipple type="button" icon="pi pi-external-link"
+                                    class="p-button-rounded p-button-text"></button>
+                            </div>
+                        </td>
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="product.ram">
+                                    <input pInputText type="text" [(ngModel)]="product.storage">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.ram}} {{product.storage}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-dropdown [options]="orderStatus" [(ngModel)]="product.status"
+                                        [style]="{'width':'100%'}"></p-dropdown>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.status}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-dropdown [options]="appName" [(ngModel)]="product.AppName"
+                                        [style]="{'width':'100%'}"></p-dropdown>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.AppName}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="product.AppAccount">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.AppAccount}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="date" [(ngModel)]="product.date">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.date}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-dropdown [options]="cardNames" [(ngModel)]="product.cardHolder"
+                                        [style]="{'width':'100%'}"></p-dropdown>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.cardHolder}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td>{{product.listPrice}}</td>
+                        <td>{{product.coupon}}</td>
+                        <td>{{product.giftBalence}}</td>
+                        <td>{{product.cardDiscount}}</td>
+                        <td>{{product.cardAmount}}</td>
+                        <td>{{product.cashback}}</td>
+                        <td>{{product.costToMe}}</td>
+                        <td>{{product.buyerPrice}}</td>
+                        <td>{{product.profit}}</td>
+
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="date" [(ngModel)]="product.deliveryDate">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.deliveryDate}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="product.deliveryLoc">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.deliveryLoc}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="date" [(ngModel)]="product.buyerDate">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.buyerDate}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <td>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="product.buyerName">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{product.buyerName}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td pFrozenColumn></td>
+                        <td pFrozenColumn style="width: 4rem">
+                        </td>
+                        <td>Total</td>
+                        <td pFrozenColumn></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{aggregate.listPrice}}</td>
+                        <td>{{aggregate.coupon}}</td>
+                        <td>{{aggregate.giftBalence}}</td>
+                        <td>{{aggregate.cardDiscount}}</td>
+                        <td>{{aggregate.cardAmount}}</td>
+                        <td>{{aggregate.cashback}}</td>
+                        <td>{{aggregate.costToMe}}</td>
+                        <td>{{aggregate.buyerPrice}}</td>
+                        <td>{{aggregate.profit}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
         </div>
     </div>
-    <div class="row" *ngIf="filterBy">
-        <div class="col-md-6">
-            <label class="col-form-label">
-                Showing products containing <b>{{filterBy}}</b>
-            </label></div>
-    </div>
-<button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()" class="mr-2" pTooltip="CSV" tooltipPosition="bottom"></button>
-<div class="card">
-    <p-table [value]="products| filter:filterBy" dataKey="_id" editMode="row" [scrollable]="true" scrollHeight="80vh"
-        styleClass="p-datatable-sm" styleClass="p-datatable-gridlines" (selectionChange)="schange($event)"
-        [(selection)]="selectedProduct">
-        <ng-template pTemplate="header">
-            <tr>
-                <th pFrozenColumn>SN</th>
-                <th pFrozenColumn style="width: 4rem">
-                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                </th>
-                <th pFrozenColumn pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-                <th pFrozenColumn></th>
-                <th>Size</th>
-                <th>Status</th>
-                <th>App Name</th>
-                <th>Account</th>
-                <th pSortableColumn="date">PurchaseDate <p-sortIcon field="date"></p-sortIcon></th>
-                <th>Card Name</th>
-                <th>List Price</th>
-                <th>Coupon</th>
-                <th>gift bal</th>
-                <th>Card Discount</th>
-                <th>Card Amount</th>
-                <th>Cashback</th>
-                <th>Cost ToMe</th>
-                <th>DPrice</th>
-                <th>Profit</th>
-                <th>deliveryDate</th>
-                <th>deliveryLoc</th>
-                <th>Buyer Date</th>
-                <th>BuyerName</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="product">
-                <td pFrozenColumn>{{ri+1}}</td>
-                <td pFrozenColumn>
-                    <p-tableCheckbox [value]="product"></p-tableCheckbox>
-                </td>
-                <td pFrozenColumn>
-                    {{product.name}}
-                </td>
-                <td pFrozenColumn>
-                    <div class="flex align-items-center justify-content-center gap-2">
-                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
-                            (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
-                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
-                            (click)="onRowEditSave(product)"
-                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
-                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
-                            (click)="onRowEditCancel(product, ri)"
-                            class="p-button-rounded p-button-text p-button-danger"></button>
-                        <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-trash"
-                            (click)="deleteProduct(product)"
-                            class="p-button-rounded p-button-text p-button-danger"></button>
-                        <button [routerLink]="['/product', product._id, 'edit']" *ngIf="!editing" pButton pRipple type="button" icon="pi pi-external-link"
-                            class="p-button-rounded p-button-text"></button>
-                    </div>
-                </td>
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <input pInputText type="text" [(ngModel)]="product.ram">
-                            <input pInputText type="text" [(ngModel)]="product.storage">
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.ram}} {{product.storage}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <p-dropdown [options]="orderStatus" [(ngModel)]="product.status"
-                                [style]="{'width':'100%'}"></p-dropdown>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.status}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <p-dropdown [options]="appName" [(ngModel)]="product.AppName"
-                                [style]="{'width':'100%'}"></p-dropdown>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.AppName}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <input pInputText type="text" [(ngModel)]="product.AppAccount">
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.AppAccount}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <input pInputText type="date" [(ngModel)]="product.date">
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.date}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <p-dropdown [options]="cardHolder" [(ngModel)]="product.cardHolder"
-                                [style]="{'width':'100%'}"></p-dropdown>
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.cardHolder}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-
-                <td>{{product.listPrice}}</td>
-                <td>{{product.coupon}}</td>
-                <td>{{product.giftBalence}}</td>
-                <td>{{product.cardDiscount}}</td>
-                <td>{{product.cardAmount}}</td>
-                <td>{{product.cashback}}</td>
-                <td>{{product.costToMe}}</td>
-                <td>{{product.buyerPrice}}</td>
-                <td>{{product.profit}}</td>
-
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <input pInputText type="date" [(ngModel)]="product.deliveryDate">
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.deliveryDate}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <input pInputText type="text" [(ngModel)]="product.deliveryLoc">
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.deliveryLoc}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <input pInputText type="date" [(ngModel)]="product.buyerDate">
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.buyerDate}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
-                            <input pInputText type="text" [(ngModel)]="product.buyerName">
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.buyerName}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="footer">        <tr>
-            <td pFrozenColumn></td>
-            <td pFrozenColumn style="width: 4rem">
-            </td>
-            <td>Total</td>
-            <td pFrozenColumn></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td ></td>
-            <td></td>
-            <td>{{aggregate.listPrice}}</td>
-            <td>{{aggregate.coupon}}</td>
-            <td>{{aggregate.giftBalence}}</td>
-            <td>{{aggregate.cardDiscount}}</td>
-            <td>{{aggregate.cardAmount}}</td>
-            <td>{{aggregate.cashback}}</td>
-            <td>{{aggregate.costToMe}}</td>
-            <td>{{aggregate.buyerPrice}}</td>
-            <td>{{aggregate.profit}}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr></ng-template>
-
-    </p-table>
-</div>

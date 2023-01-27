@@ -45,15 +45,26 @@
                         <td>{{card.dueDate}}</td>
                         <td>{{card.amountDue}}</td>
                         <td>{{card.totalAmount}}</td>
-                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card.cardName, 'edit']">
+                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'edit']">
                                 Edit
                             </button></td>
                             <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/transactions/', card.cardName]">
                                 See Txns
                             </button></td>
-                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteCard(card._id)">
+                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteCard(card)">
                                 Delete
                             </button></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>Total</td>
+                        <td></td>
+                        <td></td>
+                        <td>{{aggregate.amountDue}}</td>
+                        <td>{{aggregate.totalAmount}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
 
                 </tbody>

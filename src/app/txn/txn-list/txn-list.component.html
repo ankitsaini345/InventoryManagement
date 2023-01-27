@@ -9,7 +9,8 @@
             <div class="col-md-1">
                 <label class="col-form-label">
                     FilterBy:
-                </label></div>
+                </label>
+            </div>
             <div>
                 <input [(ngModel)]=filterBy type="text" class="form-control">
             </div>
@@ -18,7 +19,8 @@
             <div class="col-md-6">
                 <label class="col-form-label">
                     Showing Transactions containing <b>{{filterBy}}</b>
-                </label></div>
+                </label>
+            </div>
         </div>
         <br>
 
@@ -48,7 +50,15 @@
                                 Order Details
                             </button></td>
                     </tr>
-
+                    <tr>
+                        <td></td>
+                        <td>Total</td>
+                        <td></td>
+                        <td></td>
+                        <td>{{aggregate.totalAmount}}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
 

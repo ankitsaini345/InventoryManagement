@@ -1,59 +1,105 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, Observable, of } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Iresult } from '../product/Iresult';
 import { Icard } from './card';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService {
-  constructor(private http: HttpClient) { }
 
   private cardStorageString = 'inventoryCards';
   private txnStorageString = 'inventoryTxns';
   private url = environment.baseUrl + 'api/cards'
 
-  async getCards(): Promise<Icard[]> {
-    // return this.http.get<Icard[]>(this.url);
+  private cardData$ = new BehaviorSubject<Icard[]>([]);
 
-    let cards = localStorage.getItem(this.cardStorageString);
+  constructor(private http: HttpClient,
+    private messageService: MessageService) {
+    this.initialiseCardData();
+  }
+
+  getCards(): Observable<Icard[]> {
+    return this.cardData$.asObservable();
+  }
+
+  async initialiseCardData() {
+    let cards = sessionStorage.getItem(this.cardStorageString);
     let cardsArray: Icard[];
     if (cards) {
       cardsArray = JSON.parse(cards);
+      this.cardData$.next(cardsArray);
     } else {
       cardsArray = await firstValueFrom(this.http.get<Icard[]>(this.url));
-      localStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
+      sessionStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
+      this.cardData$.next(cardsArray);
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Cards Data Initialised' });
     }
-    return cardsArray;
   }
 
-  async getCard(cardName: string): Promise<Icard> {
+  getCard(cardName: string): Icard {
     if (cardName == 'new') return this.blankCard();
     else {
-      let cardsArray = await this.getCards();
-      let card = cardsArray.find(p => p.cardName == cardName);
-      return card!;
+      return this.cardData$.getValue().find(p => p.cardName == cardName)!;
     }
     // return this.http.get<Icard>(this.url + '/' + cardName);
   }
 
-  addCard(card: Icard): Observable<Icard> {
-    localStorage.removeItem(this.cardStorageString);
-    localStorage.removeItem(this.txnStorageString);
-    return this.http.post<Icard>(this.url, card);
+  getCardById(_id: string): Icard {
+    if (_id == 'new') return this.blankCard();
+    else {
+      return this.cardData$.getValue().find(p => p._id == _id)!;
+    }
+    // return this.http.get<Icard>(this.url + '/' + cardName);
   }
 
-  updateCard(card: Icard): Observable<Icard> {
-    localStorage.removeItem(this.cardStorageString);
-    localStorage.removeItem(this.txnStorageString);
-    return this.http.put<Icard>(this.url + '/' + card._id, card);
+  async addCard(card: Icard) {
+    try {
+      let res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, card));
+      if (res.acknowledged) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' added.' });
+        sessionStorage.removeItem(this.cardStorageString);
+        this.initialiseCardData();
+      } else throw res;
+    } catch (error: any) {
+      console.error(error);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add card: ' + card.cardName + ' Error: ' + error.message });
+    }
   }
 
-  deleteCard(id: any): Observable<Icard> {
-    localStorage.removeItem(this.cardStorageString);
-    localStorage.removeItem(this.txnStorageString);
-    return this.http.delete<Icard>(this.url + '/' + id);
+  async updateCard(card: Icard) {
+    try {
+      let res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + card._id, card));
+      if (res.acknowledged) {
+        if (res.matchedCount && res.modifiedCount) {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' Updated.' });
+          sessionStorage.removeItem(this.cardStorageString);
+          this.initialiseCardData();
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: card.cardName + ': Not matched with any existing card' });
+        }
+      } else throw res;
+    } catch (error: any) {
+      console.error(error);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to update card: ' + card.cardName + ' Error: ' + error.message });
+    }
+  }
+
+  async deleteCard(card: Icard) {
+    try {
+      let res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + card._id));
+      if (res.acknowledged && res.deletedCount) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' deleted.' });
+        sessionStorage.removeItem(this.cardStorageString);
+        this.initialiseCardData();
+      } else throw res;
+    } catch (error: any) {
+      console.error(error);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete card: ' + card.cardName + ' Error: ' + error.message });
+    }
   }
 
   blankCard(): Icard {

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { firstValueFrom, map, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { IProduct } from './product';
 import { environment } from 'src/environments/environment';
 import { CardService } from '../card/card.service';
-import { ToastrService } from 'ngx-toastr';
 import { TxnService } from '../txn/txn.service';
+import { MessageService } from 'primeng/api';
+import { Iresult } from './Iresult';
 
 @Injectable({
   providedIn: 'root'
@@ -13,80 +14,127 @@ import { TxnService } from '../txn/txn.service';
 export class ProductServiceService {
 
   private productStorageString = 'inventoryProducts';
-  private cardStorageString = 'inventoryCards';
-  private txnStorageString = 'inventoryTxns';
 
   constructor(private http: HttpClient,
     private cardService: CardService,
     private txnService: TxnService,
-    private toastService: ToastrService,
-  ) { }
-
-  private url = environment.baseUrl + 'api/orders';
-
-  async getProducts(): Promise<IProduct[]> {
-    let products = localStorage.getItem(this.productStorageString);
-    let productArray: IProduct[];
-    if (products) {
-      productArray = JSON.parse(products);
-    } else {
-      productArray = await firstValueFrom(this.http.get<IProduct[]>(this.url));
-      localStorage.setItem(this.productStorageString, JSON.stringify(productArray));
-    }
-    return productArray;
+    private messageService: MessageService
+  ) {
+    this.initialiseProductData();
   }
 
-  getUniqueProducts(field: string) {
-    const uniqueProductUrl = environment.useInMemDB ? 'api/uniqueOrders' : this.url + '/unique/' + field;
+  private url = environment.baseUrl + 'api/orders';
+  private productData$ = new BehaviorSubject<IProduct[]>([]);
+
+  async initialiseProductData() {
+    try {
+      let products = sessionStorage.getItem(this.productStorageString);
+      let productArray: IProduct[];
+      if (products) {
+        productArray = JSON.parse(products);
+        this.productData$.next(productArray);
+      } else {
+        productArray = await firstValueFrom(this.http.get<IProduct[]>(this.url));
+        this.productData$.next(productArray);
+        sessionStorage.setItem(this.productStorageString, JSON.stringify(productArray));
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Products Initialised' });
+      }
+    } catch (error: any) {
+      console.error(error);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
+    }
+  }
+
+  getProducts(): Observable<IProduct[]> {
+    return this.productData$.asObservable();
+  }
+
+  getUniqueProducts(field: string): Observable<object> {
+    const uniqueProductUrl = this.url + '/unique/' + field;
     return this.http.get(uniqueProductUrl);
   }
 
-  async getProduct(_id: string): Promise<IProduct> {
+  getProduct(_id: string): IProduct {
     if (_id == 'new') return this.blankProduct();
     else {
-      let productArray = await this.getProducts();
-      let product = productArray.find(p => p._id == _id);
-      return product!;
+      return this.productData$.getValue().find(p => p._id == _id)!;
     }
   }
 
   async addProduct(currentProduct: IProduct) {
-    localStorage.removeItem(this.productStorageString);
-    localStorage.removeItem(this.cardStorageString);
-    localStorage.removeItem(this.txnStorageString);
-    await firstValueFrom(this.http.post(this.url, currentProduct));
-    this.toastService.success('Product ' + currentProduct.name + ' added.')
-    await this.txnService.addTxnfromProduct(currentProduct);
-    this.toastService.success('Product ' + currentProduct.name + ' added in Txns')
-    let cardInfo = await this.cardService.getCard(currentProduct.cardHolder);
-    cardInfo.amountDue += currentProduct.cardAmount;
-    cardInfo.totalAmount += currentProduct.cardAmount;
-    await firstValueFrom(this.cardService.updateCard(cardInfo));
-    this.toastService.success('Amount for ' + currentProduct.name + ' Updated in ' + currentProduct.cardHolder)
+    try {
+      const res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, currentProduct));
+      if (res.acknowledged) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' added.' });
+        sessionStorage.removeItem(this.productStorageString);
+        this.initialiseProductData();
+
+        this.txnService.addTxnfromProduct(currentProduct);
+
+        let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
+        updatedCard.amountDue += currentProduct.cardAmount;
+        updatedCard.totalAmount += currentProduct.cardAmount;
+        this.cardService.updateCard(updatedCard);
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
+        console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
+      }
+    } catch (error: any) {
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
+      console.error('Unable to add Product ' + currentProduct.name + ' Error: ', error);
+    }
   }
 
   async editProduct(currentProduct: IProduct, originalProduct: IProduct) {
-    localStorage.removeItem(this.productStorageString);
-    localStorage.removeItem(this.cardStorageString);
-    localStorage.removeItem(this.txnStorageString);
-    await firstValueFrom(this.http.put<IProduct>(this.url + '/' + currentProduct._id, currentProduct))
-    if (currentProduct.cardAmount != originalProduct.cardAmount) {
-      await this.txnService.updateTxnUsingProduct(currentProduct);
-      let cardInfo = await this.cardService.getCard(currentProduct.cardHolder);
-      cardInfo.amountDue -= originalProduct.cardAmount;
-      cardInfo.amountDue += currentProduct.cardAmount;
-      cardInfo.totalAmount -= originalProduct.cardAmount;
-      cardInfo.totalAmount += currentProduct.cardAmount;
-      await firstValueFrom(this.cardService.updateCard(cardInfo));
+    try {
+      const res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + currentProduct._id, currentProduct));
+      if (res.acknowledged && res.modifiedCount) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' Updated.' });
+        sessionStorage.removeItem(this.productStorageString);
+        this.initialiseProductData();
+        
+        if (currentProduct.cardAmount != originalProduct.cardAmount) {
+          this.txnService.updateTxnUsingProduct(currentProduct);
+          let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
+          updatedCard.amountDue -= originalProduct.cardAmount;
+          updatedCard.amountDue += currentProduct.cardAmount;
+          updatedCard.totalAmount -= originalProduct.cardAmount;
+          updatedCard.totalAmount += currentProduct.cardAmount;
+          this.cardService.updateCard(updatedCard);
+        }
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
+        console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
+      }
+    } catch (error: any) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
+      console.error('Unable to add Product ' + currentProduct.name + ' Error: ', error);
     }
 
   }
 
-  deleteProduct(id: string): Observable<IProduct[]> {
-    localStorage.removeItem(this.productStorageString);
-    localStorage.removeItem(this.cardStorageString);
-    localStorage.removeItem(this.txnStorageString);
-    return this.http.delete<IProduct[]>(this.url + '/' + id);
+  async deleteProduct(currentProduct: IProduct) {
+    try {
+      const res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + currentProduct._id));
+      if (res.acknowledged) {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' deleted.' });
+        sessionStorage.removeItem(this.productStorageString);
+        this.initialiseProductData();
+
+        this.txnService.deleteTxn(currentProduct.txnId);
+
+        let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
+        updatedCard.totalAmount -= currentProduct.cardAmount;
+        if (updatedCard.amountDue >= currentProduct.cardAmount) updatedCard.amountDue -= currentProduct.cardAmount;
+        this.cardService.updateCard(updatedCard);
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
+        console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
+      }
+    } catch (error: any) {
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
+      console.error('Unable to add Product ' + currentProduct.name + ' Error: ', error);
+    }
   }
 
   blankProduct(): IProduct {
