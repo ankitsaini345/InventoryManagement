@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Icard } from '../card/card';
+import { Iresult } from '../product/Iresult';
 import { IProduct } from '../product/product';
 import { Itxn } from './transaction';
 
@@ -29,43 +30,35 @@ export class TxnService {
   }
 
   async initialiseTxnData() {
-    let txns = localStorage.getItem(this.txnStorageString);
+    let txns = sessionStorage.getItem(this.txnStorageString);
     let txnsArray: Itxn[];
     if (txns) {
       txnsArray = JSON.parse(txns);
       this.txnData$.next(txnsArray);
     } else {
       txnsArray = await firstValueFrom(this.http.get<Itxn[]>(this.url));
-      localStorage.setItem(this.txnStorageString, JSON.stringify(txnsArray));
+      sessionStorage.setItem(this.txnStorageString, JSON.stringify(txnsArray));
       this.txnData$.next(txnsArray);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn Data Initialised' });
     }
   }
 
-  // getTxnByCardName(name: string): Observable<Itxn[]> {
-  //   return this.http.get<Itxn[]>(this.url + '?TxnName=' + name);
-  // }
-
-  async getTxn(id: string): Promise<Itxn> {
-    let txns = await firstValueFrom(this.getTxns());
-    let txn = txns.find(p => p._id == id);
-    return txn!;
+  getTxn(id: string): Itxn {
+    return this.txnData$.getValue().find(p => p._id == id)!;
     // return this.http.get<Itxn>(this.url + '?id=' + id);
   }
 
-  async getTxnByCard(cname: string): Promise<Itxn[]> {
-    let txnArray = await firstValueFrom(this.getTxns());
-    let txns = txnArray.filter(p => p.cardName == cname);
-    return txns!;
+  getTxnByCard(cname: string): Itxn[] {
+    return this.txnData$.getValue().filter(p => p.cardName == cname)!;
     // return this.http.get<Itxn[]>(this.url + '/' + cname);
   }
 
   async addTxn(Txn: Itxn) {
     try {
-      let res: any = await firstValueFrom(this.http.post<Itxn>(this.url, Txn));
+      let res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, Txn));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' added.' });
-        localStorage.removeItem(this.txnStorageString);
+        sessionStorage.removeItem(this.txnStorageString);
         this.initialiseTxnData();
       } else throw res;
     } catch (error: any) {
@@ -87,23 +80,23 @@ export class TxnService {
   }
 
   async updateTxnUsingProduct(product: IProduct) {
-      const txn: Itxn = {
-        _id: product.txnId,
-        amount: product.cardAmount,
-        orderId: product._id,
-        txnDate: product.date,
-        cardName: product.cardHolder,
-        OrderName: product.name
-      }
-      await this.updateTxn(txn);
+    const txn: Itxn = {
+      _id: product.txnId,
+      amount: product.cardAmount,
+      orderId: product._id,
+      txnDate: product.date,
+      cardName: product.cardHolder,
+      OrderName: product.name
+    }
+    await this.updateTxn(txn);
   }
 
   async updateTxn(Txn: Itxn) {
     try {
-      let res: any = await firstValueFrom(this.http.put<Itxn>(this.url + '/' + Txn._id, Txn));
+      let res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + Txn._id, Txn));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' updated.' });
-        localStorage.removeItem(this.txnStorageString);
+        sessionStorage.removeItem(this.txnStorageString);
         this.initialiseTxnData();
       } else throw res;
     } catch (error: any) {
@@ -114,10 +107,10 @@ export class TxnService {
 
   async deleteTxn(_id: string) {
     try {
-      let res: any = await firstValueFrom(this.http.delete<Itxn>(this.url + '/' + _id));
+      let res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + _id));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + _id + ' deleted.' });
-        localStorage.removeItem(this.txnStorageString);
+        sessionStorage.removeItem(this.txnStorageString);
         this.initialiseTxnData();
       } else throw res;
     } catch (error: any) {

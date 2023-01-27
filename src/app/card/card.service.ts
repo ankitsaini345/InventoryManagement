@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Iresult } from '../product/Iresult';
 import { Icard } from './card';
 
 @Injectable({
@@ -26,45 +27,41 @@ export class CardService {
   }
 
   async initialiseCardData() {
-    let cards = localStorage.getItem(this.cardStorageString);
+    let cards = sessionStorage.getItem(this.cardStorageString);
     let cardsArray: Icard[];
     if (cards) {
       cardsArray = JSON.parse(cards);
       this.cardData$.next(cardsArray);
     } else {
       cardsArray = await firstValueFrom(this.http.get<Icard[]>(this.url));
-      localStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
+      sessionStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
       this.cardData$.next(cardsArray);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Cards Data Initialised' });
     }
   }
 
-  async getCard(cardName: string): Promise<Icard> {
+  getCard(cardName: string): Icard {
     if (cardName == 'new') return this.blankCard();
     else {
-      let cards = await firstValueFrom(this.getCards());
-      let card = cards.find(p => p.cardName == cardName);
-      return card!;
+      return this.cardData$.getValue().find(p => p.cardName == cardName)!;
     }
     // return this.http.get<Icard>(this.url + '/' + cardName);
   }
 
-  async getCardById(_id: string): Promise<Icard> {
+  getCardById(_id: string): Icard {
     if (_id == 'new') return this.blankCard();
     else {
-      let cards = await firstValueFrom(this.getCards());
-      let card = cards.find(p => p._id == _id);
-      return card!;
+      return this.cardData$.getValue().find(p => p._id == _id)!;
     }
     // return this.http.get<Icard>(this.url + '/' + cardName);
   }
 
   async addCard(card: Icard) {
     try {
-      let res: any = await firstValueFrom(this.http.post(this.url, card));
+      let res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, card));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' added.' });
-        localStorage.removeItem(this.cardStorageString);
+        sessionStorage.removeItem(this.cardStorageString);
         this.initialiseCardData();
       } else throw res;
     } catch (error: any) {
@@ -75,11 +72,11 @@ export class CardService {
 
   async updateCard(card: Icard) {
     try {
-      let res: any = await firstValueFrom(this.http.put(this.url + '/' + card._id, card));
+      let res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + card._id, card));
       if (res.acknowledged) {
         if (res.matchedCount && res.modifiedCount) {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' Updated.' });
-          localStorage.removeItem(this.cardStorageString);
+          sessionStorage.removeItem(this.cardStorageString);
           this.initialiseCardData();
         } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: card.cardName + ': Not matched with any existing card' });
@@ -93,10 +90,10 @@ export class CardService {
 
   async deleteCard(card: Icard) {
     try {
-      let res: any = await firstValueFrom(this.http.delete<Icard>(this.url + '/' + card._id));
+      let res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + card._id));
       if (res.acknowledged && res.deletedCount) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' deleted.' });
-        localStorage.removeItem(this.cardStorageString);
+        sessionStorage.removeItem(this.cardStorageString);
         this.initialiseCardData();
       } else throw res;
     } catch (error: any) {

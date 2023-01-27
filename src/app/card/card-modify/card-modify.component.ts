@@ -26,7 +26,7 @@ export class CardModifyComponent implements OnInit {
   }
 
   async initialise() {
-    let sub1 = this.route.params.subscribe(async (param) => {
+    let sub1: Subscription = this.route.params.subscribe(async (param) => {
       let _id: string = param['_id'];
       if (_id == 'new') this.pageTitle = 'Add Card';
       this.currentCard = await this.cardService.getCardById(_id);

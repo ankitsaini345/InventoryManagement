@@ -23,6 +23,7 @@
     "bootstrap": "^4.6.2",
     "bson": "^4.7.0",
     "font-awesome": "^4.7.0",
+    "html-to-image": "^1.11.4",
     "ng2-search-filter": "^0.5.1",
     "ngx-toastr": "^15.2.2",
     "primeicons": "^6.0.1",

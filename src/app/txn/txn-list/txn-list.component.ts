@@ -15,6 +15,7 @@ export class TxnListComponent implements OnInit, OnDestroy {
   cardName!: string;
   txns!: Itxn[];
   subArray: Subscription[] = [];
+  aggregate: any = {};
   constructor(private route: ActivatedRoute,
     private txnService: TxnService) { }
 
@@ -36,6 +37,14 @@ export class TxnListComponent implements OnInit, OnDestroy {
       }
     })
     this.subArray.push(sub1);
+    this.calcTotal();
+  }
+
+  calcTotal() {
+    this.aggregate = {};
+    this.txns.forEach((item) => {
+      this.aggregate.totalAmount ? this.aggregate.totalAmount += item.amount : this.aggregate.totalAmount = item.amount;
+    })
   }
 
   ngOnDestroy(): void {

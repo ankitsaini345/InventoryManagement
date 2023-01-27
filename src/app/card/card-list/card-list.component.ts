@@ -12,6 +12,7 @@ export class CardListComponent implements OnInit, OnDestroy {
   filterBy = '';
   cards: Icard[] = []
   sub!: Subscription;
+  aggregate: any = {};
   constructor( private cardService: CardService) { }
 
   ngOnInit(): void {
@@ -21,6 +22,15 @@ export class CardListComponent implements OnInit, OnDestroy {
   async initialise() {
     this.sub = this.cardService.getCards().subscribe((cards)=> {
       this.cards = cards;
+    })
+    this.calcTotal();
+  }
+
+  calcTotal() {
+    this.aggregate = {};
+    this.cards.forEach((item) => {
+      this.aggregate.amountDue ? this.aggregate.amountDue += item.amountDue : this.aggregate.amountDue = item.amountDue;
+      this.aggregate.totalAmount ? this.aggregate.totalAmount += item.totalAmount : this.aggregate.totalAmount = item.totalAmount;
     })
   }
 
