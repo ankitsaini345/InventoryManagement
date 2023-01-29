@@ -10,6 +10,7 @@ import { ProductServiceService } from '../product-service.service';
 
 import { MessageService } from 'primeng/api';
 import { Icard } from 'src/app/card/card';
+import { ShareService } from 'src/app/share.service';
 
 @Component({
   selector: 'app-product-list',
@@ -20,6 +21,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   constructor(private productService: ProductServiceService,
     private cardService: CardService,
     private clipboard: Clipboard,
+    private shareService: ShareService,
     private messageService: MessageService
   ) {
     this.orgProduct = null;
@@ -156,6 +158,39 @@ export class ProductListComponent implements OnInit, OnDestroy {
       // }
     }
   }
+
+  async exportTelegramData() {
+    if (!this.selectedProduct.length) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+    } else {
+      let exportString = '';
+      this.selectedProduct.forEach((item) => {
+
+        exportString += (item.name + ' ' + item.ram + 'x' + item.storage + ' ' + item.AppName + '/' + item.AppAccount + ' ' + item.listPrice + ' ' + item.costToMe + ' ');
+        if (item.coupon) exportString += (item.coupon + ' ');
+        if (item.cardDiscount) exportString += (item.cardDiscount + ' ');
+        if (item.delivery) exportString += (item.delivery + ' ');
+        if (item.giftBalence) exportString += (item.giftBalence + ' ');
+        exportString += (item.cardHolder + '=' + item.cardAmount + ' ');
+        if (item.cashback) exportString += (item.cashback + ' ');
+        if (item.profit) exportString += (item.profit + ' ');
+        if (item.buyerPrice) exportString += (item.buyerPrice + ' ');
+        exportString += '\n';
+      });
+
+      this.clipboard.copy(exportString);
+
+      const shareData: ShareData = {
+        title: 'Order Details',
+        text: exportString
+      }
+      const shareMessage = await this.shareService.share(shareData);
+      if (shareMessage.error) {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+      }
+    }
+  }
+
   // async exportImage() {
   //   const dataUrl = await toPng(document.getElementById('my-table')!)
   //   this.clipboard.copy(dataUrl);

@@ -24,13 +24,15 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     private productService: ProductServiceService) { }
 
   pageTitle = 'Edit Product';
+  saveButtonText = 'Update';
+  editMode = true;
   currentProduct!: IProduct;
   originalProduct!: IProduct;
   subArray: Subscription[] = [];
   cards!: Icard[];
   productNamesArray: any = [];
   isLoading = false;
-  addMoreProduct = true;
+  addMoreProduct = false;
   cashbackup!: number
 
   get listPrice() {
@@ -131,8 +133,15 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     try {
       let sub: Subscription = this.route.params.subscribe(async (param) => {
         let _id: string = param['id'];
-        if (_id == 'new')
+        if (_id == 'new') {
           this.pageTitle = 'Add Product';
+          this.saveButtonText = 'Save';
+          this.editMode = false;
+        } else {
+          this.pageTitle = 'Edit Product';
+          this.saveButtonText = 'Update';
+          this.editMode = true;
+        }
         this.currentProduct = this.productService.getProduct(_id);
         this.originalProduct = { ...this.currentProduct };
         this.cashbackup = this.currentProduct.cashback;
@@ -161,6 +170,24 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         }
         else this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Change in Product to save' });
       }
+      if (this.addMoreProduct) {
+        this.resetProduct();
+        this.isLoading = true;
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 300);
+      } else this.router.navigate(['/products']);
+    } catch (error: any) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
+    }
+  }
+
+  async addAsNewProduct() {
+    try {
+      this.currentProduct._id = new ObjectId().toString();
+      this.currentProduct.txnId = new ObjectId().toString();
+      this.productService.addProduct(this.currentProduct);
+
       if (this.addMoreProduct) {
         this.resetProduct();
         this.isLoading = true;
