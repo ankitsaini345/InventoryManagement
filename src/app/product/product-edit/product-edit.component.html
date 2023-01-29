@@ -257,22 +257,23 @@
                     <label class="form-check-label" for="flexSwitchCheckDefault">Add More Products</label>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-8">
                 <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="saveProduct()">
-                    Save
+                    {{ saveButtonText }}
                 </button>
                 <button class="btn btn-outline-secondary mr-3" style="width:80px" type="button"
                     title="Cancel your edits" [routerLink]="['/products']">
                     Cancel
                 </button>
-                <button class="btn btn-outline-warning" style="width:80px" type="button" title="Delete this product"
+                <button class="btn btn-outline-warning mr-3" style="width:80px" type="button" title="Delete this product"
                     (click)="resetProduct()">
                     Reset
+                </button>
+                <button *ngIf="editMode" class="btn btn-outline-success" style="width:140px" type="button" (click)="addAsNewProduct()">
+                    Add as New
                 </button>
             </div>
         </div>
     </div>
     {{ currentProduct | json }}
-    <br><br>
-    {{originalProduct | json}}
 </div>
