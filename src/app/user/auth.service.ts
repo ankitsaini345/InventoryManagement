@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { User } from './user';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpClient, HttpResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { firstValueFrom, retry, tap } from 'rxjs';
+import { firstValueFrom, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { MessageService } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root'
@@ -26,42 +26,45 @@ export class AuthService implements HttpInterceptor {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private toastService: ToastrService ) {
+    private messageService: MessageService
+  ) {
     this.errorMessage = '';
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     let token = localStorage.getItem('inventoryAppToken');
-  if (token) {
-    const modifiedRequest = req.clone({
-      setHeaders: { 'authorization': 'Bearer ' + token }
-    });
-    return next.handle(modifiedRequest)
-      .pipe(
-        tap({
-          next: (event) => {
-            if (event instanceof HttpResponse) {
+    if (token) {
+      const modifiedRequest = req.clone({
+        setHeaders: { 'authorization': 'Bearer ' + token }
+      });
+      return next.handle(modifiedRequest)
+        .pipe(
+          tap({
+            next: (event) => {
+              if (event instanceof HttpResponse) {
 
+              }
+              return event;
+            },
+            error: async (error) => {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: error.status + ' ' + error.message });
+
+              if (error.status === 401 && error.error?.message == 'jwt expired') {
+                console.log('Token Expired. Generating new token...');
+                this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Token Expired. Generating new token...' });
+
+                await this.refreshToken();
+                token = localStorage.getItem('inventoryAppToken');
+                window.location.reload();
+              } else console.log(error);
             }
-            return event;
-          },
-          error: async (error) => {
-            this.toastService.error(error.status + ' ' + error.message)
-            if (error.status === 401 && error.error?.message == 'jwt expired') {
-              console.log('Token Expired. Generating new token...');
-              this.toastService.error('Token Expired. Generating new token...')
-              await this.refreshToken();
-              token = localStorage.getItem('inventoryAppToken');
-              window.location.reload();
-            } else console.log(error);
-          }
-        }));
+          }));
+    }
+    else {
+      console.log('auth token not found in browser.');
+      return next.handle(req);
+    }
   }
-  else {
-    console.log('auth token not found in browser.');
-    return next.handle(req);
-  }
-}
 
   async login(userId: string, password: string) {
     this.errorMessage = '';
@@ -84,8 +87,11 @@ export class AuthService implements HttpInterceptor {
       console.log(error);
       if (error.error.error) {
         this.errorMessage = error.error.message;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: error.error.message });
       }
-      else this.errorMessage = error.message;
+      else
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
+
     }
   }
 
@@ -97,7 +103,7 @@ export class AuthService implements HttpInterceptor {
     sessionStorage.removeItem('inventoryProducts');
     sessionStorage.removeItem('inventoryCards');
     sessionStorage.removeItem('inventoryTxns');
-    
+
     this.router.navigate(['/login']);
   }
 
@@ -115,8 +121,8 @@ export class AuthService implements HttpInterceptor {
       else throw 'unknown error while refreshing token. redirecting to login page.'
     }
     catch (error: any) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
       this.router.navigate(['/login']);
-      this.errorMessage = error.message
     }
   }
 }
