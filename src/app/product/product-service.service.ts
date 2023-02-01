@@ -44,24 +44,24 @@ export class ProductServiceService {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Products Initialised' });
       }
 
-      let uniqueProducts = sessionStorage.getItem(this.uniqueProductStorageString);
-      let uniqueProductArray: string[];
-      if (uniqueProducts) {
-        uniqueProductArray = JSON.parse(uniqueProducts);
-      } else {
-        uniqueProductArray = this.extractFieldArray(productArray, 'name');
-        sessionStorage.setItem(this.uniqueProductStorageString, JSON.stringify(uniqueProductArray));
-      }
+      // let uniqueProducts = sessionStorage.getItem(this.uniqueProductStorageString);
+      // let uniqueProductArray: string[];
+      // if (uniqueProducts) {
+      //   uniqueProductArray = JSON.parse(uniqueProducts);
+      // } else {
+        let uniqueProductArray = this.extractFieldArray(productArray, 'name');
+        // sessionStorage.setItem(this.uniqueProductStorageString, JSON.stringify(uniqueProductArray));
+      // }
       this.uniqueProductName$.next(uniqueProductArray);
 
-      let uniqueAppAccounts = sessionStorage.getItem(this.uniqueAppAccountStorageString);
-      let uniqueAppAccountArray: string[];
-      if (uniqueAppAccounts) {
-        uniqueAppAccountArray = JSON.parse(uniqueAppAccounts);
-      } else {
-        uniqueAppAccountArray = this.extractFieldArray(productArray, 'AppAccount');
-        sessionStorage.setItem(this.uniqueAppAccountStorageString, JSON.stringify(uniqueAppAccountArray))
-      }
+      // let uniqueAppAccounts = sessionStorage.getItem(this.uniqueAppAccountStorageString);
+      // let uniqueAppAccountArray: string[];
+      // if (uniqueAppAccounts) {
+      //   uniqueAppAccountArray = JSON.parse(uniqueAppAccounts);
+      // } else {
+       let uniqueAppAccountArray = this.extractFieldArray(productArray, 'AppAccount');
+      //   sessionStorage.setItem(this.uniqueAppAccountStorageString, JSON.stringify(uniqueAppAccountArray))
+      // }
       this.uniqueAccountName$.next(uniqueAppAccountArray);
 
     } catch (error: any) {
@@ -114,13 +114,15 @@ export class ProductServiceService {
     }
   }
 
-  async editProduct(currentProduct: IProduct, originalProduct: IProduct) {
+  async editProduct(currentProduct: IProduct, originalProduct: IProduct, init = true) {
     try {
       const res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + currentProduct._id, currentProduct));
       if (res.acknowledged && res.modifiedCount) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' Updated.' });
-        sessionStorage.removeItem(this.productStorageString);
-        this.initialiseProductData();
+        if (init) {
+          sessionStorage.removeItem(this.productStorageString);
+          this.initialiseProductData();
+        }
 
         if (currentProduct.cardAmount != originalProduct.cardAmount) {
           this.txnService.updateTxnUsingProduct(currentProduct);

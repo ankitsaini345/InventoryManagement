@@ -27,6 +27,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.orgProduct = null;
   }
 
+  private productStorageString = 'inventoryProducts';
   products: IProduct[] = [];
   filterBy = '';
   aggregate: any = {};
@@ -188,6 +189,30 @@ export class ProductListComponent implements OnInit, OnDestroy {
       if (shareMessage.error) {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
       }
+    }
+  }
+
+  async bulkStatusChange(status: string) {
+    const items = this.selectedProduct.length;
+    if (!items) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+    } else {
+      if (confirm('Mark ' + items + ' items as ' + status)) {
+        let promiseArray: Promise<any>[] = [];
+        this.selectedProduct.forEach((product: IProduct) => {
+          let originalProduct = product;
+          if (product.status != status) {
+            product.status = status;
+            let pro = this.productService.editProduct(product, originalProduct, false);
+            promiseArray.push(pro);
+          }
+        });
+        Promise.all(promiseArray).then(()=> {
+          sessionStorage.removeItem(this.productStorageString);
+          this.productService.initialiseProductData();
+        })
+        this.filterBy = ''
+      } else return;
     }
   }
 

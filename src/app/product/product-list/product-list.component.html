@@ -11,7 +11,7 @@
                     FilterBy:
                 </label>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <input [(ngModel)]=filterBy type="text" class="form-control">
             </div>
             <div class="col-md-7">
@@ -19,12 +19,18 @@
                     Showing products containing <b>{{filterBy}}</b>
                 </label>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
+                <button type="button" pButton pRipple icon="pi pi-home" (click)="bulkStatusChange('DeliveredHome')" class="mr-2"
+                    pTooltip="DeliveredHome" tooltipPosition="top"></button>
+
+                    <button type="button" pButton pRipple icon="pi pi-user" (click)="bulkStatusChange('Distributor')" class="mr-2"
+                    pTooltip="Distributor" tooltipPosition="top"></button>
+
                 <button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()" class="mr-2"
                     pTooltip="Export Data" tooltipPosition="top"></button>
 
                     <button type="button" pButton pRipple icon="pi pi-telegram" (click)="exportTelegramData()" class="mr-2"
-                    pTooltip="Export Data" tooltipPosition="top"></button>
+                    pTooltip="Add to telegram" tooltipPosition="top"></button>
                 <!-- <button type="button" pButton pRipple icon="pi pi-image" (click)="exportImage()" class="mr-2" pTooltip="Export Image" tooltipPosition="top"></button> -->
             </div>
         </div>
