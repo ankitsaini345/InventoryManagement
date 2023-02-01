@@ -29,8 +29,13 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   currentProduct!: IProduct;
   originalProduct!: IProduct;
   subArray: Subscription[] = [];
-  cards!: Icard[];
-  productNamesArray: any = [];
+  cardNameArray: string[] = [];
+  productNamesArray: string[] = [];
+  appAccountArray: string[] = [];
+  filteredCardArray: string[] = [];
+  filteredProductArray: string[] = [];
+  filteredAppAccountArray: string[] = [];
+  filterBy = '';
   isLoading = false;
   addMoreProduct = false;
   cashbackup!: number
@@ -129,7 +134,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     this.initialiseData();
   }
 
-  async initialiseData() {
+  initialiseData() {
     try {
       let sub: Subscription = this.route.params.subscribe(async (param) => {
         let _id: string = param['id'];
@@ -148,11 +153,24 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       });
       this.subArray.push(sub);
 
-      let sub1 = this.cardService.getCards().subscribe((cards) => {
-        this.cards = cards;
+      let sub1: Subscription = this.productService.getUniqueProductNames().subscribe((data: string[]) => {
+        this.productNamesArray = this.filteredProductArray = data;
       });
       this.subArray.push(sub1);
-      this.productNamesArray = await firstValueFrom(this.productService.getUniqueProducts('name'));
+
+      let sub2: Subscription = this.cardService.getCards().subscribe((cards: Icard[]) => {
+        cards.forEach((card) => {
+          this.cardNameArray.push(card.cardName)
+        })
+        this.filteredCardArray = this.cardNameArray;
+      });
+      this.subArray.push(sub2);
+
+      let sub3: Subscription = this.productService.getUniqueAppAccount().subscribe((data: string[]) => {
+        this.appAccountArray = this.filteredAppAccountArray = data;
+      });
+      this.subArray.push(sub3);
+
     } catch (error: any) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
     }
@@ -160,6 +178,19 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 
   async saveProduct() {
     try {
+      let existingCard = this.cardNameArray.includes(this.currentProduct.cardHolder);
+      if (!existingCard) {
+        if (confirm('Card ' + this.currentProduct.cardHolder + ' is not in list. Do you want to add it?')) {
+          await this.cardService.addCard({
+            cardName: this.currentProduct.cardHolder,
+            _id: new ObjectId().toString(),
+            amountDue: 0,
+            billDate: 0,
+            dueDate: 0,
+            totalAmount: 0
+          })
+        } else return;
+      }
       if (this.currentProduct._id == 'new') {
         this.currentProduct._id = new ObjectId().toString();
         this.currentProduct.txnId = new ObjectId().toString();
@@ -216,5 +247,49 @@ export class ProductEditComponent implements OnInit, OnDestroy {
     })
   }
 
+  filterProducts(event: any) {
+    this.filteredProductArray = [];
+    let query = event.query;
+    if (query) {
+      for (let i = 0; i < this.productNamesArray.length; i++) {
+        let product = this.productNamesArray[i];
+        if (product.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+          this.filteredProductArray.push(product);
+        }
+      }
+    } else {
+      this.filteredProductArray = this.productNamesArray.slice();
+    }
+  }
+
+  filterAppAccounts(event: any) {
+    this.filteredAppAccountArray = [];
+    let query = event.query;
+    if (query) {
+      for (let i = 0; i < this.appAccountArray.length; i++) {
+        let product = this.appAccountArray[i];
+        if (product.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+          this.filteredAppAccountArray.push(product);
+        }
+      }
+    } else {
+      this.filteredAppAccountArray = this.appAccountArray.slice();
+    }
+  }
+
+  filterCards(event: any) {
+    this.filteredCardArray = [];
+    let query = event.query;
+    if (query) {
+      for (let i = 0; i < this.cardNameArray.length; i++) {
+        let card = this.cardNameArray[i];
+        if (card.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+          this.filteredCardArray.push(card);
+        }
+      }
+    } else {
+      this.filteredCardArray = this.cardNameArray.slice();
+    }
+  }
 }
 

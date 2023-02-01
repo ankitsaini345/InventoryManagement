@@ -1,279 +1,311 @@
-<app-spinner *ngIf="isLoading"></app-spinner>
-<div class="card" style="width: 90%">
-    <div class="card-header">
-        {{pageTitle}}
-    </div>
+<div class="container">
+    <!-- <app-spinner *ngIf="isLoading"></app-spinner> -->
+    <div class="card" style="width: 90%">
+        <div class="card-header">
+            {{pageTitle}}
+            <span *ngIf="!currentProduct"><i class="pi pi-spin pi-spinner ml-2 mr-2"
+                    style="font-size: 1rem"></i>Loading..</span>
+        </div>
 
-    <div class="card-body" *ngIf="currentProduct">
-        <form novalidate>
-            <fieldset>
-                <legend>
-                    Product Information
-                </legend>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="productNameId">
-                        Product Name
-                    </label>
-                    <div class="col">
-                        <input type="text" list="id-car" class="form-control" placeholder="Name (required)"
-                            name="productName" [(ngModel)]=currentProduct.name>
-                        <datalist id="id-car" *ngFor="let product of productNamesArray">
-                            <option>{{product}}</option>
-                        </datalist>
+        <div class="card-body" *ngIf="currentProduct">
+            <form novalidate>
+                <fieldset>
+                    <legend>
+                        Product Information
+                    </legend>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="productNameId">
+                            Product Name
+                        </label>
+                        <div class="col">
+                            <p-autoComplete [showClear]=true [required]=true [completeOnFocus]=true [minLength]="0"
+                                [(ngModel)]=currentProduct.name [suggestions]="filteredProductArray"
+                                (completeMethod)="filterProducts($event)" [dropdown]="false" name="productName">
+                                <ng-template let-product pTemplate="item">
+                                    <div class="product-item">
+                                        <div>{{product}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group row">
-                    <label class="col col-form-label" for="ram">
-                        RAM
-                    </label>
-                    <div class="col">
-                        <select class="form-control" name="ram" id="ram" [(ngModel)]=currentProduct.ram>
-                            <option value=2>2</option>
-                            <option value=3>3</option>
-                            <option value=4>4</option>
-                            <option value=6>6</option>
-                            <option value=8>8</option>
-                            <option value=10>10</option>
-                        </select>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="ram">
+                            RAM
+                        </label>
+                        <div class="col">
+                            <select class="form-control" name="ram" id="ram" [(ngModel)]=currentProduct.ram>
+                                <option value=2>2</option>
+                                <option value=3>3</option>
+                                <option value=4>4</option>
+                                <option value=6>6</option>
+                                <option value=8>8</option>
+                                <option value=10>10</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="storage">
-                        Storage
-                    </label>
-                    <div class="col">
-                        <select class="form-control" name="storage" id="storage" [(ngModel)]=currentProduct.storage>
-                            <option value=16>16</option>
-                            <option value=32>32</option>
-                            <option value=64>64</option>
-                            <option value=128>128</option>
-                            <option value=256>256</option>
-                            <option value=512>512</option>
-                        </select>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="storage">
+                            Storage
+                        </label>
+                        <div class="col">
+                            <select class="form-control" name="storage" id="storage" [(ngModel)]=currentProduct.storage>
+                                <option value=16>16</option>
+                                <option value=32>32</option>
+                                <option value=64>64</option>
+                                <option value=128>128</option>
+                                <option value=256>256</option>
+                                <option value=512>512</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="date">
-                        Purchase Date
-                    </label>
-                    <div class="col">
-                        <input type="date" class="form-control" id="date" placeholder="Date (required)" required
-                            minlength="3" name="date" [(ngModel)]=currentProduct.date>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="date">
+                            Purchase Date
+                        </label>
+                        <div class="col">
+                            <input type="date" class="form-control" id="date" placeholder="Date (required)" required
+                                minlength="3" name="date" [(ngModel)]=currentProduct.date>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="productNameId">
-                        App Name
-                    </label>
-                    <div class="col">
-                        <select class="form-control" name="appName" id="appName" [(ngModel)]=currentProduct.AppName>
-                            <option value="Amazon">Amazon</option>
-                            <option value="Flipkart">Flipkart</option>
-                            <option value="Samsung">Samsung</option>
-                            <option value="Realme">Realme</option>
-                            <option value="Vivo">Vivo</option>
-                            <option value="Oppo">Oppo</option>
-                            <option value="Mi">Mi</option>
-                            <option value="1+">1+</option>
-                            <option value="TataCliQ">Tata CliQ</option>
-                            <option value="RelianceDigital">Reliance Digital</option>
-                            <option value="Others">Others</option>
-                        </select>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="productNameId">
+                            App Name
+                        </label>
+                        <div class="col">
+                            <select class="form-control" name="appName" id="appName" [(ngModel)]=currentProduct.AppName>
+                                <option value="Amazon">Amazon</option>
+                                <option value="Flipkart">Flipkart</option>
+                                <option value="Samsung">Samsung</option>
+                                <option value="Realme">Realme</option>
+                                <option value="Vivo">Vivo</option>
+                                <option value="Oppo">Oppo</option>
+                                <option value="Mi">Mi</option>
+                                <option value="1+">1+</option>
+                                <option value="TataCliQ">Tata CliQ</option>
+                                <option value="RelianceDigital">Reliance Digital</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="appAccount">
-                        App Account
-                    </label>
-                    <div class="col">
-                        <input type="text" class="form-control" id="appAccount"
-                            placeholder="Ordered from Account (required)" required minlength="3" name="appAccount"
-                            [(ngModel)]=currentProduct.AppAccount>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="appAccount">
+                            App Account
+                        </label>
+                        <div class="col">
+                            <p-autoComplete placeholder="Ordered from Account (required)" [showClear]=true
+                                [required]=true [minLength]="0" [completeOnFocus]=true
+                                [(ngModel)]=currentProduct.AppAccount [suggestions]="filteredAppAccountArray"
+                                (completeMethod)="filterAppAccounts($event)" [dropdown]="false" name="appAccount">
+                                <ng-template let-account pTemplate="item">
+                                    <div class="account-item">
+                                        <div>{{account}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="Status">
-                        Status
-                    </label>
-                    <div class="col">
-                        <select class="form-control" name="status" id="status" [(ngModel)]=currentProduct.status>
-                            <option value="Ordered">Ordered</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="DeliveredToLoc">DeliveredToLoc</option>
-                            <option value="DeliveredHome">DeliveredHome</option>
-                            <option value="Distributor">Distributor</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="Status">
+                            Status
+                        </label>
+                        <div class="col">
+                            <select class="form-control" name="status" id="status" [(ngModel)]=currentProduct.status>
+                                <option value="Ordered">Ordered</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="DeliveredToLoc">DeliveredToLoc</option>
+                                <option value="DeliveredHome">DeliveredHome</option>
+                                <option value="Distributor">Distributor</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="listPrice">
-                        List Price
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="listPrice" placeholder="Price on App (required)"
-                            required name="listPrice" [(ngModel)]=listPrice>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="listPrice">
+                            List Price
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="listPrice"
+                                placeholder="Price on App (required)" required name="listPrice" [(ngModel)]=listPrice>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="coupon">
-                        Coupon
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="coupon" placeholder="coupon amount (default = 0)"
-                            required name="coupon" [(ngModel)]=coupon>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="coupon">
+                            Coupon
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="coupon"
+                                placeholder="coupon amount (default = 0)" required name="coupon" [(ngModel)]=coupon>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="cardHolder">
-                        Card Name
-                    </label>
-                    <div class="col">
-                        <select class="form-control" id="cardHolder" name="cardHolder"
-                            [(ngModel)]=currentProduct.cardHolder>
-                            <option *ngFor="let card of cards" [ngValue]="card.cardName">
-                                {{card.cardName}}</option>
-                        </select>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="cardHolder">
+                            Card Name
+                        </label>
+                        <!-- <div class="col">
+                            <select class="form-control" id="cardHolder" name="cardHolder"
+                                [(ngModel)]=currentProduct.cardHolder>
+                                <option *ngFor="let card of cards" [ngValue]="card.cardName">
+                                    {{card.cardName}}</option>
+                            </select>
+                        </div> -->
+                        <div class="col">
+                            <p-autoComplete placeholder="Card Name" [showClear]=true
+                                [required]=true [minLength]="0" [completeOnFocus]=true
+                                [(ngModel)]=currentProduct.cardHolder [suggestions]="filteredCardArray"
+                                (completeMethod)="filterCards($event)" [dropdown]="false" name="cards">
+                                <ng-template let-card pTemplate="item">
+                                    <div class="card-item">
+                                        <div>{{card}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="cardDiscount">
-                        Card Discount
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="cardDiscount"
-                            placeholder="Card Discount (required)" required name="cardDiscount"
-                            [(ngModel)]=cardDiscount>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="cardDiscount">
+                            Card Discount
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="cardDiscount"
+                                placeholder="Card Discount (required)" required name="cardDiscount"
+                                [(ngModel)]=cardDiscount>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="DeliveryAmount">
-                        Packaging/Delivery Charges
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="DeliveryAmount"
-                            placeholder="Packaging/Delivery Charges" required name="DeliveryAmount"
-                            [(ngModel)]=delivery>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="DeliveryAmount">
+                            Packaging/Delivery Charges
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="DeliveryAmount"
+                                placeholder="Packaging/Delivery Charges" required name="DeliveryAmount"
+                                [(ngModel)]=delivery>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="giftCardAmount">
-                        Wallet/Gift Amount
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="giftCardAmount"
-                            placeholder="Gift Card Balence Used (required)" required name="giftCardAmount"
-                            [(ngModel)]=giftBalence>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="giftCardAmount">
+                            Wallet/Gift Amount
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="giftCardAmount"
+                                placeholder="Gift Card Balence Used (required)" required name="giftCardAmount"
+                                [(ngModel)]=giftBalence>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="cardAmount">
-                        Card Amount
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="cardAmount" disabled="true"
-                            placeholder="Amount deducted from card (required)" required name="cardAmount"
-                            [(ngModel)]=currentProduct.cardAmount>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="cardAmount">
+                            Card Amount
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="cardAmount" disabled="true"
+                                placeholder="Amount deducted from card (required)" required name="cardAmount"
+                                [(ngModel)]=currentProduct.cardAmount>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group row">
-                    <label class="col col-form-label" for="cashback">
-                        Cashback
-                    </label>
-                    <div class="col">
-                        <div class="input-group">
-                            <input type="number" class="form-control" id="cashback" placeholder="Cashback in %" required
-                                name="cashback" [(ngModel)]=cashback>
-                            <div class="input-group-append">
-                                <span class="input-group-text">{{currentProduct.cashback}}</span>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="cashback">
+                            Cashback
+                        </label>
+                        <div class="col">
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="cashback" placeholder="Cashback in %"
+                                    required name="cashback" [(ngModel)]=cashback>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">{{currentProduct.cashback}}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="costToMe">
-                        Cost To Me
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="costToMe" placeholder="costToMe (required)"
-                            disabled="true" required name="costToMe" [(ngModel)]=currentProduct.costToMe>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="costToMe">
+                            Cost To Me
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="costToMe" placeholder="costToMe (required)"
+                                disabled="true" required name="costToMe" [(ngModel)]=currentProduct.costToMe>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="deliveryDate">
+                            Home Delivery Date
+                        </label>
+                        <div class="col">
+                            <input type="date" class="form-control" id="buyerDate"
+                                placeholder="Delivery Date (required)" minlength="3" name="buyerDate"
+                                [(ngModel)]=currentProduct.deliveryDate>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="buyerName">
+                            Buyer Name
+                        </label>
+                        <div class="col">
+                            <input type="text" class="form-control" id="buyerName" placeholder="Buyer Name" required
+                                minlength="3" name="buyerName" [(ngModel)]=currentProduct.buyerName>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="profit">
+                            Profit
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="profit" placeholder="Profit" required
+                                name="profit" [(ngModel)]=profit>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="distributorPrice">
+                            Buyer Price
+                        </label>
+                        <div class="col">
+                            <input type="number" class="form-control" id="distributorPrice"
+                                placeholder="Amount Received from buyer (required)" required name="distributorPrice"
+                                [(ngModel)]=dPrice>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="buyerDate">
+                            Buyer Date
+                        </label>
+                        <div class="col">
+                            <input type="date" class="form-control" id="buyerDate" placeholder="Buyer Date (required)"
+                                minlength="3" name="buyerDate" [(ngModel)]=currentProduct.buyerDate>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+            <div class="row mb-2 form-group">
+                <div class="col-md-4">
+                    <div class="form-check form-switch" style="padding-left: 50%;">
+                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                            [(ngModel)]=addMoreProduct>
+                        <label class="form-check-label" for="flexSwitchCheckDefault">Add More Products</label>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="deliveryDate">
-                        Home Delivery Date
-                    </label>
-                    <div class="col">
-                        <input type="date" class="form-control" id="buyerDate" placeholder="Delivery Date (required)"
-                            minlength="3" name="buyerDate" [(ngModel)]=currentProduct.deliveryDate>
-                    </div>
+                <div class="col-md-8">
+                    <button [disabled]="isLoading" class="btn btn-primary mr-3" style="width:80px" type="button"
+                        (click)="saveProduct()">
+                        {{ saveButtonText }}
+                        <span *ngIf="isLoading"><i class="pi pi-spin pi-spinner ml-2 mr-2"
+                                style="font-size: 1rem"></i></span>
+                    </button>
+                    <button class="btn btn-outline-secondary mr-3" style="width:80px" type="button"
+                        title="Cancel your edits" [routerLink]="['/products']">
+                        Cancel
+                    </button>
+                    <button class="btn btn-outline-warning mr-3" style="width:80px" type="button"
+                        title="Delete this product" (click)="resetProduct()">
+                        Reset
+                    </button>
+                    <button *ngIf="editMode" class="btn btn-outline-success" style="width:140px" type="button"
+                        (click)="addAsNewProduct()">
+                        Add as New
+                    </button>
                 </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="buyerName">
-                        Buyer Name
-                    </label>
-                    <div class="col">
-                        <input type="text" class="form-control" id="buyerName" placeholder="Buyer Name" required
-                            minlength="3" name="buyerName" [(ngModel)]=currentProduct.buyerName>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="profit">
-                        Profit
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="profit" placeholder="Profit" required
-                            name="profit" [(ngModel)]=profit>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="distributorPrice">
-                        Buyer Price
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="distributorPrice"
-                            placeholder="Amount Received from buyer (required)" required name="distributorPrice"
-                            [(ngModel)]=dPrice>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="buyerDate">
-                        Buyer Date
-                    </label>
-                    <div class="col">
-                        <input type="date" class="form-control" id="buyerDate" placeholder="Buyer Date (required)"
-                            minlength="3" name="buyerDate" [(ngModel)]=currentProduct.buyerDate>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
-        <div class="row mb-2 form-group">
-            <div class="col-md-4">
-                <div class="form-check form-switch" style="padding-left: 50%;">
-                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
-                        [(ngModel)]=addMoreProduct>
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Add More Products</label>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="saveProduct()">
-                    {{ saveButtonText }}
-                </button>
-                <button class="btn btn-outline-secondary mr-3" style="width:80px" type="button"
-                    title="Cancel your edits" [routerLink]="['/products']">
-                    Cancel
-                </button>
-                <button class="btn btn-outline-warning mr-3" style="width:80px" type="button" title="Delete this product"
-                    (click)="resetProduct()">
-                    Reset
-                </button>
-                <button *ngIf="editMode" class="btn btn-outline-success" style="width:140px" type="button" (click)="addAsNewProduct()">
-                    Add as New
-                </button>
             </div>
         </div>
+        {{ currentProduct | json }}
     </div>
-    {{ currentProduct | json }}
 </div>

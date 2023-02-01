@@ -1,7 +1,8 @@
-<app-spinner *ngIf="!txns"></app-spinner>
+<!-- <app-spinner *ngIf="!txns"></app-spinner> -->
 <div class="card" *ngIf="txns">
     <div class="card-header">
         Transactions on Card '{{cardName}}'
+        <span *ngIf="!txns"><i class="pi pi-spin pi-spinner ml-2 mr-2" style="font-size: 1rem"></i>Loading..</span>
     </div>
     <div class="card-body">
 
