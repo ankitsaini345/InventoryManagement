@@ -1,7 +1,8 @@
-<app-spinner *ngIf="!products.length"></app-spinner>
+<!-- <app-spinner *ngIf="!products.length"></app-spinner> -->
 <div class="card">
     <div class="card-header">
-        Product List
+        Product List 
+        <span *ngIf="!products.length"><i class="pi pi-spin pi-spinner ml-2 mr-2" style="font-size: 1rem"></i>Loading..</span>
     </div>
     <div class="card-body">
         <div class="row">

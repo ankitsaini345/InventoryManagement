@@ -38,6 +38,14 @@ import {DropdownModule} from 'primeng/dropdown';
 import {ProgressBarModule} from 'primeng/progressbar';
 import {InputTextModule} from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
+import {MenubarModule} from 'primeng/menubar'
+import {MenuModule} from 'primeng/menu';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import {CheckboxModule} from 'primeng/checkbox';
+import {StyleClassModule} from 'primeng/styleclass';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+
+
 
 @NgModule({
   declarations: [
@@ -61,7 +69,13 @@ import { MessageService } from 'primeng/api';
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
+    MenubarModule,
+    MenuModule,
+    AutoCompleteModule,
+    SplitButtonModule,
     TableModule,
+    CheckboxModule,
+    StyleClassModule,
     CalendarModule,
 		SliderModule,
 		DialogModule,

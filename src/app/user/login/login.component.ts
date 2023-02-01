@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
     pass: ''
   };
   errorMessage!: string;
+  loading = false;
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
   }
 
   async save(loginForm: NgForm) {
+    this.loading = true;
 
     await this.authService.login(loginForm.form.value.email, loginForm.form.value.password);
 

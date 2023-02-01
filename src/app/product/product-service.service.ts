@@ -14,6 +14,8 @@ import { Iresult } from './Iresult';
 export class ProductServiceService {
 
   private productStorageString = 'inventoryProducts';
+  private uniqueProductStorageString = 'inventoryUniqueProducts';
+  private uniqueAppAccountStorageString = 'inventoryUniqueAppAccounts';
 
   constructor(private http: HttpClient,
     private cardService: CardService,
@@ -25,6 +27,8 @@ export class ProductServiceService {
 
   private url = environment.baseUrl + 'api/orders';
   private productData$ = new BehaviorSubject<IProduct[]>([]);
+  private uniqueProductName$ = new BehaviorSubject<string[]>([]);
+  private uniqueAccountName$ = new BehaviorSubject<string[]>([]);
 
   async initialiseProductData() {
     try {
@@ -39,6 +43,27 @@ export class ProductServiceService {
         sessionStorage.setItem(this.productStorageString, JSON.stringify(productArray));
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Products Initialised' });
       }
+
+      let uniqueProducts = sessionStorage.getItem(this.uniqueProductStorageString);
+      let uniqueProductArray: string[];
+      if (uniqueProducts) {
+        uniqueProductArray = JSON.parse(uniqueProducts);
+      } else {
+        uniqueProductArray = this.extractFieldArray(productArray, 'name');
+        sessionStorage.setItem(this.uniqueProductStorageString, JSON.stringify(uniqueProductArray));
+      }
+      this.uniqueProductName$.next(uniqueProductArray);
+
+      let uniqueAppAccounts = sessionStorage.getItem(this.uniqueAppAccountStorageString);
+      let uniqueAppAccountArray: string[];
+      if (uniqueAppAccounts) {
+        uniqueAppAccountArray = JSON.parse(uniqueAppAccounts);
+      } else {
+        uniqueAppAccountArray = this.extractFieldArray(productArray, 'AppAccount');
+        sessionStorage.setItem(this.uniqueAppAccountStorageString, JSON.stringify(uniqueAppAccountArray))
+      }
+      this.uniqueAccountName$.next(uniqueAppAccountArray);
+
     } catch (error: any) {
       console.error(error);
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
@@ -49,9 +74,13 @@ export class ProductServiceService {
     return this.productData$.asObservable();
   }
 
-  getUniqueProducts(field: string): Observable<object> {
-    const uniqueProductUrl = this.url + '/unique/' + field;
-    return this.http.get(uniqueProductUrl);
+  getUniqueProductNames(): Observable<string[]> {
+    // const uniqueProductUrl = this.url + '/unique/' + field;
+    return this.uniqueProductName$.asObservable();
+  }
+
+  getUniqueAppAccount(): Observable<string[]> {
+    return this.uniqueAccountName$.asObservable();
   }
 
   getProduct(_id: string): IProduct {
@@ -92,7 +121,7 @@ export class ProductServiceService {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' Updated.' });
         sessionStorage.removeItem(this.productStorageString);
         this.initialiseProductData();
-        
+
         if (currentProduct.cardAmount != originalProduct.cardAmount) {
           this.txnService.updateTxnUsingProduct(currentProduct);
           let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
@@ -135,6 +164,16 @@ export class ProductServiceService {
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
       console.error('Unable to add Product ' + currentProduct.name + ' Error: ', error);
     }
+  }
+
+  extractFieldArray(items: IProduct[], fieldName: string): string[] {
+    let resArray: string[] = [];
+    items.forEach((item: any) => {
+      let field = item[fieldName];
+      if (!(resArray.includes(field)))
+        resArray.push(field);
+    })
+    return resArray;
   }
 
   blankProduct(): IProduct {
