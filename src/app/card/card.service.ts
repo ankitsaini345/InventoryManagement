@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Iresult } from '../product/Iresult';
+import { IProduct } from '../product/product';
 import { Icard } from './card';
 
 @Injectable({
@@ -20,7 +21,7 @@ export class CardService {
   constructor(private http: HttpClient,
     private messageService: MessageService) {
     this.initialiseCardData();
-    
+
   }
 
   getCards(): Observable<Icard[]> {
@@ -57,13 +58,15 @@ export class CardService {
     // return this.http.get<Icard>(this.url + '/' + cardName);
   }
 
-  async addCard(card: Icard) {
+  async addCard(card: Icard, init = true) {
     try {
       let res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, card));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' added.' });
-        sessionStorage.removeItem(this.cardStorageString);
-        this.initialiseCardData();
+        if (init) {
+          sessionStorage.removeItem(this.cardStorageString);
+          this.initialiseCardData();
+        }
       } else throw res;
     } catch (error: any) {
       console.error(error);
@@ -71,14 +74,16 @@ export class CardService {
     }
   }
 
-  async updateCard(card: Icard) {
+  async updateCard(card: Icard, init = true) {
     try {
       let res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + card._id, card));
       if (res.acknowledged) {
         if (res.matchedCount && res.modifiedCount) {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' Updated.' });
-          sessionStorage.removeItem(this.cardStorageString);
-          this.initialiseCardData();
+          if (init) {
+            sessionStorage.removeItem(this.cardStorageString);
+            this.initialiseCardData();
+          }
         } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: card.cardName + ': Not matched with any existing card' });
         }
@@ -89,13 +94,40 @@ export class CardService {
     }
   }
 
-  async deleteCard(card: Icard) {
+  async updateCardUsingProduct(currentProduct: IProduct, originalProduct: IProduct, init = true) {
+
+    if (currentProduct.cardHolder != originalProduct.cardHolder) {
+      let oldCard = this.getCard(originalProduct.cardHolder);
+      oldCard.amountDue -= originalProduct.cardAmount;
+      if(!oldCard.amountDue) oldCard.amountDue = 0;
+      oldCard.totalAmount -= originalProduct.cardAmount;
+      this.updateCard(oldCard, init);
+
+      let newCard = this.getCard(currentProduct.cardHolder);
+      newCard.totalAmount += currentProduct.cardAmount;
+      newCard.amountDue += currentProduct.cardAmount;
+      this.updateCard(newCard, init);
+
+    } else if (currentProduct.cardAmount != originalProduct.cardAmount) {
+      let oldCard = this.getCard(originalProduct.cardHolder);
+      oldCard.amountDue -= originalProduct.cardAmount;
+      oldCard.totalAmount -= originalProduct.cardAmount;
+
+      oldCard.totalAmount += currentProduct.cardAmount;
+      oldCard.amountDue += currentProduct.cardAmount;
+      this.updateCard(oldCard, init);
+    }
+  }
+
+  async deleteCard(card: Icard, init = true) {
     try {
       let res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + card._id));
       if (res.acknowledged && res.deletedCount) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' deleted.' });
-        sessionStorage.removeItem(this.cardStorageString);
-        this.initialiseCardData();
+        if (init) {
+          sessionStorage.removeItem(this.cardStorageString);
+          this.initialiseCardData();
+        }
       } else throw res;
     } catch (error: any) {
       console.error(error);
