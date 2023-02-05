@@ -27,14 +27,11 @@ export class AuthService implements HttpInterceptor {
     private router: Router,
     private messageService: MessageService
   ) {
-    this.errorMessage = '';
-    console.log('authser');
-    
+    this.errorMessage = '';    
     if (localStorage.getItem('inventoryAppUser'))
       this.userDetails$ = new BehaviorSubject<User>({ id: localStorage.getItem('inventoryAppUser')!, isLoggedIn: true });
     else
       this.userDetails$ = new BehaviorSubject<User>({ id: '', isLoggedIn: false });
-
   }
 
   getUserDetails(): Observable<User> {

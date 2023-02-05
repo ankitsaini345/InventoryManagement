@@ -181,6 +181,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       let existingCard = this.cardNameArray.includes(this.currentProduct.cardHolder);
       if (!existingCard) {
         if (confirm('Card ' + this.currentProduct.cardHolder + ' is not in list. Do you want to add it?')) {
+          this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Adding Card: ' + this.currentProduct.cardHolder + '...' });
           await this.cardService.addCard({
             cardName: this.currentProduct.cardHolder,
             _id: new ObjectId().toString(),

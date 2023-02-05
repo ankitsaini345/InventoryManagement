@@ -9,6 +9,7 @@ import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
 
 import { MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Icard } from 'src/app/card/card';
 import { ShareService } from 'src/app/share.service';
 
@@ -22,6 +23,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     private cardService: CardService,
     private clipboard: Clipboard,
     private shareService: ShareService,
+    private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
     this.orgProduct = null;
@@ -33,6 +35,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
   aggregate: any = {};
   orgProduct: IProduct | null;
   subArray: Subscription[] = [];
+
+  deliveryDialog = {
+    display: false,
+    date: '',
+    type: ''
+  }
+
 
   appName = ["Amazon", "Flipkart", "Samsung", "Realme", "Vivo", "Oppo", "Mi", "1+", "TataCliQ", "Reliance", "Others"];
   orderStatus = ['Ordered', 'Shipped', 'DeliveredToLoc', 'DeliveredHome', 'Distributor', 'Cancelled']
@@ -83,8 +92,24 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.aggregate.costToMe = Math.round(this.aggregate.costToMe);
   }
 
-  deleteProduct(product: IProduct) {
-    this.productService.deleteProduct(product);
+  deleteProduct(event: Event, product: IProduct) {
+
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: 'Are you sure that you delete product: ' + product.name,
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.productService.deleteProduct(product);
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Rejected',
+          detail: 'Product deletion Cancelled.',
+        });
+      },
+    });
+
   }
 
   onRowEditInit(product: IProduct) {
@@ -192,28 +217,38 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
-  async bulkStatusChange(status: string) {
-    const items = this.selectedProduct.length;
-    if (!items) {
+  deliveryStatus(flag: boolean) {
+    if (!this.selectedProduct.length) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
     } else {
-      if (confirm('Mark ' + items + ' items as ' + status)) {
-        let promiseArray: Promise<any>[] = [];
-        this.selectedProduct.forEach((product: IProduct) => {
-          let originalProduct = product;
-          if (product.status != status) {
-            product.status = status;
-            let pro = this.productService.editProduct(product, originalProduct, false);
-            promiseArray.push(pro);
-          }
-        });
-        Promise.all(promiseArray).then(()=> {
-          sessionStorage.removeItem(this.productStorageString);
-          this.productService.initialiseProductData();
-        })
-        this.filterBy = ''
-      } else return;
+      if (flag) {
+        this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
+        this.deliveryDialog.display = false;
+      } else {
+        this.deliveryDialog.display = false,
+          this.deliveryDialog.date = '',
+          this.deliveryDialog.type = ''
+      }
     }
+  }
+
+  async bulkStatusChange(status: string, date: string) {
+    let promiseArray: Promise<any>[] = [];
+    this.selectedProduct.forEach((product: IProduct) => {
+      let originalProduct = product;
+      if (product.status != status) {
+        product.status = status;
+        if (status == 'Distributor') product.buyerDate = date;
+        if (status == 'DeliveredHome') product.deliveryDate = date;
+        let pro = this.productService.editProduct(product, originalProduct, false);
+        promiseArray.push(pro);
+      }
+    });
+    Promise.all(promiseArray).then(() => {
+      sessionStorage.removeItem(this.productStorageString);
+      this.productService.initialiseProductData();
+    })
+    this.filterBy = ''
   }
 
   // async exportImage() {

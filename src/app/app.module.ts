@@ -44,6 +44,9 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import {CheckboxModule} from 'primeng/checkbox';
 import {StyleClassModule} from 'primeng/styleclass';
 import {AutoCompleteModule} from 'primeng/autocomplete';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
+import { ConfirmationService } from 'primeng/api';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
 
 
 
@@ -71,6 +74,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
     FormsModule,
     MenubarModule,
     MenuModule,
+    ConfirmPopupModule,
     AutoCompleteModule,
     SplitButtonModule,
     TableModule,
@@ -84,6 +88,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 		DropdownModule,
 		ButtonModule,
 		ToastModule,
+    ConfirmDialogModule,
     InputTextModule,
     ProgressBarModule,
     Ng2SearchPipeModule,
@@ -93,7 +98,7 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true
-  }, MessageService],
+  }, MessageService, ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
