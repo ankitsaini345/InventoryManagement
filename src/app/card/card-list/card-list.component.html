@@ -36,6 +36,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,6 +49,9 @@
                         <td>{{card.totalAmount}}</td>
                         <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'edit']">
                                 Edit
+                            </button></td>
+                            <td><button class="btn btn-outline-success btn-sm" (click)="markAsPaid($event,card)">
+                                Paid
                             </button></td>
                             <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/transactions/', card.cardName]">
                                 See Txns

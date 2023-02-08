@@ -62,6 +62,31 @@ export class CardListComponent implements OnInit, OnDestroy {
     });
   }
 
+  async markAsPaid(event: Event, card: Icard) {
+
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: 'Are you sure to mark bill as paid for: ' + card.cardName,
+      icon: 'pi pi-exclamation-triangle',
+      accept: async () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Info',
+          detail: card.cardName + ' marked for Updation.',
+        });
+        card.amountDue = 0;
+        await this.cardService.updateCard(card);
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Rejected',
+          detail: 'Card Updation Cancelled.',
+        });
+      },
+    });
+  }
+
   ngOnDestroy(): void {
    this.sub.unsubscribe();
   }

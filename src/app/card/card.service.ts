@@ -83,6 +83,9 @@ export class CardService {
             sessionStorage.removeItem(this.cardStorageString);
             this.initialiseCardData();
           }
+        } else if (!res.modifiedCount) {
+          this.messageService.add({ severity: 'info', summary: 'Info', detail: card.cardName + ': Nothing to update.' });
+
         } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: card.cardName + ': Not matched with any existing card' });
         }
@@ -98,7 +101,7 @@ export class CardService {
     if (currentProduct.cardHolder != originalProduct.cardHolder) {
       let oldCard = this.getCard(originalProduct.cardHolder);
       oldCard.amountDue -= originalProduct.cardAmount;
-      if(!oldCard.amountDue) oldCard.amountDue = 0;
+      if (!oldCard.amountDue) oldCard.amountDue = 0;
       oldCard.totalAmount -= originalProduct.cardAmount;
       this.updateCard(oldCard, init);
 
