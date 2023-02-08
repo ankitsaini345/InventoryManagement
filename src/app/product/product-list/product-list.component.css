@@ -36,3 +36,14 @@
 :host ::ng-deep .p-datatable .p-datatable-header .p-button.p-button-icon-only{
     width: 2.6rem;
 }
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    padding: 0.4rem 1.1rem;
+    font-weight: 550;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th .p-inputtext {
+    font-size: .9rem;
+    padding: 0.3rem 0.3rem;
+    max-width: 11vw;
+}

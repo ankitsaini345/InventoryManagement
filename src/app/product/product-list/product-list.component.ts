@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { table } from 'table';
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
@@ -12,6 +12,7 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { Icard } from 'src/app/card/card';
 import { ShareService } from 'src/app/share.service';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-product-list',
@@ -35,6 +36,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   aggregate: any = {};
   orgProduct: IProduct | null;
   subArray: Subscription[] = [];
+  @ViewChild('dt') table!: Table;
 
   deliveryDialog = {
     display: false,
@@ -140,6 +142,25 @@ export class ProductListComponent implements OnInit, OnDestroy {
   schange(event: any) {
     // console.log(this.selectedProduct);
   }
+
+  onDateSelect(value: any) {
+    this.table.filter(this.formatDate(value), 'date', 'equals')
+  }
+
+  formatDate(date: any) {
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) {
+        month = '0' + month;
+    }
+
+    if (day < 10) {
+        day = '0' + day;
+    }
+
+    return date.getFullYear() + '-' + month + '-' + day;
+}
 
   async exportText() {
     // console.log(this.selectedProduct);
@@ -260,6 +281,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.subArray.forEach((sub: Subscription) => {
       sub.unsubscribe();
     })
+  }
+
+  onRepresentativeChange(event: any) {
+    this.table.filter(event.value, 'status', 'in')
   }
 
 }

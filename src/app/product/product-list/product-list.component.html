@@ -1,28 +1,5 @@
 <div class="mr-2 ml-2">
-    <!-- <app-spinner *ngIf="!products.length"></app-spinner> -->
-    <!-- <div class="card"> -->
-    <!-- <div class="card-header">
-        Product List 
-        <span *ngIf="!products.length"><i class="pi pi-spin pi-spinner ml-2 mr-2" style="font-size: 1rem"></i>Loading..</span>
-    </div> -->
-    <!-- <div class="card-body"> -->
-    <!-- <div class="row">
-            <div class="col-md-1">
-                <label>
-                    FilterBy:
-                </label>
-            </div>
-            <div class="col-md-2">
-                <input [(ngModel)]=filterBy type="text" class="form-control">
-            </div>
-            <div class="col-md-7">
-                <label class="col-form-label" *ngIf="filterBy">
-                    Showing products containing <b>{{filterBy}}</b>
-                </label>
-            </div>
-
-        </div> -->
-    <p-table #dt [value]="products| filter:filterBy" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
+    <p-table #dt [value]="products" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
         [loading]="!products.length" scrollHeight="80vh" styleClass="p-datatable-sm" styleClass="p-datatable-gridlines"
         (selectionChange)="schange($event)" [(selection)]="selectedProduct" [filterDelay]="0"
         [globalFilterFields]="['products.name']">
@@ -30,11 +7,12 @@
             <div class="table-header">
                 Product List
                 <div>
-                    <button type="button"  pButton pRipple icon="pi pi-check-square" (click)="deliveryDialog.display=true"
-                        class="p-button-help mr-2" pTooltip="Change Status" tooltipPosition="top"></button>
+                    <button type="button" pButton pRipple icon="pi pi-check-square"
+                        (click)="deliveryDialog.display=true" class="p-button-help mr-2" pTooltip="Change Status"
+                        tooltipPosition="top"></button>
 
-                    <button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()" class="p-button-success mr-2"
-                        pTooltip="Export Data" tooltipPosition="top"></button>
+                    <button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()"
+                        class="p-button-success mr-2" pTooltip="Export Data" tooltipPosition="top"></button>
 
                     <button type="button" pButton pRipple icon="pi pi-telegram" (click)="exportTelegramData()"
                         class="mr-2" pTooltip="Add to telegram" tooltipPosition="top"></button>
@@ -54,15 +32,14 @@
             <tr>
                 <th pFrozenColumn>SN</th>
                 <th pFrozenColumn style="width: 3rem">
-                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
-                <th pFrozenColumn>ProductName</th>
+                <th pSortableColumn="name" pFrozenColumn>ProductName <p-sortIcon field="name"></p-sortIcon></th>
                 <th pFrozenColumn>Action</th>
                 <th>Size</th>
                 <th>Status</th>
                 <th>App</th>
                 <th>Account</th>
-                <th>PurchaseDate </th>
+                <th pSortableColumn="date" style="min-width:6rem">Date<p-sortIcon field="date"></p-sortIcon></th>
                 <th>CardName</th>
                 <th>ListPrice</th>
                 <th>Coupon</th>
@@ -78,6 +55,73 @@
                 <th>Buyer Date</th>
                 <th>BuyerName</th>
             </tr>
+
+            <tr>
+                <th pFrozenColumn></th>
+                <th pFrozenColumn>
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pFrozenColumn>
+                    <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'name', 'contains')"
+                        placeholder="Search" class="p-column-filter">
+                </th>
+                <th pFrozenColumn></th>
+                <th></th>
+                <th>
+                    <!-- <p-multiSelect appendTo="body" [showClear]="false" [options]="orderStatus" placeholder="Status"
+                        (onChange)="onRepresentativeChange($event)" styleClass="p-column-filter" optionLabel="">
+                        <ng-template let-option pTemplate="item">
+                            <div class="p-multiselect-option">
+                                <span class="p-ml-1">{{option}}</span>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect> -->
+
+                    <p-dropdown appendTo="body" [options]="orderStatus"
+                        (onChange)="dt.filter($event.value, 'status', 'equals')" styleClass="p-column-filter"
+                        placeholder="Status" [showClear]="true">
+                        <ng-template let-option pTemplate="">
+                            <span>&#123;&#123;option&#125;&#125;</span>
+                        </ng-template>
+                    </p-dropdown>
+                </th>
+                <th>
+                    <p-dropdown appendTo="body" [options]="appName"
+                        (onChange)="dt.filter($event.value, 'AppName', 'equals')" styleClass="p-column-filter"
+                        placeholder="App" [showClear]="true">
+                        <ng-template let-option pTemplate="">
+                            <span>&#123;&#123;option&#125;&#125;</span>
+                        </ng-template>
+                    </p-dropdown>
+                </th>
+                <th>
+                    <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'AppAccount', 'contains')"
+                    placeholder="Search" class="p-column-filter">
+                </th>
+                <th>
+                    <p-calendar appendTo="body" (onSelect)="onDateSelect($event)" (onClearClick)="dt.filter('', 'date', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true" dateFormat="yyyy-mm-dd"></p-calendar>
+                </th>
+                <th>
+                    <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'cardHolder', 'contains')"
+                    placeholder="Search" class="p-column-filter">
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>
+                    <p-calendar appendTo="body" (onSelect)="onDateSelect($event)" (onClearClick)="dt.filter('', 'buyerDate', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true" dateFormat="yyyy-mm-dd"></p-calendar>
+                </th>
+                <th></th>
+            </tr>
+
         </ng-template>
         <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
             <tr [pEditableRow]="product">
@@ -262,21 +306,25 @@
     <!-- </div> -->
 </div>
 
-<p-dialog (onHide)="deliveryStatus(false)" header="Delivey Status Change" position="top" [(visible)]="deliveryDialog.display" [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}"
-    [draggable]="false" [resizable]="false">
+<p-dialog (onHide)="deliveryStatus(false)" header="Delivey Status Change" position="top"
+    [(visible)]="deliveryDialog.display" [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [draggable]="false"
+    [resizable]="false">
     <div class="p-fluid grid formgrid">
         <h5>Total Selected Items: {{selectedProduct.length}}</h5>
         <div class="field col-12 md:col-4">
             <label for="dtype">Delivery Type</label>
-            <p-dropdown appendTo="body" [options]="['DeliveredHome', 'Distributor']" [(ngModel)]="deliveryDialog.type" placeholder="Select delivery type" [showClear]="true"></p-dropdown>
+            <p-dropdown appendTo="body" [options]="['DeliveredHome', 'Distributor']" [(ngModel)]="deliveryDialog.type"
+                placeholder="Select delivery type" [showClear]="true"></p-dropdown>
         </div>
         <div class="field col-12 md:col-4">
             <label for="icon">Date</label>
-            <p-calendar appendTo="body" [(ngModel)]="deliveryDialog.date" [showIcon]="true" dateFormat="mm-dd-yy" inputId="icon"></p-calendar>
+            <p-calendar appendTo="body" [(ngModel)]="deliveryDialog.date" [showIcon]="true" dateFormat="mm-dd-yy"
+                inputId="icon"></p-calendar>
         </div>
     </div>
-        <ng-template pTemplate="footer">
+    <ng-template pTemplate="footer">
         <p-button (click)="deliveryStatus(false)" label="Cancel" styleClass="p-button-outlined"></p-button>
-        <p-button [disabled]="!selectedProduct.length || !deliveryDialog.type || !deliveryDialog.date" (click)="deliveryStatus(true)" label="Deliver" styleClass="p-button-outlined"></p-button>
-        </ng-template>
+        <p-button [disabled]="!selectedProduct.length || !deliveryDialog.type || !deliveryDialog.date"
+            (click)="deliveryStatus(true)" label="Deliver" styleClass="p-button-outlined"></p-button>
+    </ng-template>
 </p-dialog>
