@@ -20,8 +20,7 @@ export class CardService {
 
   constructor(private http: HttpClient,
     private messageService: MessageService) {
-    this.initialiseCardData();
-
+    // this.initialiseCardData();
   }
 
   getCards(): Observable<Icard[]> {

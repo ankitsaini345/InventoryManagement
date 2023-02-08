@@ -22,7 +22,7 @@ export class TxnService {
 
   constructor(private http: HttpClient,
     private messageService: MessageService) {
-    this.initialiseTxnData();
+    // this.initialiseTxnData();
   }
 
   getTxns(): Observable<Itxn[]> {

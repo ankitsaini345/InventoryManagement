@@ -23,16 +23,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(private authService: AuthService,
     private messageService: MessageService,
+    private productService: ProductServiceService,
+    private cardService: CardService,
+    private txnService: TxnService,
     private router: Router) { }
 
 
   ngOnInit(): void {
     this.initItems();
     this.initUserDetails();
-    // this.productService.initialiseProductData();
-    // this.cardService.initialiseCardData();
-    // this.txnService.initialiseTxnData();
-
+    if (this.authService.isLoggedIn) {
+      this.productService.initialiseProductData();
+      this.cardService.initialiseCardData();
+      this.txnService.initialiseTxnData();
+    }
   }
   ngOnDestroy(): void {
     this.sub.unsubscribe();

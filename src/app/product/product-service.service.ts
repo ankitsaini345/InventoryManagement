@@ -22,7 +22,7 @@ export class ProductServiceService {
     private txnService: TxnService,
     private messageService: MessageService
   ) {
-    this.initialiseProductData();
+    // this.initialiseProductData();
   }
 
   private url = environment.baseUrl + 'api/orders';
