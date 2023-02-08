@@ -22,7 +22,7 @@ export class ProductServiceService {
     private txnService: TxnService,
     private messageService: MessageService
   ) {
-    this.initialiseProductData();
+    // this.initialiseProductData();
   }
 
   private url = environment.baseUrl + 'api/orders';
@@ -44,24 +44,10 @@ export class ProductServiceService {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Products Initialised' });
       }
 
-      let uniqueProducts = sessionStorage.getItem(this.uniqueProductStorageString);
-      let uniqueProductArray: string[];
-      if (uniqueProducts) {
-        uniqueProductArray = JSON.parse(uniqueProducts);
-      } else {
-        uniqueProductArray = this.extractFieldArray(productArray, 'name');
-        sessionStorage.setItem(this.uniqueProductStorageString, JSON.stringify(uniqueProductArray));
-      }
+      let uniqueProductArray = this.extractFieldArray(productArray, 'name');
       this.uniqueProductName$.next(uniqueProductArray);
 
-      let uniqueAppAccounts = sessionStorage.getItem(this.uniqueAppAccountStorageString);
-      let uniqueAppAccountArray: string[];
-      if (uniqueAppAccounts) {
-        uniqueAppAccountArray = JSON.parse(uniqueAppAccounts);
-      } else {
-        uniqueAppAccountArray = this.extractFieldArray(productArray, 'AppAccount');
-        sessionStorage.setItem(this.uniqueAppAccountStorageString, JSON.stringify(uniqueAppAccountArray))
-      }
+      let uniqueAppAccountArray = this.extractFieldArray(productArray, 'AppAccount');
       this.uniqueAccountName$.next(uniqueAppAccountArray);
 
     } catch (error: any) {
@@ -114,23 +100,19 @@ export class ProductServiceService {
     }
   }
 
-  async editProduct(currentProduct: IProduct, originalProduct: IProduct) {
+  async editProduct(currentProduct: IProduct, originalProduct: IProduct, init = true) {
     try {
       const res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + currentProduct._id, currentProduct));
       if (res.acknowledged && res.modifiedCount) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' Updated.' });
-        sessionStorage.removeItem(this.productStorageString);
-        this.initialiseProductData();
-
-        if (currentProduct.cardAmount != originalProduct.cardAmount) {
-          this.txnService.updateTxnUsingProduct(currentProduct);
-          let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
-          updatedCard.amountDue -= originalProduct.cardAmount;
-          updatedCard.amountDue += currentProduct.cardAmount;
-          updatedCard.totalAmount -= originalProduct.cardAmount;
-          updatedCard.totalAmount += currentProduct.cardAmount;
-          this.cardService.updateCard(updatedCard);
+        if (init) {
+          sessionStorage.removeItem(this.productStorageString);
+          this.initialiseProductData();
         }
+
+        this.txnService.updateTxnUsingProduct(currentProduct, init);
+        this.cardService.updateCardUsingProduct(currentProduct, originalProduct, init)
+
       } else {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);

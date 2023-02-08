@@ -22,7 +22,7 @@ export class TxnService {
 
   constructor(private http: HttpClient,
     private messageService: MessageService) {
-    this.initialiseTxnData();
+    // this.initialiseTxnData();
   }
 
   getTxns(): Observable<Itxn[]> {
@@ -53,13 +53,15 @@ export class TxnService {
     // return this.http.get<Itxn[]>(this.url + '/' + cname);
   }
 
-  async addTxn(Txn: Itxn) {
+  async addTxn(Txn: Itxn, init = true) {
     try {
       let res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, Txn));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' added.' });
-        sessionStorage.removeItem(this.txnStorageString);
-        this.initialiseTxnData();
+        if (init) {
+          sessionStorage.removeItem(this.txnStorageString);
+          this.initialiseTxnData();
+        }
       } else throw res;
     } catch (error: any) {
       console.error(error);
@@ -79,7 +81,7 @@ export class TxnService {
     await this.addTxn(txn);
   }
 
-  async updateTxnUsingProduct(product: IProduct) {
+  async updateTxnUsingProduct(product: IProduct, init = true) {
     const txn: Itxn = {
       _id: product.txnId,
       amount: product.cardAmount,
@@ -88,16 +90,18 @@ export class TxnService {
       cardName: product.cardHolder,
       OrderName: product.name
     }
-    await this.updateTxn(txn);
+    await this.updateTxn(txn, init);
   }
 
-  async updateTxn(Txn: Itxn) {
+  async updateTxn(Txn: Itxn, init = true) {
     try {
       let res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + Txn._id, Txn));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' updated.' });
-        sessionStorage.removeItem(this.txnStorageString);
-        this.initialiseTxnData();
+        if (init) {
+          sessionStorage.removeItem(this.txnStorageString);
+          this.initialiseTxnData();
+        }
       } else throw res;
     } catch (error: any) {
       console.error(error);
@@ -105,13 +109,15 @@ export class TxnService {
     }
   }
 
-  async deleteTxn(_id: string) {
+  async deleteTxn(_id: string, init = true) {
     try {
       let res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + _id));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + _id + ' deleted.' });
-        sessionStorage.removeItem(this.txnStorageString);
-        this.initialiseTxnData();
+        if (init) {
+          sessionStorage.removeItem(this.txnStorageString);
+          this.initialiseTxnData();
+        }
       } else throw res;
     } catch (error: any) {
       console.error(error);

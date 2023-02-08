@@ -22,20 +22,21 @@ export class AppComponent implements OnInit, OnDestroy {
   sub!: Subscription;
 
   constructor(private authService: AuthService,
-    private cardService: CardService,
     private messageService: MessageService,
-    private txnService: TxnService,
     private productService: ProductServiceService,
+    private cardService: CardService,
+    private txnService: TxnService,
     private router: Router) { }
 
 
   ngOnInit(): void {
     this.initItems();
     this.initUserDetails();
-    this.productService.initialiseProductData();
-    this.cardService.initialiseCardData();
-    this.txnService.initialiseTxnData();
-
+    if (this.authService.isLoggedIn) {
+      this.productService.initialiseProductData();
+      this.cardService.initialiseCardData();
+      this.txnService.initialiseTxnData();
+    }
   }
   ngOnDestroy(): void {
     this.sub.unsubscribe();
@@ -86,32 +87,36 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   initUserDetails() {
-    this.sub = this.authService.getUserDetails().subscribe((user: User) => {
-      this.currentUser = user.id;
-      if (user.isLoggedIn) {
-        this.rightItem = [
-          {
-            label: 'Manage',
-            icon: 'pi pi-fw pi-cog'
-          },
-          {
-            label: 'Logout',
-            icon: 'pi pi-fw pi-power-off',
-            command: (() => this.logout())
-          }]
-      } else {
-        this.currentUser = 'Login';
-        this.rightItem = [
-          {
-            label: 'Password??',
-            icon: 'pi pi-fw pi-question-circle'
-          },
-          {
-          label: 'Signup',
-          icon: 'pi pi-fw pi-user-plus'
-        }]
-      }
-    })
+    try {
+      this.sub = this.authService.getUserDetails().subscribe((user: User) => {
+        this.currentUser = user.id;
+        if (user.isLoggedIn) {
+          this.rightItem = [
+            {
+              label: 'Manage',
+              icon: 'pi pi-fw pi-cog'
+            },
+            {
+              label: 'Logout',
+              icon: 'pi pi-fw pi-power-off',
+              command: (() => this.logout())
+            }]
+        } else {
+          this.currentUser = 'Login';
+          this.rightItem = [
+            {
+              label: 'Password??',
+              icon: 'pi pi-fw pi-question-circle'
+            },
+            {
+              label: 'Signup',
+              icon: 'pi pi-fw pi-user-plus'
+            }]
+        }
+      })
+    } catch (error: any) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in initialising user: ' + error.message });
+    }
   }
 
   logout() {

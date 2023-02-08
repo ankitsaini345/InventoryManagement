@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { table } from 'table';
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
@@ -9,8 +9,10 @@ import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
 
 import { MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Icard } from 'src/app/card/card';
 import { ShareService } from 'src/app/share.service';
+import { Table } from 'primeng/table';
 
 @Component({
   selector: 'app-product-list',
@@ -22,16 +24,26 @@ export class ProductListComponent implements OnInit, OnDestroy {
     private cardService: CardService,
     private clipboard: Clipboard,
     private shareService: ShareService,
+    private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
     this.orgProduct = null;
   }
 
+  private productStorageString = 'inventoryProducts';
   products: IProduct[] = [];
   filterBy = '';
   aggregate: any = {};
   orgProduct: IProduct | null;
   subArray: Subscription[] = [];
+  @ViewChild('dt') table!: Table;
+
+  deliveryDialog = {
+    display: false,
+    date: '',
+    type: ''
+  }
+
 
   appName = ["Amazon", "Flipkart", "Samsung", "Realme", "Vivo", "Oppo", "Mi", "1+", "TataCliQ", "Reliance", "Others"];
   orderStatus = ['Ordered', 'Shipped', 'DeliveredToLoc', 'DeliveredHome', 'Distributor', 'Cancelled']
@@ -82,8 +94,24 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.aggregate.costToMe = Math.round(this.aggregate.costToMe);
   }
 
-  deleteProduct(product: IProduct) {
-    this.productService.deleteProduct(product);
+  deleteProduct(event: Event, product: IProduct) {
+
+    this.confirmationService.confirm({
+      target: event.target!,
+      message: 'Are you sure that you delete product: ' + product.name,
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.productService.deleteProduct(product);
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Rejected',
+          detail: 'Product deletion Cancelled.',
+        });
+      },
+    });
+
   }
 
   onRowEditInit(product: IProduct) {
@@ -114,6 +142,25 @@ export class ProductListComponent implements OnInit, OnDestroy {
   schange(event: any) {
     // console.log(this.selectedProduct);
   }
+
+  onDateSelect(value: any) {
+    this.table.filter(this.formatDate(value), 'date', 'equals')
+  }
+
+  formatDate(date: any) {
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    if (month < 10) {
+        month = '0' + month;
+    }
+
+    if (day < 10) {
+        day = '0' + day;
+    }
+
+    return date.getFullYear() + '-' + month + '-' + day;
+}
 
   async exportText() {
     // console.log(this.selectedProduct);
@@ -191,6 +238,40 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
+  deliveryStatus(flag: boolean) {
+    if (!this.selectedProduct.length) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+    } else {
+      if (flag) {
+        this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
+        this.deliveryDialog.display = false;
+      } else {
+        this.deliveryDialog.display = false,
+          this.deliveryDialog.date = '',
+          this.deliveryDialog.type = ''
+      }
+    }
+  }
+
+  async bulkStatusChange(status: string, date: string) {
+    let promiseArray: Promise<any>[] = [];
+    this.selectedProduct.forEach((product: IProduct) => {
+      let originalProduct = product;
+      if (product.status != status) {
+        product.status = status;
+        if (status == 'Distributor') product.buyerDate = date;
+        if (status == 'DeliveredHome') product.deliveryDate = date;
+        let pro = this.productService.editProduct(product, originalProduct, false);
+        promiseArray.push(pro);
+      }
+    });
+    Promise.all(promiseArray).then(() => {
+      sessionStorage.removeItem(this.productStorageString);
+      this.productService.initialiseProductData();
+    })
+    this.filterBy = ''
+  }
+
   // async exportImage() {
   //   const dataUrl = await toPng(document.getElementById('my-table')!)
   //   this.clipboard.copy(dataUrl);
@@ -200,6 +281,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.subArray.forEach((sub: Subscription) => {
       sub.unsubscribe();
     })
+  }
+
+  onRepresentativeChange(event: any) {
+    this.table.filter(event.value, 'status', 'in')
   }
 
 }

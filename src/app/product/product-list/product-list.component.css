@@ -16,14 +16,34 @@
     text-align: center;
     padding: 0rem 1rem;
     font-weight: 550;
-    color: #343a40;
-    background: #bacdee80;
 }
 
 :host ::ng-deep .p-datatable .p-datatable-tfoot > tr > td {
     text-align: center;
     padding: 0rem 1rem;
     font-weight: 550;
-    color: #343a40;
-    background: #bacdee80;
+}
+
+:host ::ng-deep .table-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-header {
+    padding: .5rem 0.5rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-header .p-button.p-button-icon-only{
+    width: 2.6rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    padding: 0.4rem 1.1rem;
+    font-weight: 550;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th .p-inputtext {
+    font-size: .9rem;
+    padding: 0.3rem 0.3rem;
+    max-width: 11vw;
 }
