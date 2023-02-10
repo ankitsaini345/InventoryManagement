@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { CardService } from './card/card.service';
+import { PayeeService } from './payment/payee.service';
+import { PaymentService } from './payment/payment.service';
 import { ProductServiceService } from './product/product-service.service';
 import { TxnService } from './txn/txn.service';
 import { AuthService } from './user/auth.service';
@@ -25,6 +27,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private productService: ProductServiceService,
     private cardService: CardService,
+    private payeeService: PayeeService,
+    private paymentService: PaymentService,
     private txnService: TxnService,
     private router: Router) { }
 
@@ -36,6 +40,8 @@ export class AppComponent implements OnInit, OnDestroy {
       this.productService.initialiseProductData();
       this.cardService.initialiseCardData();
       this.txnService.initialiseTxnData();
+      this.payeeService.initialiseData();
+      this.paymentService.initialisePaymentData();
     }
   }
   ngOnDestroy(): void {
@@ -82,6 +88,36 @@ export class AppComponent implements OnInit, OnDestroy {
         label: 'Txns',
         icon: 'pi pi-fw pi-dollar',
         routerLink: '/transactions/All'
+      },
+      {
+        label: 'Payee',
+        icon: 'pi pi-fw pi-credit-card',
+        style: { 'margin-left': 'auto' },
+        items: [{
+          label: 'All Payee',
+          icon: 'pi pi-fw pi-server',
+          routerLink: '/payee'
+        },
+        {
+          label: 'Add New',
+          icon: 'pi pi-fw pi-plus',
+          routerLink: '/payee/new/edit'
+        }]
+      },
+      {
+        label: 'Payments',
+        icon: 'pi pi-fw pi-credit-card',
+        style: { 'margin-left': 'auto' },
+        items: [{
+          label: 'All Payments',
+          icon: 'pi pi-fw pi-server',
+          routerLink: '/payments/All'
+        },
+        {
+          label: 'Add New',
+          icon: 'pi pi-fw pi-plus',
+          routerLink: '/payments/new/edit'
+        }]
       }
     ];
   }

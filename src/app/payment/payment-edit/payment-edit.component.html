@@ -1,0 +1,109 @@
+<!-- <app-spinner *ngIf="!currentPayment"></app-spinner> -->
+<div class="card" style="width: 90%">
+    <div class="card-header">
+        {{pageTitle}}
+    </div>
+    <div class="card-body" *ngIf="currentPayment">
+        <form novalidate >
+            <fieldset>
+                <legend>
+                    Payment Information
+                </legend>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="cardNameId">
+                        Name
+                    </label>
+                    <!-- <div class="col">
+                        <input type="text" class="form-control" id="cardNameId" placeholder="Name (required)"
+                            required minlength="3" name="cardName" [(ngModel)]=currentPayment.name>
+                    </div> -->
+                    <div class="col">
+                        <p-autoComplete placeholder="Name" [showClear]=true
+                            [required]=true [minLength]="0" [completeOnFocus]=true
+                            [(ngModel)]=currentPayment.name [suggestions]="filteredPayeeNameArray"
+                            (completeMethod)="filterPayee($event)" [dropdown]="false" name="payee">
+                            <ng-template let-item pTemplate="item">
+                                <div class="card-item">
+                                    <div>{{item}}</div>
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col col-form-label" for="billDate">
+                        Date
+                    </label>
+                    <div class="col">
+                        <input type="date" class="form-control" id="paymentDate" placeholder="payment Date(required)"
+                            required name="paymentDate" [(ngModel)]=currentPayment.date>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="storage">
+                        Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="Amount" placeholder="Amount (required)"
+                            required name="Amount" [(ngModel)]=currentPayment.amount>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col col-form-label" for="cardNameId">
+                       Payment Mode
+                    </label>
+                    <div class="col">
+                        <select class="form-control" name="ram" id="ram" [(ngModel)]=currentPayment.paymentMode >
+                            <option *ngFor="let md of mode " [value]=md>{{md}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col col-form-label" for="cardNameId">
+                        Receiver
+                    </label>
+                    <div class="col">
+                        <p-autoComplete placeholder="Receiver" [showClear]=true
+                            [required]=true [minLength]="0" [completeOnFocus]=true
+                            [(ngModel)]=currentPayment.receiver [suggestions]="filteredReceiverNameArray"
+                            (completeMethod)="filterReceiver($event)" [dropdown]="false" name="Receiver">
+                            <ng-template let-item pTemplate="item">
+                                <div class="card-item">
+                                    <div>{{item}}</div>
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                    </div>
+                </div>
+                
+            </fieldset>
+        </form>
+        <div class="row mb-2">
+            <div class="col">
+              <button class="btn btn-primary mr-3"
+                      style="width:80px"
+                      type="button"
+                      (click)="save()">
+                      <span *ngIf="loading"><i class="pi pi-spin pi-spinner mr-2" style="font-size: 1rem"></i></span>
+                Save
+              </button>
+              <button class="btn btn-outline-secondary mr-3"
+                      style="width:80px"
+                      type="button"
+                      title="Cancel your edits"
+                      [routerLink]="['/payments']">
+                Cancel
+              </button>
+              <button class="btn btn-outline-warning"
+                      style="width:80px"
+                      type="button"
+                      title="Reset"
+                      (click)="reset()">
+                Delete
+              </button>
+            </div>
+          </div>
+    </div>
+</div>

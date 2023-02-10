@@ -139,11 +139,11 @@ export class ProductServiceService {
         if (updatedCard.amountDue >= currentProduct.cardAmount) updatedCard.amountDue -= currentProduct.cardAmount;
         this.cardService.updateCard(updatedCard);
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
       }
     } catch (error: any) {
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Unable to delete Product ' + currentProduct.name + ' Error: ' + error.message });
       console.error('Unable to add Product ' + currentProduct.name + ' Error: ', error);
     }
   }

@@ -144,6 +144,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   onDateSelect(value: any) {
+    console.log(value);
+    console.log(this.formatDate(value));
+    
+    console.log(this.table);
+    
+    
     this.table.filter(this.formatDate(value), 'date', 'equals')
   }
 
@@ -257,13 +263,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
     let promiseArray: Promise<any>[] = [];
     this.selectedProduct.forEach((product: IProduct) => {
       let originalProduct = product;
-      if (product.status != status) {
+      // if (product.status != status) {
         product.status = status;
-        if (status == 'Distributor') product.buyerDate = date;
-        if (status == 'DeliveredHome') product.deliveryDate = date;
+        if (status == 'Distributor') product.buyerDate = this.formatDate(date);
+        if (status == 'DeliveredHome') product.deliveryDate = this.formatDate(date);
         let pro = this.productService.editProduct(product, originalProduct, false);
         promiseArray.push(pro);
-      }
+      // }
     });
     Promise.all(promiseArray).then(() => {
       sessionStorage.removeItem(this.productStorageString);

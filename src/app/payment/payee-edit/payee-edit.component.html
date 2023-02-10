@@ -1,60 +1,53 @@
-<app-spinner *ngIf="!currentCard"></app-spinner>
+<app-spinner *ngIf="!currentPayee"></app-spinner>
 <div class="card" style="width: 90%">
     <div class="card-header">
         {{pageTitle}}
     </div>
 
-    <div class="card-body" *ngIf="currentCard">
+    <div class="card-body" *ngIf="currentPayee">
         <form novalidate >
             <fieldset>
                 <legend>
-                    Card Information
+                    Payee Information
                 </legend>
                 <div class="form-group row">
                     <label class="col col-form-label" for="cardNameId">
-                        Card Name
+                        Payee Name
                     </label>
                     <div class="col">
                         <input type="text" class="form-control" id="cardNameId" placeholder="Name (required)"
-                            required minlength="3" name="cardName" [(ngModel)]=currentCard.cardName>
+                            required minlength="3" name="cardName" [(ngModel)]=currentPayee.name>
+                    </div>
+                </div>
+                
+                <div class="form-group row">
+                    <label class="col col-form-label" for="amountDue">
+                        Total Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="Amount" placeholder="Total Amount (required)"
+                            required minlength="3" name="Amount" [(ngModel)]=currentPayee.totalAmount>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col col-form-label" for="billDate">
-                        Bill Date
+                        Last Payment Date
                     </label>
                     <div class="col">
-                        <input type="number" class="form-control" id="billDate" placeholder="Bill Date(required)"
-                            required name="billDate" [(ngModel)]=currentCard.billDate>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="storage">
-                        Due Date
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="dueDate" placeholder="Due Date (required)"
-                            required minlength="3" name="dueDate" [(ngModel)]=currentCard.dueDate>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col col-form-label" for="amountDue">
-                        Amount Due
-                    </label>
-                    <div class="col">
-                        <input type="number" class="form-control" id="amountDue" placeholder="Amount Due (required)"
-                            required minlength="3" name="amountDue" [(ngModel)]=currentCard.amountDue>
+                        <input type="date" class="form-control" id="lastPaymentDate" placeholder="Last Payment Date (required)"
+                            required name="lastPaymentDate" [(ngModel)]=currentPayee.lastPaymentDate>
                     </div>
                 </div>
 
+
                 <div class="form-group row">
                     <label class="col col-form-label" for="totalAmount">
-                        Total Amount
+                        Pending Commission
                     </label>
                     <div class="col">
-                        <input type="number" class="form-control" id="totalAmount" placeholder="Total Amount"
-                            required minlength="3" name="totalAmount" [(ngModel)]=currentCard.totalAmount>
+                        <input type="number" class="form-control" id="Commission" placeholder="Pending Commission"
+                            required minlength="3" name="Commission" [(ngModel)]=currentPayee.pendingComm>
                     </div>
                 </div>
                 
@@ -65,7 +58,7 @@
               <button class="btn btn-primary mr-3"
                       style="width:80px"
                       type="button"
-                      (click)="saveCard()">
+                      (click)="savePayee()">
                       <span *ngIf="loading"><i class="pi pi-spin pi-spinner mr-2" style="font-size: 1rem"></i></span>
                 Save
               </button>
@@ -73,14 +66,14 @@
                       style="width:80px"
                       type="button"
                       title="Cancel your edits"
-                      [routerLink]="['/cards']">
+                      [routerLink]="['/payee']">
                 Cancel
               </button>
               <button class="btn btn-outline-warning"
                       style="width:80px"
                       type="button"
                       title="Delete this card"
-                      (click)="resetCard()">
+                      (click)="reset()">
                 Delete
               </button>
             </div>

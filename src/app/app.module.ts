@@ -47,6 +47,10 @@ import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
 import { ConfirmationService } from 'primeng/api';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import { PayeeListComponent } from './payment/payee-list/payee-list.component';
+import { PayeeEditComponent } from './payment/payee-edit/payee-edit.component';
+import { PaymentEditComponent } from './payment/payment-edit/payment-edit.component';
+import { PaymentListComponent } from './payment/payment-list/payment-list.component';
 
 
 
@@ -64,7 +68,11 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
     CardTxnsComponent,
     TxnListComponent,
     LoginComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    PayeeListComponent,
+    PayeeEditComponent,
+    PaymentEditComponent,
+    PaymentListComponent
   ],
   imports: [
     BrowserModule,

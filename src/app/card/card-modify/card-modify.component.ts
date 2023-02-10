@@ -20,6 +20,7 @@ export class CardModifyComponent implements OnInit {
   pageTitle = 'Edit Card';
   currentCard!: Icard;
   originalCard!: Icard;
+  loading = false;
 
   ngOnInit(): void {
     this.initialise();
@@ -36,6 +37,7 @@ export class CardModifyComponent implements OnInit {
   }
 
   async saveCard() {
+    this.loading = true;
     if (this.currentCard._id == 'new') {
       this.currentCard._id = new ObjectId().toString();
       await this.cardService.addCard(this.currentCard);
