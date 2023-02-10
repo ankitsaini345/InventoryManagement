@@ -51,8 +51,7 @@
                 <th>DPrice</th>
                 <th>Profit</th>
                 <th>deliveryDate</th>
-                <th>deliveryLoc</th>
-                <th>Buyer Date</th>
+                <th>BuyerDate</th>
                 <th>BuyerName</th>
             </tr>
 
@@ -99,7 +98,7 @@
                     placeholder="Search" class="p-column-filter">
                 </th>
                 <th>
-                    <p-calendar appendTo="body" (onSelect)="onDateSelect($event)" (onClearClick)="dt.filter('', 'date', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true" dateFormat="yyyy-mm-dd"></p-calendar>
+                    <p-calendar appendTo="body" (onSelect)="dt.filter(formatDate($event), 'date', 'equals')" (onClearClick)="dt.filter('', 'date', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"></p-calendar>
                 </th>
                 <th>
                     <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'cardHolder', 'contains')"
@@ -115,9 +114,8 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th></th>
                 <th>
-                    <p-calendar appendTo="body" (onSelect)="onDateSelect($event)" (onClearClick)="dt.filter('', 'buyerDate', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true" dateFormat="yyyy-mm-dd"></p-calendar>
+                    <p-calendar appendTo="body" (onSelect)="dt.filter(formatDate($event), 'buyerDate', 'equals')" (onClearClick)="dt.filter('', 'buyerDate', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"></p-calendar>
                 </th>
                 <th></th>
             </tr>
@@ -241,17 +239,6 @@
                 <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">
-                            <input pInputText type="text" [(ngModel)]="product.deliveryLoc">
-                        </ng-template>
-                        <ng-template pTemplate="output">
-                            {{product.deliveryLoc}}
-                        </ng-template>
-                    </p-cellEditor>
-                </td>
-
-                <td>
-                    <p-cellEditor>
-                        <ng-template pTemplate="input">
                             <input pInputText type="date" [(ngModel)]="product.buyerDate">
                         </ng-template>
                         <ng-template pTemplate="output">
@@ -318,7 +305,7 @@
         </div>
         <div class="field col-12 md:col-4">
             <label for="icon">Date</label>
-            <p-calendar appendTo="body" [(ngModel)]="deliveryDialog.date" [showIcon]="true" dateFormat="mm-dd-yy"
+            <p-calendar appendTo="body" [(ngModel)]="deliveryDialog.date" [showIcon]="true"
                 inputId="icon"></p-calendar>
         </div>
     </div>

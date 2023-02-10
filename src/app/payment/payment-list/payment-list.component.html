@@ -1,0 +1,192 @@
+<div class="mr-2 ml-2">
+    <p-table #dt [value]="payments" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
+        [loading]="!payments.length" scrollHeight="80vh" styleClass="p-datatable-sm" styleClass="p-datatable-gridlines"
+        (selectionChange)="schange($event)" [(selection)]="selectedPayment" [filterDelay]="0"
+        [globalFilterFields]="['payments.name']">
+        <ng-template pTemplate="caption">
+            <div class="table-header">
+                Payment List
+                <div>
+                    <button type="button" pButton pRipple icon="pi pi-check-square"
+                        (click)="deliveryDialog.display=true" class="p-button-help mr-2" pTooltip="Change Status"
+                        tooltipPosition="top"></button>
+
+                    <button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()"
+                        class="p-button-success mr-2" pTooltip="Export Data" tooltipPosition="top"></button>
+
+                    <button type="button" pButton pRipple icon="pi pi-telegram" (click)="exportTelegramData()"
+                        class="mr-2" pTooltip="Add to telegram" tooltipPosition="top"></button>
+
+                    <!-- <button type="button" pButton pRipple icon="pi pi-image" (click)="exportImage()" class="mr-2" pTooltip="Export Image" tooltipPosition="top"></button> -->
+
+                    <span class="p-input-icon-left mr-1">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" [(ngModel)]=filterBy placeholder="Global Search" />
+                        <!-- <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Global Search" /> -->
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pFrozenColumn>SN</th>
+                <th pFrozenColumn style="width: 3rem">
+                </th>
+                <th pSortableColumn="name" pFrozenColumn>Payment <p-sortIcon field="name"></p-sortIcon></th>
+                <th pFrozenColumn>Action</th>
+                <th>Amount</th>
+                <th>Payment Mode</th>
+                <th pSortableColumn="date" style="min-width:6rem">Date<p-sortIcon field="date"></p-sortIcon></th>
+                <th>receiver</th>
+            </tr>
+
+            <tr>
+                <th pFrozenColumn></th>
+                <th pFrozenColumn>
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th pFrozenColumn>
+                    <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'name', 'contains')"
+                        placeholder="Search" class="p-column-filter">
+                </th>
+                <th pFrozenColumn></th>
+                <th></th>
+                <th>
+                    <p-dropdown appendTo="body" [options]="mode"
+                        (onChange)="dt.filter($event.value, 'status', 'equals')" styleClass="p-column-filter"
+                        placeholder="mode" [showClear]="true">
+                        <ng-template let-option pTemplate="">
+                            <span>&#123;&#123;option&#125;&#125;</span>
+                        </ng-template>
+                    </p-dropdown>
+                </th>
+                <th>
+                    <p-calendar appendTo="body" (onSelect)="onDateSelect($event)" (onClearClick)="dt.filter('', 'date', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true" dateFormat="yyyy-mm-dd"></p-calendar>
+                </th>
+                <th>
+                    <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'receiver', 'contains')"
+                    placeholder="Receiver" class="p-column-filter">
+                </th>
+            </tr>
+
+        </ng-template>
+        <ng-template pTemplate="body" let-payment let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="payment">
+                <td pFrozenColumn>{{ri+1}}</td>
+                <td pFrozenColumn>
+                    <p-tableCheckbox [value]="payment"></p-tableCheckbox>
+                </td>
+                <td pFrozenColumn>
+                    {{payment.name}}
+                </td>
+                <td pFrozenColumn style="min-width: 100px;">
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            (click)="onRowEditInit(payment)" class="p-button-rounded p-button-text"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="onRowEditSave(payment)"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            (click)="onRowEditCancel(payment, ri)"
+                            class="p-button-rounded p-button-text p-button-danger"></button>
+                        <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-trash"
+                            (click)="deletePayment($event, payment)"
+                            class="p-button-rounded p-button-text p-button-danger"></button>
+                        <button [routerLink]="['/payments', payment._id, 'edit']" *ngIf="!editing" pButton pRipple
+                            type="button" icon="pi pi-external-link" class="p-button-rounded p-button-text"></button>
+                    </div>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="payment.amount">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{payment.amount}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <p-dropdown [options]="mode" [(ngModel)]="payment.paymentMode"
+                                [style]="{'width':'100%'}"></p-dropdown>
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{payment.paymentMode}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+                <td>
+                    {{payment.date}}
+                </td>
+
+                <td>
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <input pInputText type="text" [(ngModel)]="payment.receiver">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                            {{payment.receiver}}
+                        </ng-template>
+                    </p-cellEditor>
+                </td>
+            </tr>
+        </ng-template>
+        <!-- <ng-template pTemplate="footer">
+            <tr>
+                <td pFrozenColumn></td>
+                <td pFrozenColumn style="width: 4rem">
+                </td>
+                <td>Total</td>
+                <td pFrozenColumn></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{aggregate.listPrice}}</td>
+                <td>{{aggregate.coupon}}</td>
+                <td>{{aggregate.giftBalence}}</td>
+                <td>{{aggregate.cardDiscount}}</td>
+                <td>{{aggregate.cardAmount}}</td>
+                <td>{{aggregate.cashback}}</td>
+                <td>{{aggregate.costToMe}}</td>
+                <td>{{aggregate.buyerPrice}}</td>
+                <td>{{aggregate.profit}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </ng-template> -->
+
+    </p-table>
+    <!-- </div> -->
+    <!-- </div> -->
+</div>
+
+<p-dialog (onHide)="deliveryStatus(false)" header="Delivey Status Change" position="top"
+    [(visible)]="deliveryDialog.display" [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [draggable]="false"
+    [resizable]="false">
+    <div class="p-fluid grid formgrid">
+        <h5>Total Selected Items: {{selectedPayment.length}}</h5>
+        <div class="field col-12 md:col-4">
+            <label for="dtype">Delivery Type</label>
+            <p-dropdown appendTo="body" [options]="['DeliveredHome', 'Distributor']" [(ngModel)]="deliveryDialog.type"
+                placeholder="Select delivery type" [showClear]="true"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-4">
+            <label for="icon">Date</label>
+            <p-calendar appendTo="body" [(ngModel)]="deliveryDialog.date" [showIcon]="true" dateFormat="mm-dd-yy"
+                inputId="icon"></p-calendar>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button (click)="deliveryStatus(false)" label="Cancel" styleClass="p-button-outlined"></p-button>
+        <p-button [disabled]="!selectedPayment.length || !deliveryDialog.type || !deliveryDialog.date"
+            (click)="deliveryStatus(true)" label="Deliver" styleClass="p-button-outlined"></p-button>
+    </ng-template>
+</p-dialog>
