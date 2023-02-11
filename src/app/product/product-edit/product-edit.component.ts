@@ -172,7 +172,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       this.subArray.push(sub3);
 
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
     }
   }
 
@@ -200,7 +201,10 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         if (this.currentProduct != this.originalProduct) {
           this.productService.editProduct(this.currentProduct, this.originalProduct);
         }
-        else this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Change in Product to save' });
+        else {
+          console.error('No Change in Product to save');
+          this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Change in Product to save' });
+        }
       }
       if (this.addMoreProduct) {
         this.resetProduct();
@@ -210,7 +214,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         }, 300);
       } else this.router.navigate(['/products']);
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
     }
   }
 
@@ -228,7 +232,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         }, 300);
       } else this.router.navigate(['/products']);
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
     }
   }
 

@@ -41,7 +41,7 @@ export class PayeeService {
 
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in initialising Payee: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in initialising Payee: ' + error.message });
     }
   }
 
@@ -69,7 +69,7 @@ export class PayeeService {
         sessionStorage.removeItem(this.StorageString);
         this.initialiseData();
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Acknowledge failed: add Payee ' + payee.name });
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Acknowledge failed: add Payee ' + payee.name });
         console.error('Acknowledge failed: add Payee ' + payee.name + ' Error: ', res);
       }
     } catch (error: any) {
@@ -88,11 +88,11 @@ export class PayeeService {
           this.initialiseData();
         }
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Payee ' + payee.name });
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Payee ' + payee.name });
         console.error('Unable to add Payee ' + payee.name + ' Error: ', res);
       }
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Payee ' + payee.name + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Payee ' + payee.name + ' Error: ' + error.message });
       console.error('Unable to add Payee ' + payee.name + ' Error: ', error);
     }
 
@@ -106,7 +106,7 @@ export class PayeeService {
         sessionStorage.removeItem(this.StorageString);
         this.initialiseData();
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete Payee ' + payee.name });
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to delete Payee ' + payee.name });
         console.error('Unable to add Payee ' + payee.name + ' Error: ', res);
       }
     } catch (error: any) {

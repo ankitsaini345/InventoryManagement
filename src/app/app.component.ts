@@ -151,7 +151,8 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       })
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in initialising user: ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in initialising user: ' + error.message });
     }
   }
 

@@ -54,7 +54,8 @@ export class PaymentListComponent implements OnInit, OnDestroy {
       });
       this.subArray.push(sub);
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in getting Products: ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
     }
   }
 
@@ -122,7 +123,8 @@ export class PaymentListComponent implements OnInit, OnDestroy {
         this.paymentService.updatePayment(payment)
       } else throw 'orgPayment missing or id is different'
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in updaing ' + payment.name + ' ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in updaing ' + payment.name + ' ' + error.message });
     }
   }
 
@@ -162,11 +164,11 @@ export class PaymentListComponent implements OnInit, OnDestroy {
 
   async exportText() {
     
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'function not defined' });
+    this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'function not defined' });
     
     // // console.log(this.selectedProduct);
     // if (!this.selectedPayment.length) {
-    //   this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Payment Selected' });
+    //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
     // } else {
     //   let exportData: any = {};
     //   let totalAmount = 0;
@@ -202,18 +204,18 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     //   //   text: cdata
     //   // })
     //   // if (shareMessage.error) {
-    //   //   this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+    //   //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
     //   // }
     // }
   }
 
   async exportTelegramData() {
 
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'function not defined' });
+    this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'function not defined' });
 
 
     // if (!this.selectedPayment.length) {
-    //   this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Payment Selected' });
+    //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
     // } else {
     //   let exportString = '';
     //   this.selectedPayment.forEach((item) => {
@@ -238,14 +240,15 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     //   }
     //   const shareMessage = await this.shareService.share(shareData);
     //   if (shareMessage.error) {
-    //     this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+    //     this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
     //   }
     // }
   }
 
   deliveryStatus(flag: boolean) {
     if (!this.selectedPayment.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Payment Selected' });
+      console.error('No Payment Selected');
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
     } else {
       if (flag) {
         this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
@@ -260,7 +263,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
 
   async bulkStatusChange(status: string, date: string) {
 
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'function not defined' });
+    this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'function not defined' });
 
 
     // let promiseArray: Promise<any>[] = [];

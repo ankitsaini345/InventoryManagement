@@ -72,7 +72,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
       });
       this.subArray.push(sub);
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in getting Products: ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
     }
   }
 
@@ -124,7 +125,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.productService.editProduct(product, this.orgProduct!)
       } else throw 'orgProduct missing or id is different'
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in updaing ' + product.name + ' ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in updaing ' + product.name + ' ' + error.message });
     }
   }
 
@@ -171,7 +173,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   async exportText() {
     // console.log(this.selectedProduct);
     if (!this.selectedProduct.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+      console.error('No Product Selected');
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
       let exportData: any = {};
       let totalAmount = 0;
@@ -207,14 +210,15 @@ export class ProductListComponent implements OnInit, OnDestroy {
       //   text: cdata
       // })
       // if (shareMessage.error) {
-      //   this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+      //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
       // }
     }
   }
 
   async exportTelegramData() {
     if (!this.selectedProduct.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+      console.error('No Product Selected');
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
       let lastDate = this.selectedProduct[0].date;
       let exportString = '';
@@ -244,14 +248,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
       }
       const shareMessage = await this.shareService.share(shareData);
       if (shareMessage.error) {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+        console.error(shareMessage.message);
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
       }
     }
   }
 
   deliveryStatus(flag: boolean) {
     if (!this.selectedProduct.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+      console.error('No Product Selected');
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
       if (flag) {
         this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);

@@ -79,7 +79,7 @@ export class PaymentService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add payment for: ' + payment.name + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add payment for: ' + payment.name + ' Error: ' + error.message });
     }
   }
 
@@ -94,12 +94,13 @@ export class PaymentService {
             this.initialisePaymentData();
           }
         } else {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: payment.name + ': Not matched with any existing payment user' });
+          console.error(payment.name + ': Not matched with any existing payment user');
+          this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: payment.name + ': Not matched with any existing payment user' });
         }
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to update payment: ' + payment.name + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to update payment: ' + payment.name + ' Error: ' + error.message });
     }
   }
 
@@ -116,7 +117,7 @@ export class PaymentService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete payment for: ' + payment.name + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to delete payment for: ' + payment.name + ' Error: ' + error.message });
     }
   }
 
