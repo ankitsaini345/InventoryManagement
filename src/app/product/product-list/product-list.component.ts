@@ -216,9 +216,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
     if (!this.selectedProduct.length) {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
     } else {
+      let lastDate = this.selectedProduct[0].date;
       let exportString = '';
+      exportString += lastDate + '\n';
       this.selectedProduct.forEach((item) => {
-
+        if(item.date != lastDate) {
+          lastDate = item.date;
+          exportString += lastDate + '\n';
+        }
         exportString += (item.name + ' ' + item.ram + 'x' + item.storage + ' ' + item.AppName + '/' + item.AppAccount + ' ' + item.listPrice + ' ' + item.costToMe + ' ');
         if (item.coupon) exportString += (item.coupon + ' ');
         if (item.cardDiscount) exportString += (item.cardDiscount + ' ');
@@ -228,7 +233,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
         if (item.cashback) exportString += (item.cashback + ' ');
         if (item.profit) exportString += (item.profit + ' ');
         if (item.buyerPrice) exportString += (item.buyerPrice + ' ');
-        exportString += '\n';
+        exportString += '\n\n';
       });
 
       this.clipboard.copy(exportString);
