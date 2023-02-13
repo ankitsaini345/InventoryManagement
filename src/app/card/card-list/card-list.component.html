@@ -50,8 +50,8 @@
                         <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'edit']">
                                 Edit
                             </button></td>
-                            <td><button class="btn btn-outline-success btn-sm" (click)="markAsPaid($event,card)">
-                                Paid
+                            <td><button class="btn btn-outline-success btn-sm" (click)="selectedCardOverlay.card = card">
+                                Pay
                             </button></td>
                             <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/transactions/', card.cardName]">
                                 See Txns
@@ -79,3 +79,25 @@
 
     </div>
 </div>
+
+<p-dialog (onHide)="markAsPaid(false)" header="Card Bill Payment" position="top"
+    [(visible)]="selectedCardOverlay.card.cardName" [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [draggable]="false"
+    [resizable]="false">
+    <div class="p-fluid grid formgrid">
+        <h5>Selected Card: {{selectedCardOverlay.card.cardName}}</h5>
+        <div class="field col-12 md:col-4">
+            <label for="dtype">Payment Type</label>
+            <p-dropdown appendTo="body" [options]="['Remaining Amount', 'Paid Amount']" [(ngModel)]="selectedCardOverlay.type"
+                placeholder="Select payment type" [showClear]="true"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-4">
+            <label for="icon">Amount</label>
+            <input type="text" pInputText [(ngModel)]="selectedCardOverlay.amount">
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button (click)="markAsPaid(false)" label="Cancel" styleClass="p-button-outlined"></p-button>
+        <p-button [disabled]="!selectedCardOverlay.card || !selectedCardOverlay.amount || !selectedCardOverlay.type"
+            (click)="markAsPaid(true)" label="Paid" styleClass="p-button-outlined"></p-button>
+    </ng-template>
+</p-dialog>

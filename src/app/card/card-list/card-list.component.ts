@@ -14,17 +14,24 @@ export class CardListComponent implements OnInit, OnDestroy {
   cards: Icard[] = []
   sub!: Subscription;
   aggregate: any = {};
-    
-    constructor( private cardService: CardService,
-      private confirmationService: ConfirmationService,
-      private messageService: MessageService) { }
+  selectedCardOverlay: any = {
+    card: {
+      cardName: null
+    },
+    amount: 0,
+    type: ''
+  }
+
+  constructor(private cardService: CardService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.initialise();
   }
 
   async initialise() {
-    this.sub = this.cardService.getCards().subscribe((cards)=> {
+    this.sub = this.cardService.getCards().subscribe((cards) => {
       this.cards = cards;
     })
     this.calcTotal();
@@ -62,32 +69,30 @@ export class CardListComponent implements OnInit, OnDestroy {
     });
   }
 
-  async markAsPaid(event: Event, card: Icard) {
+  async markAsPaid(status: boolean) {
 
-    this.confirmationService.confirm({
-      target: event.target!,
-      message: 'Are you sure to mark bill as paid for: ' + card.cardName,
-      icon: 'pi pi-exclamation-triangle',
-      accept: async () => {
+    if (status) {
+      if (this.selectedCardOverlay.type == 'Remaining Amount')
+        this.selectedCardOverlay.card.amountDue = +this.selectedCardOverlay.amount;
+      else this.selectedCardOverlay.card.amountDue -= +this.selectedCardOverlay.amount;
         this.messageService.add({
           severity: 'info',
           summary: 'Info',
-          detail: card.cardName + ' marked for Updation.',
+          detail: this.selectedCardOverlay.card.cardName + ' marked for Updation.',
         });
-        card.amountDue = 0;
-        await this.cardService.updateCard(card);
+      this.cardService.updateCard(this.selectedCardOverlay.card);
+    }
+
+    this.selectedCardOverlay = {
+      card: {
+        cardName: null
       },
-      reject: () => {
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Rejected',
-          detail: 'Card Updation Cancelled.',
-        });
-      },
-    });
+      amount: 0,
+      type: ''
+    }
   }
 
   ngOnDestroy(): void {
-   this.sub.unsubscribe();
+    this.sub.unsubscribe();
   }
 }
