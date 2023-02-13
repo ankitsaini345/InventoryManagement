@@ -33,7 +33,7 @@ export class TxnListComponent implements OnInit, OnDestroy {
         });
         this.subArray.push(sub2);
       } else {
-        this.txns = await this.txnService.getTxnByCard(this.cardName);
+        this.txns = this.txnService.getTxnByCard(this.cardName);
       }
     })
     this.subArray.push(sub1);
