@@ -16,20 +16,28 @@ export class TxnListComponent implements OnInit, OnDestroy {
   txns!: Itxn[];
   subArray: Subscription[] = [];
   aggregate: any = {};
+  cols: any[] = [];
+
   constructor(private route: ActivatedRoute,
     private txnService: TxnService) { }
 
 
   ngOnInit(): void {
     this.initialise();
+    this.initialiseCols();
   }
 
   async initialise() {
     let sub1: Subscription = this.route.params.subscribe(async (param) => {
       this.cardName = param['cname'];
       if (this.cardName == 'All') {
-        let sub2: Subscription = this.txnService.getTxns().subscribe((txns)=> {
+        let sub2: Subscription = this.txnService.getTxns().subscribe((txns) => {
           this.txns = txns;
+          console.log(txns);
+          
+          this.cols = Object.keys(this.txns[0]);
+          console.log(this.cols);
+          
         });
         this.subArray.push(sub2);
       } else {
@@ -40,6 +48,15 @@ export class TxnListComponent implements OnInit, OnDestroy {
     this.calcTotal();
   }
 
+  initialiseCols() {
+    this.cols = [
+      { field: 'OrderName', header: 'Product Name' },
+      { field: 'txnDate', header: 'Date' },
+      { field: 'cardName', header: 'Card' },
+      { field: 'amount', header: 'Amount' }
+  ];
+  }
+
   calcTotal() {
     this.aggregate = {};
     this.txns.forEach((item) => {
@@ -48,8 +65,8 @@ export class TxnListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-   this.subArray.forEach((sub: Subscription) => {
-    sub.unsubscribe();
-   })
+    this.subArray.forEach((sub: Subscription) => {
+      sub.unsubscribe();
+    })
   }
 }
