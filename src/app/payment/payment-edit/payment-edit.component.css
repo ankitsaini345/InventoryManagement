@@ -1,3 +1,11 @@
 .card-header {
     font-weight: bold;
 }
+:host ::ng-deep .p-component, .p-component * {
+    width: -webkit-fill-available;
+}
+
+:host ::ng-deep .p-inputtext {
+    padding: 0.5rem 0.75rem;
+    padding-right: 0.5rem !important;
+}

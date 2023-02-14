@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ObjectId } from 'bson';
+import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { Icard } from 'src/app/card/card';
 import { CardService } from 'src/app/card/card.service';
+import { IPayee } from '../payee';
 import { PayeeService } from '../payee.service';
 import { IPayment } from '../payment';
 import { PaymentService } from '../payment.service';
@@ -15,12 +17,13 @@ import { PaymentService } from '../payment.service';
 })
 export class PaymentEditComponent implements OnInit {
   subArray: Subscription[] = []
-  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "Others"];
+  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "LIC", "Others"];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
     private payeeService: PayeeService,
     private cardService: CardService,
+    private messageService: MessageService,
     private paymentService: PaymentService) { }
 
   pageTitle = 'Edit Payment';
@@ -34,6 +37,19 @@ export class PaymentEditComponent implements OnInit {
   filteredCardArray: string[] = [];
   loading = false;
   addPaymentToCard = false;
+  payee!: IPayee;
+
+  get name() {
+    return this.currentPayment.name;
+  }
+
+  set name(val: string) {
+    if (val) {
+      this.currentPayment.name = val;
+      this.payee = this.payeeService.getPayeeByName(val);
+      this.currentPayment.prevAmount = this.payee.totalAmount;
+    }
+  }
 
   ngOnInit(): void {
     this.initialise();
@@ -66,6 +82,11 @@ export class PaymentEditComponent implements OnInit {
   }
 
   async save() {
+
+    if (!this.payee) {
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Payee not selected.' });
+      return;
+    }
     this.loading = true;
     if (this.currentPayment._id == 'new') {
       this.currentPayment._id = new ObjectId().toString();
@@ -73,11 +94,18 @@ export class PaymentEditComponent implements OnInit {
     } else {
       this.paymentService.updatePayment(this.currentPayment);
     }
-    if(this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
+    if (this.currentPayment.type == 'in') {
+      this.payee.totalAmount -= this.currentPayment.amount;
+    } else this.payee.totalAmount += this.currentPayment.amount;
+
+    this.payeeService.editPayee(this.payee);
+
+    if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
       let card = this.cardService.getCard(this.currentPayment.receiver);
       card.amountDue -= this.currentPayment.amount;
       this.cardService.updateCard(card);
     }
+    this.loading = false;
     this.router.navigate(['/payments/All'])
   }
 
@@ -87,7 +115,7 @@ export class PaymentEditComponent implements OnInit {
 
   filterPayee(event: any) {
     this.filteredPayeeNameArray = [];
-    let query = event.query;    
+    let query = event.query;
     if (query) {
       for (let i = 0; i < this.payeeNameArray.length; i++) {
         let product = this.payeeNameArray[i];
@@ -103,7 +131,7 @@ export class PaymentEditComponent implements OnInit {
   filterReceiver(event: any) {
     this.filteredReceiverNameArray = [];
     let query = event.query;
-    if(this.currentPayment.paymentMode == 'Card'){
+    if (this.currentPayment.paymentMode == 'Card') {
       if (query) {
         for (let i = 0; i < this.cardNameArray.length; i++) {
           let name = this.cardNameArray[i];

@@ -129,7 +129,10 @@ export class PaymentService {
       date: new Date().toISOString().slice(0, 10),
       percent: 0,
       paymentMode: '',
-      receiver: ''
+      receiver: '',
+      prevAmount: 0,
+      remark: '',
+      type: 'in'
     }
   }
 }

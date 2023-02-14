@@ -61,6 +61,10 @@ export class PayeeService {
     }
   }
 
+  getPayeeByName(name: string): IPayee {
+      return this.payeeData$.getValue().find(p => p.name == name)!;
+  }
+
   async addPayee(payee: IPayee) {
     try {
       const res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, payee));

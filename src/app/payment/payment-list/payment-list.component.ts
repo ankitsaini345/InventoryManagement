@@ -49,7 +49,6 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     try {
       let sub: Subscription = this.paymentService.getPayments().subscribe((payments) => {
         this.payments = payments;
-        // this.calcTotal();
       });
       this.subArray.push(sub);
     } catch (error: any) {
@@ -71,29 +70,10 @@ export class PaymentListComponent implements OnInit, OnDestroy {
       }
     })
     this.subArray.push(sub1);
-    // this.calcTotal();
   }
 
-  // calcTotal() {
-  //   this.aggregate = {};
-  //   this.payments.forEach((item) => {
-  //     this.aggregate.listPrice ? this.aggregate.listPrice += item.listPrice : this.aggregate.listPrice = item.listPrice;
-  //     this.aggregate.cardAmount ? this.aggregate.cardAmount += item.cardAmount : this.aggregate.cardAmount = item.cardAmount;
-  //     this.aggregate.buyerPrice ? this.aggregate.buyerPrice += item.buyerPrice : this.aggregate.buyerPrice = item.buyerPrice;
-  //     this.aggregate.coupon ? this.aggregate.coupon += item.coupon : this.aggregate.coupon = item.coupon;
-  //     this.aggregate.giftBalence ? this.aggregate.giftBalence += item.giftBalence : this.aggregate.giftBalence = item.giftBalence;
-  //     this.aggregate.cardDiscount ? this.aggregate.cardDiscount += item.cardDiscount : this.aggregate.cardDiscount = item.cardDiscount;
-  //     this.aggregate.profit ? this.aggregate.profit += item.profit : this.aggregate.profit = item.profit;
-  //     this.aggregate.cashback ? this.aggregate.cashback += item.cashback : this.aggregate.cashback = item.cashback;
-  //     this.aggregate.delivery ? this.aggregate.delivery += item.delivery : this.aggregate.delivery = item.delivery;
-  //     this.aggregate.costToMe ? this.aggregate.costToMe += item.costToMe : this.aggregate.costToMe = item.costToMe;
-  //   })
-  //   this.aggregate.buyerPrice = Math.round(this.aggregate.buyerPrice);
-  //   this.aggregate.costToMe = Math.round(this.aggregate.costToMe);
-  // }
 
   deletePayment(event: Event, payment: IPayment) {
-
     this.confirmationService.confirm({
       target: event.target!,
       message: 'Are you sure that you delete payment: ' + payment.name,
@@ -109,7 +89,6 @@ export class PaymentListComponent implements OnInit, OnDestroy {
         });
       },
     });
-
   }
 
   onRowEditInit(payment: IPayment) {
@@ -157,7 +136,6 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     if (day < 10) {
       day = '0' + day;
     }
-
     return date.getFullYear() + '-' + month + '-' + day;
   }
 
