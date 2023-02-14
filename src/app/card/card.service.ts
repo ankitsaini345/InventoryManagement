@@ -17,6 +17,7 @@ export class CardService {
   private url = environment.baseUrl + 'api/cards'
 
   private cardData$ = new BehaviorSubject<Icard[]>([]);
+  private cardNameArray$ = new BehaviorSubject<string[]>([]);
 
   constructor(private http: HttpClient,
     private messageService: MessageService) {
@@ -25,6 +26,10 @@ export class CardService {
 
   getCards(): Observable<Icard[]> {
     return this.cardData$.asObservable();
+  }
+
+  getCardNames(): Observable<string[]> {
+    return this.cardNameArray$.asObservable();
   }
 
   async initialiseCardData() {
@@ -39,6 +44,11 @@ export class CardService {
       this.cardData$.next(cardsArray);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Cards Data Initialised' });
     }
+    let cardNames: string[] = [];
+    cardsArray.forEach((card: Icard)=> {
+      cardNames.push(card.cardName);
+    })
+    this.cardNameArray$.next(cardNames);
   }
 
   getCard(cardName: string): Icard {

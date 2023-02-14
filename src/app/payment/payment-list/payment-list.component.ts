@@ -17,7 +17,6 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
-    this.orgPayment = null;
   }
 
   private PaymentStorageString = 'inventoryPayments';
@@ -26,7 +25,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   filterBy = '';
   payeeName!: string;
   aggregate: any = {};
-  orgPayment: IPayment | null;
+  orgPayment: IPayment | null = null;
   subArray: Subscription[] = [];
   @ViewChild('dt') table!: Table;
 
@@ -55,7 +54,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
       this.subArray.push(sub);
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
     }
   }
 
@@ -63,12 +62,12 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     let sub1: Subscription = this.route.params.subscribe(async (param) => {
       this.payeeName = param['name'];
       if (this.payeeName == 'All') {
-        let sub2: Subscription = this.paymentService.getPayments().subscribe((payments)=> {
+        let sub2: Subscription = this.paymentService.getPayments().subscribe((payments) => {
           this.payments = payments;
         });
         this.subArray.push(sub2);
       } else {
-        this.payments = await this.paymentService.getPaymentByName(this.payeeName);
+        this.payments = this.paymentService.getPaymentByName(this.payeeName);
       }
     })
     this.subArray.push(sub1);
@@ -124,7 +123,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
       } else throw 'orgPayment missing or id is different'
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in updaing ' + payment.name + ' ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in updaing ' + payment.name + ' ' + error.message });
     }
   }
 
@@ -152,20 +151,20 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     let day = date.getDate();
 
     if (month < 10) {
-        month = '0' + month;
+      month = '0' + month;
     }
 
     if (day < 10) {
-        day = '0' + day;
+      day = '0' + day;
     }
 
     return date.getFullYear() + '-' + month + '-' + day;
-}
+  }
 
   async exportText() {
-    
-    this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'function not defined' });
-    
+
+    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
+
     // // console.log(this.selectedProduct);
     // if (!this.selectedPayment.length) {
     //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
@@ -211,7 +210,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
 
   async exportTelegramData() {
 
-    this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'function not defined' });
+    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
 
 
     // if (!this.selectedPayment.length) {
@@ -248,7 +247,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   deliveryStatus(flag: boolean) {
     if (!this.selectedPayment.length) {
       console.error('No Payment Selected');
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Payment Selected' });
     } else {
       if (flag) {
         this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
@@ -263,7 +262,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
 
   async bulkStatusChange(status: string, date: string) {
 
-    this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'function not defined' });
+    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
 
 
     // let promiseArray: Promise<any>[] = [];

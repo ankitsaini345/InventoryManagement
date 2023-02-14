@@ -158,10 +158,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       });
       this.subArray.push(sub1);
 
-      let sub2: Subscription = this.cardService.getCards().subscribe((cards: Icard[]) => {
-        cards.forEach((card) => {
-          this.cardNameArray.push(card.cardName)
-        })
+      let sub2: Subscription = this.cardService.getCardNames().subscribe((cardName: string[]) => {
+        this.cardNameArray = cardName;
         this.filteredCardArray = this.cardNameArray;
       });
       this.subArray.push(sub2);

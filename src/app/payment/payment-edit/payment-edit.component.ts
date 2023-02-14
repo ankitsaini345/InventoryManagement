@@ -27,9 +27,9 @@ export class PaymentEditComponent implements OnInit {
   currentPayment!: IPayment;
   originalPayment!: IPayment;
   payeeNameArray!: string[];
-  filteredPayeeNameArray!: string[];
+  filteredPayeeNameArray: string[] = [];
   receiverNameArray!: string[];
-  filteredReceiverNameArray!: string[];
+  filteredReceiverNameArray: string[] = [];
   cardNameArray: string[] = [];
   filteredCardArray: string[] = [];
   loading = false;
@@ -57,14 +57,11 @@ export class PaymentEditComponent implements OnInit {
     });
     this.subArray.push(sub3);
 
-    let sub4: Subscription = this.cardService.getCards().subscribe((cards: Icard[]) => {
-      cards.forEach((card) => {
-        this.cardNameArray.push(card.cardName)
-      })
-      this.filteredCardArray = this.cardNameArray;
+
+    let sub4: Subscription = this.cardService.getCardNames().subscribe((cardName: string[]) => {
+      this.cardNameArray = cardName;
     });
     this.subArray.push(sub4);
-
   }
 
   async save() {
@@ -100,15 +97,24 @@ export class PaymentEditComponent implements OnInit {
   filterReceiver(event: any) {
     this.filteredReceiverNameArray = [];
     let query = event.query;
-    if (query) {
-      for (let i = 0; i < this.receiverNameArray.length; i++) {
-        let product = this.receiverNameArray[i];
-        if (product.toLowerCase().indexOf(query.toLowerCase()) > -1) {
-          this.filteredReceiverNameArray.push(product);
+    if(this.currentPayment.paymentMode == 'Card'){
+      if (query) {
+        for (let i = 0; i < this.cardNameArray.length; i++) {
+          let name = this.cardNameArray[i];
+          if (name.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+            this.filteredReceiverNameArray.push(name);
+          }
         }
-      }
+      } else this.filteredReceiverNameArray = this.cardNameArray.slice();
     } else {
-      this.filteredReceiverNameArray = this.receiverNameArray.slice();
+      if (query) {
+        for (let i = 0; i < this.receiverNameArray.length; i++) {
+          let name = this.receiverNameArray[i];
+          if (name.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+            this.filteredReceiverNameArray.push(name);
+          }
+        }
+      } else this.filteredReceiverNameArray = this.receiverNameArray.slice();
     }
   }
 
