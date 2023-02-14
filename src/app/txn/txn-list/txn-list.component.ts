@@ -17,6 +17,7 @@ export class TxnListComponent implements OnInit, OnDestroy {
   subArray: Subscription[] = [];
   aggregate: any = {};
   cols: any[] = [];
+  filteredValue: Itxn[] = [];
 
   constructor(private route: ActivatedRoute,
     private txnService: TxnService) { }
@@ -27,17 +28,21 @@ export class TxnListComponent implements OnInit, OnDestroy {
     this.initialiseCols();
   }
 
+  onFilter(event: any) {
+    this.filteredValue = event.filteredValue;
+    this.calcTotal();
+  }
+
   async initialise() {
     let sub1: Subscription = this.route.params.subscribe(async (param) => {
       this.cardName = param['cname'];
       if (this.cardName == 'All') {
         let sub2: Subscription = this.txnService.getTxns().subscribe((txns) => {
           this.txns = txns;
-          console.log(txns);
-          
+          this.filteredValue = txns;
+          this.calcTotal();
           this.cols = Object.keys(this.txns[0]);
-          console.log(this.cols);
-          
+
         });
         this.subArray.push(sub2);
       } else {
@@ -45,7 +50,6 @@ export class TxnListComponent implements OnInit, OnDestroy {
       }
     })
     this.subArray.push(sub1);
-    this.calcTotal();
   }
 
   initialiseCols() {
@@ -54,12 +58,12 @@ export class TxnListComponent implements OnInit, OnDestroy {
       { field: 'txnDate', header: 'Date' },
       { field: 'cardName', header: 'Card' },
       { field: 'amount', header: 'Amount' }
-  ];
+    ];
   }
 
   calcTotal() {
     this.aggregate = {};
-    this.txns.forEach((item) => {
+    this.filteredValue.forEach((item) => {
       this.aggregate.totalAmount ? this.aggregate.totalAmount += item.amount : this.aggregate.totalAmount = item.amount;
     })
   }

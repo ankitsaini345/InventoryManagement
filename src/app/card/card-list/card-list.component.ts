@@ -14,6 +14,7 @@ export class CardListComponent implements OnInit, OnDestroy {
   cards: Icard[] = []
   sub!: Subscription;
   aggregate: any = {};
+  filteredValue: Icard[] = [];
   selectedCardOverlay: any = {
     card: {
       cardName: null
@@ -33,20 +34,25 @@ export class CardListComponent implements OnInit, OnDestroy {
   async initialise() {
     this.sub = this.cardService.getCards().subscribe((cards) => {
       this.cards = cards;
+      this.filteredValue = cards;
+      this.calcTotal();
     })
-    this.calcTotal();
   }
 
   calcTotal() {
     this.aggregate = {};
-    this.cards.forEach((item) => {
+    this.filteredValue.forEach((item) => {
       this.aggregate.amountDue ? this.aggregate.amountDue += item.amountDue : this.aggregate.amountDue = item.amountDue;
       this.aggregate.totalAmount ? this.aggregate.totalAmount += item.totalAmount : this.aggregate.totalAmount = item.totalAmount;
     })
   }
 
-  async deleteCard(event: Event, card: Icard) {
+  onFilter(event: any) {
+    this.filteredValue = event.filteredValue;
+    this.calcTotal();
+  }
 
+  async deleteCard(event: Event, card: Icard) {
     this.confirmationService.confirm({
       target: event.target!,
       message: 'Are you sure that you delete card: ' + card.cardName,

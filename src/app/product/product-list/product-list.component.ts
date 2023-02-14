@@ -58,7 +58,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   onFilter(event: any) {
-    console.log('row change ', event.filteredValue);
     this.filteredValue = event.filteredValue;
     this.calcTotal();
   }
