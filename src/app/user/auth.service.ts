@@ -54,7 +54,8 @@ export class AuthService implements HttpInterceptor {
               return event;
             },
             error: async (error) => {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: error.status + ' ' + error.message });
+              console.error(error);
+              this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: error.status + ' ' + error.message });
 
               if (error.status === 401 && error.error?.message == 'jwt expired') {
                 console.log('Token Expired. Generating new token...');
@@ -99,10 +100,10 @@ export class AuthService implements HttpInterceptor {
       console.log(error);
       if (error.error.error) {
         this.errorMessage = error.error.message;
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: error.error.message });
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: error.error.message });
       }
       else
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: error.message });
 
     }
   }
@@ -139,7 +140,8 @@ export class AuthService implements HttpInterceptor {
       else throw 'unknown error while refreshing token. redirecting to login page.'
     }
     catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: error.message });
       this.router.navigate(['/login']);
     }
   }

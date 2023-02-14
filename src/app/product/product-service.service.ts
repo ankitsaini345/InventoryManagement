@@ -52,7 +52,7 @@ export class ProductServiceService {
 
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
     }
   }
 
@@ -91,7 +91,7 @@ export class ProductServiceService {
         updatedCard.totalAmount += currentProduct.cardAmount;
         this.cardService.updateCard(updatedCard);
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
       }
     } catch (error: any) {
@@ -114,11 +114,11 @@ export class ProductServiceService {
         this.cardService.updateCardUsingProduct(currentProduct, originalProduct, init)
 
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
       }
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
       console.error('Unable to add Product ' + currentProduct.name + ' Error: ', error);
     }
 
@@ -139,7 +139,7 @@ export class ProductServiceService {
         if (updatedCard.amountDue >= currentProduct.cardAmount) updatedCard.amountDue -= currentProduct.cardAmount;
         this.cardService.updateCard(updatedCard);
       } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete Product ' + currentProduct.name });
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to delete Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
       }
     } catch (error: any) {

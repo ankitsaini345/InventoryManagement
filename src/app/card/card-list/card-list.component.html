@@ -1,81 +1,97 @@
-<!-- <app-spinner *ngIf="!cards.length"></app-spinner> -->
-<div class="card">
-    <div class="card-header">
-        Cards List
-        <span *ngIf="!cards.length"><i class="pi pi-spin pi-spinner ml-2 mr-2" style="font-size: 1rem"></i>Loading..</span>
-    </div>
-    <div class="card-body">
-
-        <div class="row">
-            <div class="col-md-1">
-                <label class="col-form-label">
-                    FilterBy:
-                </label></div>
-            <div>
-                <input [(ngModel)]=filterBy type="text" class="form-control">
+<div class="mr-4 ml-4">
+    <p-table #dt [value]="cards" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
+        (onFilter)="onFilter($event)" [loading]="!cards.length" scrollHeight="73vh" styleClass="p-datatable-sm"
+        styleClass="p-datatable-gridlines" [filterDelay]="0" [globalFilterFields]="['cardName']">
+        <ng-template pTemplate="caption">
+            <div class="table-header">
+                Card List
+                <div>
+                    <span class="p-input-icon-left mr-1">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                            placeholder="Global Search" />
+                    </span>
+                </div>
             </div>
-        </div>
-        <div class="row" *ngIf="filterBy">
-            <div class="col-md-6">
-                <label class="col-form-label">
-                    Showing cards containing <b>{{filterBy}}</b>
-                </label></div>
-        </div>
-        <br>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>SN</th>
+                <th pSortableColumn="cardName">Card<p-sortIcon field="cardName"></p-sortIcon></th>
+                <th pSortableColumn="billDate" style="min-width:6rem">BillDate<p-sortIcon field="billDate"></p-sortIcon>
+                </th>
+                <th pSortableColumn="dueDate" style="min-width:6rem">DueDate<p-sortIcon field="dueDate"></p-sortIcon>
+                </th>
+                <th>Unbilled Amount</th>
+                <th>Due Amount</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="product">
+                <td>{{ri+1}}</td>
+                <td> {{product.cardName}} </td>
+                <td> {{product.billDate}} </td>
+                <td> {{product.dueDate}} </td>
+                <td> {{product.amountDue}} </td>
+                <td> {{product.amountDue}} </td>
+                <td> {{product.totalAmount}} </td>
+                <td style="min-width: 100px;">
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" pTooltip="Edit Card"
+                            [routerLink]="['/card', product._id, 'edit']" tooltipPosition="top"
+                            class="p-button-rounded p-button-text"></button>
+                        <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" pTooltip="Bill Pay"
+                            (click)="selectedCardOverlay.card = product" tooltipPosition="top"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                        <button pButton pRipple type="button" pCancelEditableRow pTooltip="See txns"
+                            icon="pi pi-list" tooltipPosition="top"
+                            [routerLink]="['/transactions/', product.cardName]"
+                            class="p-button-rounded p-button-text"></button>
+                        <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Delete Card"
+                            (click)="deleteCard($event,product)" tooltipPosition="top"
+                            class="p-button-rounded p-button-text p-button-danger"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>
+                <td></td>
+                <td>Total</td>
+                <td></td>
+                <td></td>
+                <td>{{aggregate.amountDue}}</td>
+                <td>{{aggregate.amountDue}}</td>
+                <td>{{aggregate.totalAmount}}</td>
+                <td></td>
+            </tr>
+        </ng-template>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <th>SN</th>
-                        <th>Card Name</th>
-                        <th>Bill Date</th>
-                        <th>Due Date</th>
-                        <th>Amount Due</th>
-                        <th>Total Amount</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let card of cards | filter:filterBy">
-                        <td></td>
-                        <td>{{card.cardName}}</td>
-                        <td>{{card.billDate}}</td>
-                        <td>{{card.dueDate}}</td>
-                        <td>{{card.amountDue}}</td>
-                        <td>{{card.totalAmount}}</td>
-                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/card', card._id, 'edit']">
-                                Edit
-                            </button></td>
-                            <td><button class="btn btn-outline-success btn-sm" (click)="markAsPaid($event,card)">
-                                Paid
-                            </button></td>
-                            <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/transactions/', card.cardName]">
-                                See Txns
-                            </button></td>
-                        <td><button class="btn btn-outline-danger btn-sm" (click)="deleteCard($event,card)">
-                                Delete
-                            </button></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>Total</td>
-                        <td></td>
-                        <td></td>
-                        <td>{{aggregate.amountDue}}</td>
-                        <td>{{aggregate.totalAmount}}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                </tbody>
-            </table>
-
-        </div>
-
-    </div>
+    </p-table>
 </div>
+
+
+<p-dialog (onHide)="markAsPaid(false)" header="Card Bill Payment" position="top"
+    [(visible)]="selectedCardOverlay.card.cardName" [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}"
+    [draggable]="false" [resizable]="false">
+    <div class="p-fluid grid formgrid">
+        <h5>Selected Card: {{selectedCardOverlay.card.cardName}}</h5>
+        <div class="field col-12 md:col-4">
+            <label for="dtype">Payment Type</label>
+            <p-dropdown appendTo="body" [options]="['Remaining Amount', 'Paid Amount']"
+                [(ngModel)]="selectedCardOverlay.type" placeholder="Select payment type"
+                [showClear]="true"></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-4">
+            <label for="icon">Amount</label>
+            <input type="text" pInputText [(ngModel)]="selectedCardOverlay.amount">
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button (click)="markAsPaid(false)" label="Cancel" styleClass="p-button-outlined"></p-button>
+        <p-button [disabled]="!selectedCardOverlay.card || !selectedCardOverlay.amount || !selectedCardOverlay.type"
+            (click)="markAsPaid(true)" label="Paid" styleClass="p-button-outlined"></p-button>
+    </ng-template>
+</p-dialog>

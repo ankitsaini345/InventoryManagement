@@ -65,7 +65,7 @@ export class TxnService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add txn: ' + Txn.OrderName + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add txn: ' + Txn.OrderName + ' Error: ' + error.message });
     }
   }
 
@@ -105,7 +105,7 @@ export class TxnService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to update txn: ' + Txn.OrderName + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to update txn: ' + Txn.OrderName + ' Error: ' + error.message });
     }
   }
 
@@ -121,7 +121,7 @@ export class TxnService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete txn: ' + _id + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to delete txn: ' + _id + ' Error: ' + error.message });
     }
   }
 }

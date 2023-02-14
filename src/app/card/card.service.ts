@@ -17,6 +17,7 @@ export class CardService {
   private url = environment.baseUrl + 'api/cards'
 
   private cardData$ = new BehaviorSubject<Icard[]>([]);
+  private cardNameArray$ = new BehaviorSubject<string[]>([]);
 
   constructor(private http: HttpClient,
     private messageService: MessageService) {
@@ -25,6 +26,10 @@ export class CardService {
 
   getCards(): Observable<Icard[]> {
     return this.cardData$.asObservable();
+  }
+
+  getCardNames(): Observable<string[]> {
+    return this.cardNameArray$.asObservable();
   }
 
   async initialiseCardData() {
@@ -39,6 +44,11 @@ export class CardService {
       this.cardData$.next(cardsArray);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Cards Data Initialised' });
     }
+    let cardNames: string[] = [];
+    cardsArray.forEach((card: Icard)=> {
+      cardNames.push(card.cardName);
+    })
+    this.cardNameArray$.next(cardNames);
   }
 
   getCard(cardName: string): Icard {
@@ -69,7 +79,7 @@ export class CardService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to add card: ' + card.cardName + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add card: ' + card.cardName + ' Error: ' + error.message });
     }
   }
 
@@ -87,12 +97,13 @@ export class CardService {
           this.messageService.add({ severity: 'info', summary: 'Info', detail: card.cardName + ': Nothing to update.' });
 
         } else {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: card.cardName + ': Not matched with any existing card' });
+          console.error(card.cardName + ': Not matched with any existing card');
+          this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: card.cardName + ': Not matched with any existing card' });
         }
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to update card: ' + card.cardName + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to update card: ' + card.cardName + ' Error: ' + error.message });
     }
   }
 
@@ -133,7 +144,7 @@ export class CardService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Unable to delete card: ' + card.cardName + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to delete card: ' + card.cardName + ' Error: ' + error.message });
     }
   }
 

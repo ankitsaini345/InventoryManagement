@@ -32,6 +32,7 @@ import {CalendarModule} from 'primeng/calendar';
 import {SliderModule} from 'primeng/slider';
 import {MultiSelectModule} from 'primeng/multiselect';
 import {ContextMenuModule} from 'primeng/contextmenu';
+import {RadioButtonModule} from 'primeng/radiobutton';
 import {DialogModule} from 'primeng/dialog';
 import {ButtonModule} from 'primeng/button';
 import {DropdownModule} from 'primeng/dropdown';
@@ -81,6 +82,7 @@ import { PaymentListComponent } from './payment/payment-list/payment-list.compon
     AppRoutingModule,
     FormsModule,
     MenubarModule,
+    RadioButtonModule,
     MenuModule,
     ConfirmPopupModule,
     AutoCompleteModule,

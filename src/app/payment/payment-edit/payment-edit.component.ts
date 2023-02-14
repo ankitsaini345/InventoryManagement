@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ObjectId } from 'bson';
+import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { Icard } from 'src/app/card/card';
 import { CardService } from 'src/app/card/card.service';
+import { IPayee } from '../payee';
 import { PayeeService } from '../payee.service';
 import { IPayment } from '../payment';
 import { PaymentService } from '../payment.service';
@@ -15,24 +17,39 @@ import { PaymentService } from '../payment.service';
 })
 export class PaymentEditComponent implements OnInit {
   subArray: Subscription[] = []
-  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "Others"];
+  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "LIC", "Others"];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
     private payeeService: PayeeService,
     private cardService: CardService,
+    private messageService: MessageService,
     private paymentService: PaymentService) { }
 
   pageTitle = 'Edit Payment';
   currentPayment!: IPayment;
   originalPayment!: IPayment;
   payeeNameArray!: string[];
-  filteredPayeeNameArray!: string[];
+  filteredPayeeNameArray: string[] = [];
   receiverNameArray!: string[];
-  filteredReceiverNameArray!: string[];
+  filteredReceiverNameArray: string[] = [];
   cardNameArray: string[] = [];
   filteredCardArray: string[] = [];
   loading = false;
+  addPaymentToCard = false;
+  payee!: IPayee;
+
+  get name() {
+    return this.currentPayment.name;
+  }
+
+  set name(val: string) {
+    if (val) {
+      this.currentPayment.name = val;
+      this.payee = this.payeeService.getPayeeByName(val);
+      this.currentPayment.prevAmount = this.payee.totalAmount;
+    }
+  }
 
   ngOnInit(): void {
     this.initialise();
@@ -57,24 +74,38 @@ export class PaymentEditComponent implements OnInit {
     });
     this.subArray.push(sub3);
 
-    let sub4: Subscription = this.cardService.getCards().subscribe((cards: Icard[]) => {
-      cards.forEach((card) => {
-        this.cardNameArray.push(card.cardName)
-      })
-      this.filteredCardArray = this.cardNameArray;
+
+    let sub4: Subscription = this.cardService.getCardNames().subscribe((cardName: string[]) => {
+      this.cardNameArray = cardName;
     });
     this.subArray.push(sub4);
-
   }
 
   async save() {
+
+    if (!this.payee) {
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Payee not selected.' });
+      return;
+    }
     this.loading = true;
     if (this.currentPayment._id == 'new') {
       this.currentPayment._id = new ObjectId().toString();
-      await this.paymentService.addPayment(this.currentPayment);
+      this.paymentService.addPayment(this.currentPayment);
     } else {
-      await this.paymentService.updatePayment(this.currentPayment);
+      this.paymentService.updatePayment(this.currentPayment);
     }
+    if (this.currentPayment.type == 'in') {
+      this.payee.totalAmount -= this.currentPayment.amount;
+    } else this.payee.totalAmount += this.currentPayment.amount;
+
+    this.payeeService.editPayee(this.payee);
+
+    if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
+      let card = this.cardService.getCard(this.currentPayment.receiver);
+      card.amountDue -= this.currentPayment.amount;
+      this.cardService.updateCard(card);
+    }
+    this.loading = false;
     this.router.navigate(['/payments/All'])
   }
 
@@ -84,7 +115,7 @@ export class PaymentEditComponent implements OnInit {
 
   filterPayee(event: any) {
     this.filteredPayeeNameArray = [];
-    let query = event.query;    
+    let query = event.query;
     if (query) {
       for (let i = 0; i < this.payeeNameArray.length; i++) {
         let product = this.payeeNameArray[i];
@@ -100,15 +131,24 @@ export class PaymentEditComponent implements OnInit {
   filterReceiver(event: any) {
     this.filteredReceiverNameArray = [];
     let query = event.query;
-    if (query) {
-      for (let i = 0; i < this.receiverNameArray.length; i++) {
-        let product = this.receiverNameArray[i];
-        if (product.toLowerCase().indexOf(query.toLowerCase()) > -1) {
-          this.filteredReceiverNameArray.push(product);
+    if (this.currentPayment.paymentMode == 'Card') {
+      if (query) {
+        for (let i = 0; i < this.cardNameArray.length; i++) {
+          let name = this.cardNameArray[i];
+          if (name.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+            this.filteredReceiverNameArray.push(name);
+          }
         }
-      }
+      } else this.filteredReceiverNameArray = this.cardNameArray.slice();
     } else {
-      this.filteredReceiverNameArray = this.receiverNameArray.slice();
+      if (query) {
+        for (let i = 0; i < this.receiverNameArray.length; i++) {
+          let name = this.receiverNameArray[i];
+          if (name.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+            this.filteredReceiverNameArray.push(name);
+          }
+        }
+      } else this.filteredReceiverNameArray = this.receiverNameArray.slice();
     }
   }
 

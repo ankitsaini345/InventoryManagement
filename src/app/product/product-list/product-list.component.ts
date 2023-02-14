@@ -36,6 +36,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   aggregate: any = {};
   orgProduct: IProduct | null;
   subArray: Subscription[] = [];
+  filteredValue: IProduct[] = [];
+
   @ViewChild('dt') table!: Table;
 
   deliveryDialog = {
@@ -55,6 +57,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.getCardNames();
   }
 
+  onFilter(event: any) {
+    this.filteredValue = event.filteredValue;
+    this.calcTotal();
+  }
+
   async getCardNames() {
     let sub: Subscription = this.cardService.getCards().subscribe((cards: Icard[]) => {
       cards.forEach((card: Icard) => {
@@ -68,17 +75,31 @@ export class ProductListComponent implements OnInit, OnDestroy {
     try {
       let sub: Subscription = this.productService.getProducts().subscribe((products) => {
         this.products = products;
+        this.filteredValue = products;
         this.calcTotal();
       });
       this.subArray.push(sub);
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in getting Products: ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
     }
+  }
+
+  globalFilter(event:any) {
+    // console.log(event.target.);
+    // console.log(this.table);
+    // console.log('filterby ' + this.filterBy);
+    
+    this.table.filterGlobal(event.target.value, 'contains');
+      // console.log('values ', this.table.value);
+      // console.log('Fvalues ', this.table.);
+      
+      
   }
 
   calcTotal() {
     this.aggregate = {};
-    this.products.forEach((item) => {
+    this.filteredValue.forEach((item) => {
       this.aggregate.listPrice ? this.aggregate.listPrice += item.listPrice : this.aggregate.listPrice = item.listPrice;
       this.aggregate.cardAmount ? this.aggregate.cardAmount += item.cardAmount : this.aggregate.cardAmount = item.cardAmount;
       this.aggregate.buyerPrice ? this.aggregate.buyerPrice += item.buyerPrice : this.aggregate.buyerPrice = item.buyerPrice;
@@ -124,7 +145,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.productService.editProduct(product, this.orgProduct!)
       } else throw 'orgProduct missing or id is different'
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in updaing ' + product.name + ' ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in updaing ' + product.name + ' ' + error.message });
     }
   }
 
@@ -171,7 +193,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   async exportText() {
     // console.log(this.selectedProduct);
     if (!this.selectedProduct.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+      console.error('No Product Selected');
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
       let exportData: any = {};
       let totalAmount = 0;
@@ -207,18 +230,24 @@ export class ProductListComponent implements OnInit, OnDestroy {
       //   text: cdata
       // })
       // if (shareMessage.error) {
-      //   this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+      //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
       // }
     }
   }
 
   async exportTelegramData() {
     if (!this.selectedProduct.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+      console.error('No Product Selected');
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
+      let lastDate = this.selectedProduct[0].date;
       let exportString = '';
+      exportString += lastDate + '\n';
       this.selectedProduct.forEach((item) => {
-
+        if(item.date != lastDate) {
+          lastDate = item.date;
+          exportString += lastDate + '\n';
+        }
         exportString += (item.name + ' ' + item.ram + 'x' + item.storage + ' ' + item.AppName + '/' + item.AppAccount + ' ' + item.listPrice + ' ' + item.costToMe + ' ');
         if (item.coupon) exportString += (item.coupon + ' ');
         if (item.cardDiscount) exportString += (item.cardDiscount + ' ');
@@ -228,7 +257,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
         if (item.cashback) exportString += (item.cashback + ' ');
         if (item.profit) exportString += (item.profit + ' ');
         if (item.buyerPrice) exportString += (item.buyerPrice + ' ');
-        exportString += '\n';
+        exportString += '\n\n';
       });
 
       this.clipboard.copy(exportString);
@@ -239,14 +268,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
       }
       const shareMessage = await this.shareService.share(shareData);
       if (shareMessage.error) {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+        console.error(shareMessage.message);
+        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
       }
     }
   }
 
   deliveryStatus(flag: boolean) {
     if (!this.selectedProduct.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Product Selected' });
+      console.error('No Product Selected');
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
       if (flag) {
         this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);

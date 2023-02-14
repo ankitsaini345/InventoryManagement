@@ -17,7 +17,6 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
-    this.orgPayment = null;
   }
 
   private PaymentStorageString = 'inventoryPayments';
@@ -26,7 +25,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   filterBy = '';
   payeeName!: string;
   aggregate: any = {};
-  orgPayment: IPayment | null;
+  orgPayment: IPayment | null = null;
   subArray: Subscription[] = [];
   @ViewChild('dt') table!: Table;
 
@@ -50,11 +49,11 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     try {
       let sub: Subscription = this.paymentService.getPayments().subscribe((payments) => {
         this.payments = payments;
-        // this.calcTotal();
       });
       this.subArray.push(sub);
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in getting Products: ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
     }
   }
 
@@ -62,38 +61,19 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     let sub1: Subscription = this.route.params.subscribe(async (param) => {
       this.payeeName = param['name'];
       if (this.payeeName == 'All') {
-        let sub2: Subscription = this.paymentService.getPayments().subscribe((payments)=> {
+        let sub2: Subscription = this.paymentService.getPayments().subscribe((payments) => {
           this.payments = payments;
         });
         this.subArray.push(sub2);
       } else {
-        this.payments = await this.paymentService.getPaymentByName(this.payeeName);
+        this.payments = this.paymentService.getPaymentByName(this.payeeName);
       }
     })
     this.subArray.push(sub1);
-    // this.calcTotal();
   }
 
-  // calcTotal() {
-  //   this.aggregate = {};
-  //   this.payments.forEach((item) => {
-  //     this.aggregate.listPrice ? this.aggregate.listPrice += item.listPrice : this.aggregate.listPrice = item.listPrice;
-  //     this.aggregate.cardAmount ? this.aggregate.cardAmount += item.cardAmount : this.aggregate.cardAmount = item.cardAmount;
-  //     this.aggregate.buyerPrice ? this.aggregate.buyerPrice += item.buyerPrice : this.aggregate.buyerPrice = item.buyerPrice;
-  //     this.aggregate.coupon ? this.aggregate.coupon += item.coupon : this.aggregate.coupon = item.coupon;
-  //     this.aggregate.giftBalence ? this.aggregate.giftBalence += item.giftBalence : this.aggregate.giftBalence = item.giftBalence;
-  //     this.aggregate.cardDiscount ? this.aggregate.cardDiscount += item.cardDiscount : this.aggregate.cardDiscount = item.cardDiscount;
-  //     this.aggregate.profit ? this.aggregate.profit += item.profit : this.aggregate.profit = item.profit;
-  //     this.aggregate.cashback ? this.aggregate.cashback += item.cashback : this.aggregate.cashback = item.cashback;
-  //     this.aggregate.delivery ? this.aggregate.delivery += item.delivery : this.aggregate.delivery = item.delivery;
-  //     this.aggregate.costToMe ? this.aggregate.costToMe += item.costToMe : this.aggregate.costToMe = item.costToMe;
-  //   })
-  //   this.aggregate.buyerPrice = Math.round(this.aggregate.buyerPrice);
-  //   this.aggregate.costToMe = Math.round(this.aggregate.costToMe);
-  // }
 
   deletePayment(event: Event, payment: IPayment) {
-
     this.confirmationService.confirm({
       target: event.target!,
       message: 'Are you sure that you delete payment: ' + payment.name,
@@ -109,7 +89,6 @@ export class PaymentListComponent implements OnInit, OnDestroy {
         });
       },
     });
-
   }
 
   onRowEditInit(payment: IPayment) {
@@ -122,7 +101,8 @@ export class PaymentListComponent implements OnInit, OnDestroy {
         this.paymentService.updatePayment(payment)
       } else throw 'orgPayment missing or id is different'
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error in updaing ' + payment.name + ' ' + error.message });
+      console.error(error);
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in updaing ' + payment.name + ' ' + error.message });
     }
   }
 
@@ -150,23 +130,22 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     let day = date.getDate();
 
     if (month < 10) {
-        month = '0' + month;
+      month = '0' + month;
     }
 
     if (day < 10) {
-        day = '0' + day;
+      day = '0' + day;
     }
-
     return date.getFullYear() + '-' + month + '-' + day;
-}
+  }
 
   async exportText() {
-    
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'function not defined' });
-    
+
+    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
+
     // // console.log(this.selectedProduct);
     // if (!this.selectedPayment.length) {
-    //   this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Payment Selected' });
+    //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
     // } else {
     //   let exportData: any = {};
     //   let totalAmount = 0;
@@ -202,18 +181,18 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     //   //   text: cdata
     //   // })
     //   // if (shareMessage.error) {
-    //   //   this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+    //   //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
     //   // }
     // }
   }
 
   async exportTelegramData() {
 
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'function not defined' });
+    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
 
 
     // if (!this.selectedPayment.length) {
-    //   this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Payment Selected' });
+    //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
     // } else {
     //   let exportString = '';
     //   this.selectedPayment.forEach((item) => {
@@ -238,14 +217,15 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     //   }
     //   const shareMessage = await this.shareService.share(shareData);
     //   if (shareMessage.error) {
-    //     this.messageService.add({ severity: 'error', summary: 'Error', detail: shareMessage.message });
+    //     this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
     //   }
     // }
   }
 
   deliveryStatus(flag: boolean) {
     if (!this.selectedPayment.length) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No Payment Selected' });
+      console.error('No Payment Selected');
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Payment Selected' });
     } else {
       if (flag) {
         this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
@@ -260,7 +240,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
 
   async bulkStatusChange(status: string, date: string) {
 
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'function not defined' });
+    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
 
 
     // let promiseArray: Promise<any>[] = [];

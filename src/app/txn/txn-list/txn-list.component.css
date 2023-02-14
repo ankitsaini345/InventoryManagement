@@ -1,14 +1,49 @@
-table {
-    counter-reset: rowNumber -1;
+:host ::ng-deep .p-cell-editing {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody tr td {
+    text-align: center !important;
+    padding: 0rem 0rem !important;
+}
+
+:host ::ng-deep .p-button.p-button-icon-only {
+    width: 2rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
     text-align: center;
-  }
-  
-  table tr {
-    counter-increment: rowNumber;
-  }
-  
-  table tr td:first-child::before {
-    content: counter(rowNumber);
-    min-width: 1em;
-    margin-right: 0.5em;
-  }
+    padding: 0rem 1rem;
+    font-weight: 550;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tfoot > tr > td {
+    text-align: center;
+    padding: 0rem 1rem;
+    font-weight: 550;
+}
+
+:host ::ng-deep .table-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-header {
+    padding: .5rem 0.5rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-header .p-button.p-button-icon-only{
+    width: 2.6rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    padding: 0.4rem 1.1rem;
+    font-weight: 550;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th .p-inputtext {
+    font-size: .9rem;
+    padding: 0.3rem 0.3rem;
+    max-width: 11vw;
+}

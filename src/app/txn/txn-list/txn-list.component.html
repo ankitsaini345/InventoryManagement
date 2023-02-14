@@ -1,5 +1,4 @@
-<!-- <app-spinner *ngIf="!txns"></app-spinner> -->
-<div class="card" *ngIf="txns">
+<!-- <div class="card" *ngIf="txns">
     <div class="card-header">
         Transactions on Card '{{cardName}}'
         <span *ngIf="!txns"><i class="pi pi-spin pi-spinner ml-2 mr-2" style="font-size: 1rem"></i>Loading..</span>
@@ -25,45 +24,97 @@
         </div>
         <br>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <th>SN</th>
-                        <th>TxnId</th>
-                        <th>Order Name</th>
-                        <th>Purchase Date</th>
-                        <th>Amount</th>
-                        <th>Card Name</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let txn of txns | filter:filterBy">
-                        <td></td>
-                        <td>{{txn._id}}</td>
-                        <td>{{txn.OrderName}}</td>
-                        <td>{{txn.txnDate}}</td>
-                        <td>{{txn.amount}}</td>
-                        <td>{{txn.cardName}}</td>
-                        <td><button class="btn btn-outline-primary btn-sm"
-                                [routerLink]="['/product', txn.orderId, 'edit']">
-                                Order Details
-                            </button></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>Total</td>
-                        <td></td>
-                        <td></td>
-                        <td>{{aggregate.totalAmount}}</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
+        <p-table [columns]="cols" [value]="txns | filter:filterBy" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>SN</th>
+                    <th *ngFor="let col of columns">
+                        {{col.header}}
+                    </th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex">
+                <tr>
+                    <td>{{ri+1}}</td>
+                    <td *ngFor="let col of columns">
+                        {{rowData[col.field]}}
+                    </td>
+                    <td><button class="btn btn-outline-primary btn-sm"
+                            [routerLink]="['/product', rowData.orderId, 'edit']">
+                            Order Details
+                        </button></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <td></td>
+                <td>Total</td>
+                <td></td>
+                <td></td>
+                <td>{{aggregate.totalAmount}}</td>
+                <td></td>
+            </ng-template>
+        </p-table>
 
     </div>
+</div> -->
+
+<div class="mr-4 ml-4">
+    <p-table #dt [value]="txns" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
+        (onFilter)="onFilter($event)" [loading]="!txns.length" scrollHeight="73vh" styleClass="p-datatable-sm"
+        styleClass="p-datatable-gridlines" [filterDelay]="0" [globalFilterFields]="['OrderName', 'cardName' ]">
+        <ng-template pTemplate="caption">
+            <div class="table-header">
+                Transaction List
+                <div>
+                    <span class="p-input-icon-left mr-1">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                            placeholder="Global Search" />
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>SN</th>
+                <th pSortableColumn="cardName">Order Name<p-sortIcon field="cardName"></p-sortIcon></th>
+                <th pSortableColumn="billDate" style="min-width:6rem">Date<p-sortIcon field="billDate"></p-sortIcon>
+                </th>
+                <th pSortableColumn="dueDate" style="min-width:6rem">Card Name<p-sortIcon field="dueDate"></p-sortIcon>
+                </th>
+                <th>Amount</th>
+                <th>Order Details</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="product">
+                <td>{{ri+1}}</td>
+                <td> {{product.OrderName}} </td>
+                <td> {{product.txnDate}} </td>
+                <td> {{product.cardName}} </td>
+                <td> {{product.amount}} </td>
+                <td style="min-width: 100px;">
+                    <div class="flex align-items-center justify-content-center gap-2">
+
+                        <button pButton pRipple type="button" pCancelEditableRow pTooltip="Order Details"
+                            icon="pi pi-list" tooltipPosition="top"
+                            [routerLink]="['/product', product.orderId, 'edit']"
+                            class="p-button-rounded p-button-text"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <tr>
+                <td></td>
+                <td>Total</td>
+                <td></td>
+                <td></td>
+                <td>{{aggregate.totalAmount}}</td>
+                <td></td>
+            </tr>
+        </ng-template>
+
+    </p-table>
 </div>
