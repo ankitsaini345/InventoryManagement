@@ -36,6 +36,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   aggregate: any = {};
   orgProduct: IProduct | null;
   subArray: Subscription[] = [];
+  filteredValue: IProduct[] = [];
+
   @ViewChild('dt') table!: Table;
 
   deliveryDialog = {
@@ -55,6 +57,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.getCardNames();
   }
 
+  onFilter(event: any) {
+    console.log('row change ', event.filteredValue);
+    this.filteredValue = event.filteredValue;
+    this.calcTotal();
+  }
+
   async getCardNames() {
     let sub: Subscription = this.cardService.getCards().subscribe((cards: Icard[]) => {
       cards.forEach((card: Icard) => {
@@ -68,6 +76,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     try {
       let sub: Subscription = this.productService.getProducts().subscribe((products) => {
         this.products = products;
+        this.filteredValue = products;
         this.calcTotal();
       });
       this.subArray.push(sub);
@@ -77,9 +86,21 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
+  globalFilter(event:any) {
+    // console.log(event.target.);
+    // console.log(this.table);
+    // console.log('filterby ' + this.filterBy);
+    
+    this.table.filterGlobal(event.target.value, 'contains');
+      // console.log('values ', this.table.value);
+      // console.log('Fvalues ', this.table.);
+      
+      
+  }
+
   calcTotal() {
     this.aggregate = {};
-    this.products.forEach((item) => {
+    this.filteredValue.forEach((item) => {
       this.aggregate.listPrice ? this.aggregate.listPrice += item.listPrice : this.aggregate.listPrice = item.listPrice;
       this.aggregate.cardAmount ? this.aggregate.cardAmount += item.cardAmount : this.aggregate.cardAmount = item.cardAmount;
       this.aggregate.buyerPrice ? this.aggregate.buyerPrice += item.buyerPrice : this.aggregate.buyerPrice = item.buyerPrice;

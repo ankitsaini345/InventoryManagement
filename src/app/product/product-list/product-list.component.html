@@ -1,8 +1,8 @@
 <div class="mr-2 ml-2">
-    <p-table #dt [value]="products" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
-        [loading]="!products.length" scrollHeight="80vh" styleClass="p-datatable-sm" styleClass="p-datatable-gridlines"
+    <p-table #dt [value]="products" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true" (onFilter)="onFilter($event)"
+        [loading]="!products.length" scrollHeight="73vh" styleClass="p-datatable-sm" styleClass="p-datatable-gridlines"
         (selectionChange)="schange($event)" [(selection)]="selectedProduct" [filterDelay]="0"
-        [globalFilterFields]="['products.name']">
+        [globalFilterFields]="['name', 'status']">
         <ng-template pTemplate="caption">
             <div class="table-header">
                 Product List
@@ -21,9 +21,9 @@
 
                     <span class="p-input-icon-left mr-1">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" [(ngModel)]=filterBy placeholder="Global Search" />
-                        <!-- <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                                placeholder="Global Search" /> -->
+                        <!-- <input pInputText type="text" (input)="globalFilter($event)" [(ngModel)]=filterBy placeholder="Global Search" /> -->
+                        <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Global Search" />
                     </span>
                 </div>
             </div>
