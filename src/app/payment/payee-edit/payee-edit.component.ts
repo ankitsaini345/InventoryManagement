@@ -41,9 +41,9 @@ export class PayeeEditComponent implements OnInit {
     this.loading = true;
     if (this.currentPayee._id == 'new') {
       this.currentPayee._id = new ObjectId().toString();
-      await this.payeeService.addPayee(this.currentPayee);
+      this.payeeService.addPayee(this.currentPayee);
     } else {
-      await this.payeeService.editPayee(this.currentPayee);
+      this.payeeService.editPayee(this.currentPayee);
     }
     this.router.navigate(['/payee'])
   }

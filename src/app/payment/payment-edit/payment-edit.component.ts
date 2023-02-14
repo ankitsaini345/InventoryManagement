@@ -33,6 +33,7 @@ export class PaymentEditComponent implements OnInit {
   cardNameArray: string[] = [];
   filteredCardArray: string[] = [];
   loading = false;
+  addPaymentToCard = false;
 
   ngOnInit(): void {
     this.initialise();
@@ -68,9 +69,14 @@ export class PaymentEditComponent implements OnInit {
     this.loading = true;
     if (this.currentPayment._id == 'new') {
       this.currentPayment._id = new ObjectId().toString();
-      await this.paymentService.addPayment(this.currentPayment);
+      this.paymentService.addPayment(this.currentPayment);
     } else {
-      await this.paymentService.updatePayment(this.currentPayment);
+      this.paymentService.updatePayment(this.currentPayment);
+    }
+    if(this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
+      let card = this.cardService.getCard(this.currentPayment.receiver);
+      card.amountDue -= this.currentPayment.amount;
+      this.cardService.updateCard(card);
     }
     this.router.navigate(['/payments/All'])
   }
