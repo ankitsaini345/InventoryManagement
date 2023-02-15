@@ -74,6 +74,20 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col col-form-label" for="cashback">
+                            commission
+                        </label>
+                        <div class="col">
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="cashback" placeholder="Cashback in %"
+                                    required name="cashback" [(ngModel)]=cashback>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">{{currentPayment.cashback}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col col-form-label" for="mode">
                             Payment Mode
                         </label>

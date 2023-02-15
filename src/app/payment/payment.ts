@@ -11,5 +11,6 @@ export interface IPayment {
     remAmount: number,
     remark: string,
     count: number,
-    lastPayDate: string
+    lastPayDate: string,
+    cashback: number
 }

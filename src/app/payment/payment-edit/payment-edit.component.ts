@@ -84,6 +84,12 @@ export class PaymentEditComponent implements OnInit {
       this.currentPayment.remAmount = this.currentPayment.prevAmount + this.currentPayment.amount;
   }
 
+  set cashback(val: number) {
+    if(val) {
+      this.currentPayment.cashback = Math.round((this.currentPayment.amount * val) / 100);
+    } else this.currentPayment.cashback = 0;
+  }
+
   ngOnInit(): void {
     this.initialise();
   }
@@ -127,7 +133,7 @@ export class PaymentEditComponent implements OnInit {
     } else {
       this.paymentService.updatePayment(this.currentPayment);
     }
-    
+    this.payee.pendingComm += this.currentPayment.cashback;
     this.payee.totalAmount = this.currentPayment.remAmount;
     this.payeeService.editPayee(this.payee);
 
