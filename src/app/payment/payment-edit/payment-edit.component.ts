@@ -43,12 +43,45 @@ export class PaymentEditComponent implements OnInit {
     return this.currentPayment.name;
   }
 
+  get amount() {
+    return this.currentPayment.amount;
+  }
+
+  get type() {
+    return this.currentPayment.type;
+  }
+
+  set amount(val: number) {
+    this.currentPayment.amount = val;
+    if (this.currentPayment.type == 'in')
+      this.currentPayment.remAmount = this.currentPayment.prevAmount - this.currentPayment.amount;
+    else if (this.currentPayment.type == 'out')
+      this.currentPayment.remAmount = this.currentPayment.prevAmount + this.currentPayment.amount;
+  }
+
+  set type(val: string) {
+    this.currentPayment.type = val;
+    if (this.currentPayment.type == 'in')
+      this.currentPayment.remAmount = this.currentPayment.prevAmount - this.currentPayment.amount;
+    else if (this.currentPayment.type == 'out')
+      this.currentPayment.remAmount = this.currentPayment.prevAmount + this.currentPayment.amount;
+  }
+
   set name(val: string) {
     if (val) {
       this.currentPayment.name = val;
       this.payee = this.payeeService.getPayeeByName(val);
       this.currentPayment.prevAmount = this.payee.totalAmount;
+      this.currentPayment.lastPayDate = this.payee.lastPaymentDate;
+      if (this.currentPayment._id == 'new')
+        this.currentPayment.count = this.payee.lastPaymentNum + 1
+      else
+        this.currentPayment.count = this.payee.lastPaymentNum;
     }
+    if (this.currentPayment.type == 'in')
+      this.currentPayment.remAmount = this.currentPayment.prevAmount - this.currentPayment.amount;
+    else if (this.currentPayment.type == 'out')
+      this.currentPayment.remAmount = this.currentPayment.prevAmount + this.currentPayment.amount;
   }
 
   ngOnInit(): void {
@@ -94,10 +127,8 @@ export class PaymentEditComponent implements OnInit {
     } else {
       this.paymentService.updatePayment(this.currentPayment);
     }
-    if (this.currentPayment.type == 'in') {
-      this.payee.totalAmount -= this.currentPayment.amount;
-    } else this.payee.totalAmount += this.currentPayment.amount;
-
+    
+    this.payee.totalAmount = this.currentPayment.remAmount;
     this.payeeService.editPayee(this.payee);
 
     if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {

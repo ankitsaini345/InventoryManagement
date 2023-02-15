@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { Subscription } from 'rxjs';
+import { ShareService } from 'src/app/share.service';
 import { IPayment } from '../payment';
 import { PaymentService } from '../payment.service';
 
@@ -14,6 +16,8 @@ import { PaymentService } from '../payment.service';
 export class PaymentListComponent implements OnInit, OnDestroy {
   constructor(private paymentService: PaymentService,
     private route: ActivatedRoute,
+    private clipboard: Clipboard,
+    private shareService: ShareService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
@@ -36,7 +40,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   }
 
 
-  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "Others"];
+  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "LIC", "Others"];
 
   // cardNames: string[] = [];
   selectedPayment: IPayment[] = [];
@@ -139,87 +143,47 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     return date.getFullYear() + '-' + month + '-' + day;
   }
 
-  async exportText() {
 
-    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
+  async exportData() {
 
-    // // console.log(this.selectedProduct);
-    // if (!this.selectedPayment.length) {
-    //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
-    // } else {
-    //   let exportData: any = {};
-    //   let totalAmount = 0;
-    //   let totalQty = 0;
-    //   this.selectedPayment.forEach((item) => {
-    //     let name = item.name + ' ' + item.ram + ' ' + item.storage;
-    //     item.buyerPrice = Math.round(item.buyerPrice);
-    //     if (exportData.hasOwnProperty(name) && exportData[name].cost == item.buyerPrice) {
-    //       exportData[name].qty += 1;
-    //       exportData[name].totalCost = exportData[name].qty * exportData[name].cost;
-    //     } else {
-    //       exportData[name] = {
-    //         qty: 1,
-    //         cost: item.buyerPrice,
-    //         totalCost: item.buyerPrice
-    //       }
-    //     }
-    //     totalAmount += item.buyerPrice;
-    //     totalQty += 1;
-    //   })
-    //   let tableArray = [];
-    //   tableArray.push(['Name', '1PcCost', 'Qty', 'Amount'])
-    //   for (const key in exportData) {
-    //     tableArray.push([key, exportData[key].cost, exportData[key].qty, exportData[key].totalCost])
-    //   }
-    //   tableArray.push(['Total', '', totalQty, totalAmount])
+    // this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
+    if (!this.selectedPayment.length) {
+      this.messageService.add({ severity: 'info', summary: 'Info', detail: 'No Payment Selected' });
+    } else {
+      let error = false;
+      let exportString = '';
+      this.selectedPayment.sort((a, b) => a.count - b.count);
+      let firstEl = this.selectedPayment[0];
+      exportString += ('Last Date: ' + firstEl.lastPayDate + '. Last Amount: ' + firstEl.prevAmount + '\n\n');
+      exportString += ('[#' + firstEl.count + '] [' + firstEl.date + ']\n');
+      exportString += (firstEl.prevAmount + ' ');
+      let finalPayment = firstEl.prevAmount;
+      this.selectedPayment.forEach((item) => {
+        if (item.name != firstEl.name) error = true;
+        if (item.type == 'in') {
+          finalPayment -= item.amount;
+          exportString += ('- ' + item.amount + ' ');
+        } else {
+          finalPayment += item.amount;
+          exportString += ('+ ' + item.amount + ' ');
+        }
+      });
 
-    //   let cdata = table(tableArray);
-
-    //   this.clipboard.copy(cdata);
-    //   // const shareMessage: any = await this.shareService.share({
-    //   //   title: 'Invoice',
-    //   //   text: cdata
-    //   // })
-    //   // if (shareMessage.error) {
-    //   //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
-    //   // }
-    // }
-  }
-
-  async exportTelegramData() {
-
-    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
-
-
-    // if (!this.selectedPayment.length) {
-    //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Payment Selected' });
-    // } else {
-    //   let exportString = '';
-    //   this.selectedPayment.forEach((item) => {
-
-    //     exportString += (item.name + ' ' + item.ram + 'x' + item.storage + ' ' + item.AppName + '/' + item.AppAccount + ' ' + item.listPrice + ' ' + item.costToMe + ' ');
-    //     if (item.coupon) exportString += (item.coupon + ' ');
-    //     if (item.cardDiscount) exportString += (item.cardDiscount + ' ');
-    //     if (item.delivery) exportString += (item.delivery + ' ');
-    //     if (item.giftBalence) exportString += (item.giftBalence + ' ');
-    //     exportString += (item.cardHolder + '=' + item.cardAmount + ' ');
-    //     if (item.cashback) exportString += (item.cashback + ' ');
-    //     if (item.profit) exportString += (item.profit + ' ');
-    //     if (item.buyerPrice) exportString += (item.buyerPrice + ' ');
-    //     exportString += '\n';
-    //   });
-
-    //   this.clipboard.copy(exportString);
-
-    //   const shareData: ShareData = {
-    //     title: 'Order Details',
-    //     text: exportString
-    //   }
-    //   const shareMessage = await this.shareService.share(shareData);
-    //   if (shareMessage.error) {
-    //     this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
-    //   }
-    // }
+      if (error) {
+        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Different Payee Selected' });
+        return;
+      }
+      exportString += ('= ' + finalPayment)
+      this.clipboard.copy(exportString);
+      const shareData: ShareData = {
+        title: 'Payment Details',
+        text: exportString
+      }
+      const shareMessage = await this.shareService.share(shareData);
+      if (shareMessage.error) {
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: shareMessage.message });
+      }
+    }
   }
 
   deliveryStatus(flag: boolean) {

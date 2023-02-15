@@ -7,23 +7,15 @@
             <div class="table-header">
                 Payment List
                 <div>
-                    <button type="button" pButton pRipple icon="pi pi-check-square"
-                        (click)="deliveryDialog.display=true" class="p-button-help mr-2" pTooltip="Change Status"
-                        tooltipPosition="top"></button>
 
-                    <button type="button" pButton pRipple icon="pi pi-whatsapp" (click)="exportText()"
-                        class="p-button-success mr-2" pTooltip="Export Data" tooltipPosition="top"></button>
-
-                    <button type="button" pButton pRipple icon="pi pi-telegram" (click)="exportTelegramData()"
-                        class="mr-2" pTooltip="Add to telegram" tooltipPosition="top"></button>
-
-                    <!-- <button type="button" pButton pRipple icon="pi pi-image" (click)="exportImage()" class="mr-2" pTooltip="Export Image" tooltipPosition="top"></button> -->
+                    <button type="button" pButton pRipple icon="pi pi-telegram" (click)="exportData()"
+                        class="mr-2" pTooltip="Export Payment String" tooltipPosition="top"></button>
 
                     <span class="p-input-icon-left mr-1">
                         <i class="pi pi-search"></i>
-                        <input pInputText type="text" [(ngModel)]=filterBy placeholder="Global Search" />
-                        <!-- <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                                placeholder="Global Search" /> -->
+                        <!-- <input pInputText type="text" [(ngModel)]=filterBy placeholder="Global Search" /> -->
+                        <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                                placeholder="Global Search" />
                     </span>
                 </div>
             </div>
@@ -31,26 +23,27 @@
         <ng-template pTemplate="header">
             <tr>
                 <th pFrozenColumn>SN</th>
-                <th pFrozenColumn style="width: 3rem">
+                <th style="width: 3rem">
                 </th>
-                <th pSortableColumn="name" pFrozenColumn>Payment <p-sortIcon field="name"></p-sortIcon></th>
-                <th pFrozenColumn>Action</th>
+                <th pSortableColumn="name">Payment <p-sortIcon field="name"></p-sortIcon></th>
                 <th>Amount</th>
+                <th>Prev/Remain</th>
                 <th>Payment Mode</th>
                 <th pSortableColumn="date" style="min-width:6rem">Date<p-sortIcon field="date"></p-sortIcon></th>
                 <th>receiver</th>
+                <th>Action</th>
             </tr>
 
             <tr>
                 <th pFrozenColumn></th>
-                <th pFrozenColumn>
+                <th>
                     <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
-                <th pFrozenColumn>
+                <th>
                     <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'name', 'contains')"
                         placeholder="Search" class="p-column-filter">
                 </th>
-                <th pFrozenColumn></th>
+                <th></th>
                 <th></th>
                 <th>
                     <p-dropdown appendTo="body" [options]="mode"
@@ -68,6 +61,7 @@
                     <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'receiver', 'contains')"
                     placeholder="Receiver" class="p-column-filter">
                 </th>
+                <th></th>
             </tr>
 
         </ng-template>
@@ -78,24 +72,7 @@
                     <p-tableCheckbox [value]="payment"></p-tableCheckbox>
                 </td>
                 <td pFrozenColumn>
-                    {{payment.name}}
-                </td>
-                <td pFrozenColumn style="min-width: 100px;">
-                    <div class="flex align-items-center justify-content-center gap-2">
-                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
-                            (click)="onRowEditInit(payment)" class="p-button-rounded p-button-text"></button>
-                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
-                            (click)="onRowEditSave(payment)"
-                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
-                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
-                            (click)="onRowEditCancel(payment, ri)"
-                            class="p-button-rounded p-button-text p-button-danger"></button>
-                        <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-trash"
-                            (click)="deletePayment($event, payment)"
-                            class="p-button-rounded p-button-text p-button-danger"></button>
-                        <button [routerLink]="['/payments', payment._id, 'edit']" *ngIf="!editing" pButton pRipple
-                            type="button" icon="pi pi-external-link" class="p-button-rounded p-button-text"></button>
-                    </div>
+                    {{payment.name}} #{{payment.count}}
                 </td>
                 <td>
                     <p-cellEditor>
@@ -107,6 +84,7 @@
                         </ng-template>
                     </p-cellEditor>
                 </td>
+                <td> {{payment.prevAmount}}/ {{payment.remAmount}}</td>
                 <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">
@@ -131,6 +109,23 @@
                             {{payment.receiver}}
                         </ng-template>
                     </p-cellEditor>
+                </td>
+                <td pFrozenColumn style="min-width: 100px;">
+                    <div class="flex align-items-center justify-content-center gap-2">
+                        <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                            (click)="onRowEditInit(payment)" class="p-button-rounded p-button-text"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                            (click)="onRowEditSave(payment)"
+                            class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                        <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                            (click)="onRowEditCancel(payment, ri)"
+                            class="p-button-rounded p-button-text p-button-danger"></button>
+                        <button *ngIf="!editing" pButton pRipple type="button" icon="pi pi-trash"
+                            (click)="deletePayment($event, payment)"
+                            class="p-button-rounded p-button-text p-button-danger"></button>
+                        <button [routerLink]="['/payments', payment._id, 'edit']" *ngIf="!editing" pButton pRipple
+                            type="button" icon="pi pi-external-link" class="p-button-rounded p-button-text"></button>
+                    </div>
                 </td>
             </tr>
         </ng-template>
