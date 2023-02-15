@@ -132,7 +132,10 @@ export class PaymentService {
       receiver: '',
       prevAmount: 0,
       remark: '',
-      type: 'in'
+      type: 'in',
+      count: 0,
+      lastPayDate: '',
+      remAmount: 0
     }
   }
 }

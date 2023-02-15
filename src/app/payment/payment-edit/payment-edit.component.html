@@ -7,7 +7,7 @@
             <form novalidate>
                 <fieldset>
                     <legend>
-                        Payment Information
+                        Payment Information #{{currentPayment.count}}
                     </legend>
                     <div class="form-group row">
                         <label class="col col-form-label" for="cardNameId">
@@ -26,50 +26,59 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col col-form-label" for="storage">
-                            Previous Amount
-                        </label>
-                        <div class="col">
-                            <input type="number" class="form-control" id="RAmount" required name="RAmount"
-                                [(ngModel)]=currentPayment.prevAmount>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col col-form-label" for="billDate">
+                        <label class="col col-form-label" for="pdate">
                             Date
                         </label>
                         <div class="col">
-                            <input type="date" class="form-control" id="paymentDate"
-                                placeholder="payment Date(required)" required name="paymentDate"
+                            <input type="date" class="form-control" id="pdate"
+                                placeholder="payment Date(required)" required name="pdate"
                                 [(ngModel)]=currentPayment.date>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col col-form-label" for="storage">
+                        <label class="col col-form-label" for="groupname">
                             Type
                         </label>
                         <div class="col">
                             <p-radioButton class="mr-4" name="groupname" value="in" label="Receive"
-                                [(ngModel)]="currentPayment.type"></p-radioButton>
+                                [(ngModel)]="type"></p-radioButton>
                             <p-radioButton name="groupname" value="out" label="Paid"
-                                [(ngModel)]="currentPayment.type"></p-radioButton>
+                                [(ngModel)]="type"></p-radioButton>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col col-form-label" for="storage">
+                        <label class="col col-form-label" for="pamount">
+                            Previous Amount
+                        </label>
+                        <div class="col">
+                            <input type="number" [disabled]="true" class="form-control" id="pamount" required name="pamount"
+                                [(ngModel)]=currentPayment.prevAmount>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="amount">
                             Amount
                         </label>
                         <div class="col">
-                            <input type="number" class="form-control" id="Amount" placeholder="Amount (required)"
-                                required name="Amount" [(ngModel)]=currentPayment.amount>
+                            <input type="number" class="form-control" id="amount" placeholder="Amount (required)"
+                                required name="amount" [(ngModel)]=amount>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col col-form-label" for="cardNameId">
+                        <label class="col col-form-label" for="remAmount">
+                            Remaining Amount
+                        </label>
+                        <div class="col">
+                            <input type="number" [disabled]="true" class="form-control" id="remAmount" required name="remAmount"
+                                [(ngModel)]=currentPayment.remAmount>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col col-form-label" for="mode">
                             Payment Mode
                         </label>
                         <div class="col">
-                            <select class="form-control" name="ram" id="ram" [(ngModel)]=currentPayment.paymentMode>
+                            <select class="form-control" name="mode" id="mode" [(ngModel)]=currentPayment.paymentMode>
                                 <option *ngFor="let md of mode " [value]=md>{{md}}</option>
                             </select>
                         </div>
@@ -108,7 +117,7 @@
             <div class="row mb-2">
                 <div class="col" style="text-align-last: end;">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                        <input [disabled]="currentPayment.paymentMode != 'Card'" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
                             [(ngModel)]=addPaymentToCard>
                         <label class="form-check-label" for="flexSwitchCheckDefault">Add to Card</label>
                     </div>

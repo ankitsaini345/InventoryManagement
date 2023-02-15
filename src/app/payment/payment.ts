@@ -8,5 +8,8 @@ export interface IPayment {
     paymentMode: string,
     receiver: string,
     prevAmount: number,
-    remark: string
+    remAmount: number,
+    remark: string,
+    count: number,
+    lastPayDate: string
 }

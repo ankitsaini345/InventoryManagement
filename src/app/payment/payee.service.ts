@@ -92,11 +92,11 @@ export class PayeeService {
           this.initialiseData();
         }
       } else {
-        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Payee ' + payee.name });
+        this.messageService.add({ severity: 'info', life:15000, summary: 'Info', detail: 'Modified Count 0. Payee ' + payee.name });
         console.error('Unable to add Payee ' + payee.name + ' Error: ', res);
       }
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Payee ' + payee.name + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to Update Payee ' + payee.name + ' Error: ' + error.message });
       console.error('Unable to add Payee ' + payee.name + ' Error: ', error);
     }
 
@@ -135,7 +135,8 @@ export class PayeeService {
       lastPaymentDate: '',
       name: '',
       totalAmount: 0,
-      pendingComm: 0
+      pendingComm: 0,
+      lastPaymentNum: 0
     }
   }
 
