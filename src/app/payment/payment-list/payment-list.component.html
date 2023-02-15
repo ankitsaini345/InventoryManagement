@@ -6,7 +6,10 @@
         <ng-template pTemplate="caption">
             <div class="table-header">
                 Payment List
+                <button type="button" pButton pRipple icon="pi pi-plus" routerLink="/payments/new/edit"
+                class="mr-2" pTooltip="Add New" tooltipPosition="top"></button>
                 <div>
+                   
 
                     <button type="button" pButton pRipple icon="pi pi-telegram" (click)="exportData()"
                         class="mr-2" pTooltip="Export Payment String" tooltipPosition="top"></button>

@@ -17,7 +17,7 @@ import { PaymentService } from '../payment.service';
 })
 export class PaymentEditComponent implements OnInit {
   subArray: Subscription[] = []
-  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "LIC", "Others"];
+  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "LIC", "Order", "Others"];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -135,6 +135,8 @@ export class PaymentEditComponent implements OnInit {
     }
     this.payee.pendingComm += this.currentPayment.cashback;
     this.payee.totalAmount = this.currentPayment.remAmount;
+    this.payee.lastPaymentNum = +this.currentPayment.count;
+    this.payee.lastPaymentDate = this.currentPayment.date;
     this.payeeService.editPayee(this.payee);
 
     if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
