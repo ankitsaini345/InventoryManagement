@@ -7,8 +7,8 @@ export let environment:any = {
   useInMemDB: false
 };
 
-// environment.baseUrl= 'http://localhost:3000/';
-environment.baseUrl= 'https://inventory-management-backend-ankitsaini345.vercel.app/';
+environment.baseUrl= 'http://localhost:3000/';
+// environment.baseUrl= 'https://inventory-management-backend-ankitsaini345.vercel.app/';
 
 /*
  * For easier debugging in development mode, you can import the following file

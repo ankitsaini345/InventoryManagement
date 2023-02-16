@@ -135,7 +135,8 @@ export class PaymentService {
       type: 'in',
       count: 0,
       lastPayDate: '',
-      remAmount: 0
+      remAmount: 0,
+      cashback: 0
     }
   }
 }
