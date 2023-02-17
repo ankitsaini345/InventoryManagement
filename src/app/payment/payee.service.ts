@@ -136,7 +136,8 @@ export class PayeeService {
       name: '',
       totalAmount: 0,
       pendingComm: 0,
-      lastPaymentNum: 0
+      lastPaymentNum: 0,
+      lastPaidAmount: 0
     }
   }
 

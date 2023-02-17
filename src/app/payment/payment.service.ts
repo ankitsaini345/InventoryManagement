@@ -136,7 +136,8 @@ export class PaymentService {
       count: 0,
       lastPayDate: '',
       remAmount: 0,
-      cashback: 0
+      cashback: 0,
+      pendingCommision: 0
     }
   }
 }

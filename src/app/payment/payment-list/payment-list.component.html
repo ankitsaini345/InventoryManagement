@@ -6,11 +6,11 @@
         <ng-template pTemplate="caption">
             <div class="table-header">
                 Payment List
-                <button type="button" pButton pRipple icon="pi pi-plus" routerLink="/payments/new/edit"
-                class="mr-2" pTooltip="Add New" tooltipPosition="top"></button>
+               
                 <div>
-                   
-
+                    <button type="button" pButton pRipple icon="pi pi-plus" routerLink="/payments/new/edit"
+                    class="mr-2" pTooltip="Add New" tooltipPosition="top"></button>
+                    
                     <button type="button" pButton pRipple icon="pi pi-telegram" (click)="exportData()"
                         class="mr-2" pTooltip="Export Payment String" tooltipPosition="top"></button>
 
@@ -29,8 +29,8 @@
                 <th style="width: 3rem">
                 </th>
                 <th pSortableColumn="name">Payment <p-sortIcon field="name"></p-sortIcon></th>
-                <th>Amount</th>
-                <th>Prev/Remain</th>
+                <th>Amount/Comm</th>
+                <th>Prev/Rem/Com</th>
                 <th>Payment Mode</th>
                 <th pSortableColumn="date" style="min-width:6rem">Date<p-sortIcon field="date"></p-sortIcon></th>
                 <th>receiver</th>
@@ -83,11 +83,11 @@
                             <input pInputText type="text" [(ngModel)]="payment.amount">
                         </ng-template>
                         <ng-template pTemplate="output">
-                            {{payment.amount}}
+                            {{payment.amount}} <span *ngIf="payment.cashback">| {{payment.cashback}}</span>
                         </ng-template>
                     </p-cellEditor>
                 </td>
-                <td> {{payment.prevAmount}}/ {{payment.remAmount}}</td>
+                <td> {{payment.prevAmount}} | {{payment.remAmount}} | {{payment.pendingCommision}}</td>
                 <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">

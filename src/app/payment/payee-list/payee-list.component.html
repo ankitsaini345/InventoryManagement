@@ -2,8 +2,7 @@
 <div class="card">
     <div class="card-header">
         Payee List
-        <span *ngIf="!payees"><i class="pi pi-spin pi-spinner ml-2 mr-2"
-                style="font-size: 1rem"></i>Loading..</span>
+        <span *ngIf="!payees"><i class="pi pi-spin pi-spinner ml-2 mr-2" style="font-size: 1rem"></i>Loading..</span>
     </div>
     <div class="card-body">
         <div class="row">
@@ -31,14 +30,12 @@
                     <tr>
                         <th>SN</th>
                         <th>Name</th>
-                        <th>Amount</th>
-                        <th>Pending Com</th>
-                        <th>Total Amount</th>
-                        <th>Last Payment</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th>Pending Amount</th>
+                        <th>Pending Commision</th>
+                        <th>Final Amount</th>
+                        <th>Last Paid</th>
+                        <th>LastPaid Date</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,19 +45,24 @@
                         <td>{{item.totalAmount}}</td>
                         <td>{{item.pendingComm}}</td>
                         <td>{{item.totalAmount + item.pendingComm}}</td>
+                        <td>{{item.lastPaidAmount}}</td>
                         <td>{{item.lastPaymentDate}}</td>
-                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/payee', item._id, 'edit']">
-                                Edit
-                            </button></td>
-                        <td><button class="btn btn-outline-success btn-sm" (click)="markAsPaid($event,item)">
-                                Paid
-                            </button></td>
-                        <td><button class="btn btn-outline-primary btn-sm" [routerLink]="['/payments/', item.name]">
-                                See Txns
-                            </button></td>
-                        <td><button class="btn btn-outline-danger btn-sm" (click)="deletePayee($event,item)">
-                                Delete
-                            </button></td>
+                        <td>
+                            <button pButton pRipple type="button" icon="pi pi-pencil" pTooltip="Edit"
+                                tooltipPosition="top" [routerLink]="['/payee', item._id, 'edit']"
+                                class="p-button-text"></button>
+                     
+                            <button pButton pRipple type="button" icon="pi pi-check" pTooltip="Mark as Paid"
+                                tooltipPosition="top" (click)="markAsPaid($event,item)" class="p-button-text"></button>
+                        
+                            <button pButton pRipple type="button" pTooltip="See txns"
+                                icon="pi pi-list" tooltipPosition="top" [routerLink]="['/payments/', item.name]"
+                                class="p-button-rounded p-button-text"></button>
+                        
+                            <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Delete"
+                                (click)="deletePayee($event,item)" tooltipPosition="top"
+                                class="p-button-rounded p-button-text p-button-danger"></button>
+                        </td>
                     </tr>
 
                 </tbody>

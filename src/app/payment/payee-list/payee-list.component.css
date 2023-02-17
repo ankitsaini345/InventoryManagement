@@ -19,3 +19,8 @@
   .table {
     text-align: center;
   }
+
+  :host ::ng-deep .p-button.p-button-icon-only {
+    width: 2rem;
+}
+

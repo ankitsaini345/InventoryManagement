@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { ShareService } from 'src/app/share.service';
 import { IPayment } from '../payment';
 import { PaymentService } from '../payment.service';
+import { PayeeService } from '../payee.service';
 
 @Component({
   selector: 'app-payment-list',
@@ -18,6 +19,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private clipboard: Clipboard,
     private shareService: ShareService,
+    private payeeService: PayeeService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
@@ -129,9 +131,10 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     this.table.filter(this.formatDate(value), 'date', 'equals')
   }
 
-  formatDate(date: any) {
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
+  formatDate(str: any, regular = false) {
+    let date = new Date(str);
+    let month: any = date.getMonth() + 1;
+    let day: any = date.getDate();
 
     if (month < 10) {
       month = '0' + month;
@@ -140,95 +143,89 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     if (day < 10) {
       day = '0' + day;
     }
+    if (regular) return day + '-' + month + '-' + date.getFullYear();
     return date.getFullYear() + '-' + month + '-' + day;
   }
 
-
   async exportData() {
-
-    // this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
-    if (!this.selectedPayment.length) {
-      this.messageService.add({ severity: 'info', summary: 'Info', detail: 'No Payment Selected' });
-    } else {
-      let error = false;
-      let exportString = '';
-      this.selectedPayment.sort((a, b) => a.count - b.count);
-      let firstEl = this.selectedPayment[0];
-      exportString += ('Last Date: ' + firstEl.lastPayDate + '. Last Amount: ' + firstEl.prevAmount + '\n\n');
-      exportString += ('[#' + firstEl.count + '] [' + firstEl.date + ']\n');
-      exportString += (firstEl.prevAmount + ' ');
-      let finalPayment = firstEl.prevAmount;
-      this.selectedPayment.forEach((item) => {
-        if (item.name != firstEl.name) error = true;
-        if (item.type == 'in') {
-          finalPayment -= item.amount;
-          exportString += ('- ' + item.amount + ' ');
-        } else {
-          finalPayment += item.amount;
-          exportString += ('+ ' + item.amount + ' ');
-        }
-      });
-
-      if (error) {
-        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Different Payee Selected' });
-        return;
-      }
-      exportString += ('= ' + finalPayment)
-      this.clipboard.copy(exportString);
-      const shareData: ShareData = {
-        title: 'Payment Details',
-        text: exportString
-      }
-      const shareMessage = await this.shareService.share(shareData);
-      if (shareMessage.error) {
-        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: shareMessage.message });
-      }
-    }
-  }
-
-  deliveryStatus(flag: boolean) {
-    if (!this.selectedPayment.length) {
-      console.error('No Payment Selected');
-      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Payment Selected' });
-    } else {
-      if (flag) {
-        this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
-        this.deliveryDialog.display = false;
+    try {
+      if (!this.selectedPayment.length) {
+        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'No Payment Selected' });
       } else {
-        this.deliveryDialog.display = false,
-          this.deliveryDialog.date = '',
-          this.deliveryDialog.type = ''
+        let exportString = '';
+        let lastDate = '';
+        this.selectedPayment.sort((a, b) => a.count - b.count);
+        let firstEl = this.selectedPayment[0];
+        exportString += ('[Last Date: ' + this.formatDate(firstEl.lastPayDate, true) + '] [Last Amount: ' + firstEl.prevAmount + ']\n');
+        // exportString += ('[#' + firstEl.count + '] [' + firstEl.date + ']\n');
+        // exportString += (firstEl.prevAmount + ' ');
+        let finalPayment = firstEl.prevAmount;
+        this.selectedPayment.forEach((item) => {
+
+          if (item.name != firstEl.name) throw new Error('Different Payee Selected');
+
+          if(lastDate != item.date) {
+            lastDate = item.date;
+            exportString += ('\n[' + this.formatDate(item.date, true) + '] ')
+          }
+          if (item.type == 'in') {
+            finalPayment -= item.amount;
+            // exportString += ('- ' + item.amount + ' ');
+            exportString += ('-' + item.amount + ' ')
+          } else {
+            finalPayment += item.amount;
+            // exportString += ('+ ' + item.amount + ' ');
+            exportString += ('+' + item.amount + ' ')
+          }
+          if(item.name == 'Dev' && item.cashback) exportString += ('(' + item.cashback + ') ')
+        });
+        exportString += ('\n\n[Total] = ' + finalPayment)
+        
+        let payee = this.payeeService.getPayeeByName(firstEl.name);
+        if(firstEl.name == 'Dev')
+        exportString += ('\n[Pending Commision] = ' + payee.pendingComm);
+        if(payee.totalAmount != finalPayment) 
+        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Final Price Mismatch' });
+
+        this.clipboard.copy(exportString);
+        const shareData: ShareData = {
+          title: 'Payment Details',
+          text: exportString
+        }
+        const shareMessage = await this.shareService.share(shareData);
+        if (shareMessage.error) {
+          this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: shareMessage.message });
+        }
       }
+    } catch (error: any) {
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: error.message });
     }
   }
 
-  async bulkStatusChange(status: string, date: string) {
 
-    this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'function not defined' });
-
-
-    // let promiseArray: Promise<any>[] = [];
-    // this.selectedPayment.forEach((payment: IPayment) => {
-    //   let originalProduct = payment;
-    //   if (payment.status != status) {
-    //     payment.status = status;
-    //     if (status == 'Distributor') payment.buyerDate = date;
-    //     if (status == 'DeliveredHome') payment.deliveryDate = date;
-    //     let pro = this.productService.editProduct(payment, originalProduct, false);
-    //     promiseArray.push(pro);
-    //   }
-    // });
-    // Promise.all(promiseArray).then(() => {
-    //   sessionStorage.removeItem(this.PaymentStorageString);
-    //   this.productService.initialiseProductData();
-    // })
-    // this.filterBy = ''
-  }
-
-  // async exportImage() {
-  //   const dataUrl = await toPng(document.getElementById('my-table')!)
-  //   this.clipboard.copy(dataUrl);
+  // async bulkStatusChange() {
+  // if (!this.selectedPayment.length) {
+  //   this.messageService.add({ severity: 'info', summary: 'Info', detail: 'No Payment Selected' });
+  // } 
+  //   // let promiseArray: Promise<any>[] = [];
+  //   console.log('pending comm');
+    
+  //   let Comm = 0;
+  //   let newArr = this.selectedPayment.slice();
+  //   newArr.sort((a, b) => a.count - b.count);
+  //   newArr.forEach((payment: IPayment) => {
+  //     console.log(payment.name);
+      
+  //     if (payment.name == 'Vivek') {
+  //       Comm += payment.cashback;
+  //       if (!payment.pendingCommision) {
+  //         payment.pendingCommision = Comm;
+  //         this.paymentService.updatePayment(payment, false);
+  //       }
+  //     }
+  //   });
   // }
+
 
   ngOnDestroy(): void {
     this.subArray.forEach((sub: Subscription) => {
