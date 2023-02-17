@@ -28,7 +28,6 @@ export class PaymentEditComponent implements OnInit {
 
   pageTitle = 'Edit Payment';
   currentPayment!: IPayment;
-  originalPayment!: IPayment;
   payeeNameArray!: string[];
   filteredPayeeNameArray: string[] = [];
   receiverNameArray!: string[];
@@ -38,6 +37,7 @@ export class PaymentEditComponent implements OnInit {
   loading = false;
   addPaymentToCard = false;
   payee!: IPayee;
+  lastPaid: number = 0;
 
   get name() {
     return this.currentPayment.name;
@@ -67,12 +67,13 @@ export class PaymentEditComponent implements OnInit {
       this.currentPayment.remAmount = this.currentPayment.prevAmount + this.currentPayment.amount;
   }
 
-  set name(val: string) {
+  setName(val: string){
     if (val) {
       this.currentPayment.name = val;
       this.payee = this.payeeService.getPayeeByName(val);
       this.currentPayment.prevAmount = this.payee.totalAmount;
       this.currentPayment.lastPayDate = this.payee.lastPaymentDate;
+      this.lastPaid = this.payee.lastPaidAmount;
       if (this.currentPayment._id == 'new')
         this.currentPayment.count = this.payee.lastPaymentNum + 1
       else
@@ -84,8 +85,12 @@ export class PaymentEditComponent implements OnInit {
       this.currentPayment.remAmount = this.currentPayment.prevAmount + this.currentPayment.amount;
   }
 
+  set name(val: string) {
+    this.setName(val);
+  }
+
   set cashback(val: number) {
-    if(val) {
+    if (val) {
       this.currentPayment.cashback = Math.round((this.currentPayment.amount * val) / 100);
     } else this.currentPayment.cashback = 0;
   }
@@ -99,7 +104,6 @@ export class PaymentEditComponent implements OnInit {
       let _id: string = param['_id'];
       if (_id == 'new') this.pageTitle = 'Add Payment';
       this.currentPayment = this.paymentService.getPaymentbyId(_id);
-      this.originalPayment = { ...this.currentPayment };
     })
     this.subArray.push(sub1);
 
@@ -120,32 +124,46 @@ export class PaymentEditComponent implements OnInit {
     this.subArray.push(sub4);
   }
 
-  async save() {
+  async save(stayOnPage = false) {
+    let promiseArray: Promise<any>[] = [];
+    this.loading = true;
 
-    if (!this.payee) {
+    if (this.currentPayment._id == 'new' && !this.payee) {
       this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Payee not selected.' });
       return;
     }
-    this.loading = true;
     if (this.currentPayment._id == 'new') {
       this.currentPayment._id = new ObjectId().toString();
-      this.paymentService.addPayment(this.currentPayment);
+      const p1 = this.paymentService.addPayment(this.currentPayment);
+      promiseArray.push(p1);
+      this.payee.totalAmount = this.currentPayment.remAmount;
+      this.payee.lastPaymentNum = +this.currentPayment.count;
+      this.payee.lastPaymentDate = this.currentPayment.date;
+      this.currentPayment.pendingCommision = this.payee.pendingComm + this.currentPayment.cashback;
+      this.payee.pendingComm += this.currentPayment.cashback;
+      this.payee.lastPaidAmount = this.currentPayment.amount;
+      const p2 = this.payeeService.editPayee(this.payee);
+      promiseArray.push(p2);
     } else {
-      this.paymentService.updatePayment(this.currentPayment);
+      const p3 = this.paymentService.updatePayment(this.currentPayment);
+      promiseArray.push(p3);
     }
-    this.payee.pendingComm += this.currentPayment.cashback;
-    this.payee.totalAmount = this.currentPayment.remAmount;
-    this.payee.lastPaymentNum = +this.currentPayment.count;
-    this.payee.lastPaymentDate = this.currentPayment.date;
-    this.payeeService.editPayee(this.payee);
 
     if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
       let card = this.cardService.getCard(this.currentPayment.receiver);
       card.amountDue -= this.currentPayment.amount;
-      this.cardService.updateCard(card);
+      const p4 = this.cardService.updateCard(card);
+      promiseArray.push(p4);
     }
-    this.loading = false;
-    this.router.navigate(['/payments/All'])
+
+    if (stayOnPage) {
+      Promise.all(promiseArray).then(() => {
+        this.loading = false;
+        const payee = this.currentPayment.name;
+        this.currentPayment = this.paymentService.getPaymentbyId('new');
+        this.setName(payee);
+      })
+    } else this.router.navigate(['/payments/All'])
   }
 
   reset() {

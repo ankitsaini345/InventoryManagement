@@ -4,5 +4,6 @@ export interface IPayee {
     totalAmount: number,
     lastPaymentDate: string,
     pendingComm: number,
-    lastPaymentNum: number
+    lastPaymentNum: number,
+    lastPaidAmount: number
 }

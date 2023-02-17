@@ -41,6 +41,16 @@
                 </div>
 
                 <div class="form-group row">
+                    <label class="col col-form-label" for="lastPaymentAmt">
+                        Last Payment Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="lastPaymentAmt" placeholder="Last Payment Amount"
+                            required name="lastPaymentAmt" [(ngModel)]=currentPayee.lastPaidAmount>
+                    </div>
+                </div>
+
+                <div class="form-group row">
                     <label class="col col-form-label" for="lastPaymentCount">
                         Last Payment count
                     </label>

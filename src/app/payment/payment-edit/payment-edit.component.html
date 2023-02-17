@@ -9,6 +9,7 @@
                     <legend>
                         Payment Information #{{currentPayment.count}}
                     </legend>
+                    {{currentPayment | json}}
                     <div class="form-group row">
                         <label class="col col-form-label" for="cardNameId">
                             Name
@@ -23,6 +24,14 @@
                                     </div>
                                 </ng-template>
                             </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="form-group row" *ngIf="lastPaid">
+                        <label class="col col-form-label" for="lastamount">
+                            Last Txn
+                        </label>
+                        <div class="col">
+                            {{currentPayment.lastPayDate}} | {{lastPaid}}
                         </div>
                     </div>
                     <div class="form-group row">
@@ -48,7 +57,7 @@
                     </div>
                     <div class="form-group row">
                         <label class="col col-form-label" for="pamount">
-                            Previous Amount
+                            Pending Amount
                         </label>
                         <div class="col">
                             <input type="number" [disabled]="true" class="form-control" id="pamount" required name="pamount"
@@ -66,7 +75,7 @@
                     </div>
                     <div class="form-group row">
                         <label class="col col-form-label" for="remAmount">
-                            Remaining Amount
+                            New Pending Amount
                         </label>
                         <div class="col">
                             <input type="number" [disabled]="true" class="form-control" id="remAmount" required name="remAmount"
@@ -148,9 +157,13 @@
                 </div>
 
                 <div class="col">
-                    <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="save()">
+                    <button [disabled]="loading" class="btn btn-primary mr-3" style="width:80px" type="button" (click)="save(false)">
                         <span *ngIf="loading"><i class="pi pi-spin pi-spinner mr-2" style="font-size: 1rem"></i></span>
                         Save
+                    </button>
+                    <button [disabled]="loading" class="btn btn-primary mr-3" style="width:110px" type="button" (click)="save(true)">
+                        <span *ngIf="loading"><i class="pi pi-spin pi-spinner mr-2" style="font-size: 1rem"></i></span>
+                        Save & Stay
                     </button>
                     <button class="btn btn-outline-secondary mr-3" style="width:80px" type="button"
                         title="Cancel your edits" [routerLink]="['/payments']">
