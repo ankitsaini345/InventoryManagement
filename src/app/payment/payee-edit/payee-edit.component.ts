@@ -9,7 +9,7 @@ import { PayeeService } from '../payee.service';
 @Component({
   selector: 'app-payee-edit',
   templateUrl: './payee-edit.component.html',
-  styleUrls: ['./payee-edit.component.css']
+  styleUrls: ['./payee-edit.component.scss']
 })
 export class PayeeEditComponent implements OnInit {
   subArray: Subscription[] = []

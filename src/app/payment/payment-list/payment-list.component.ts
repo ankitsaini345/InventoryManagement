@@ -12,7 +12,7 @@ import { PayeeService } from '../payee.service';
 @Component({
   selector: 'app-payment-list',
   templateUrl: './payment-list.component.html',
-  styleUrls: ['./payment-list.component.css']
+  styleUrls: ['./payment-list.component.scss']
 })
 export class PaymentListComponent implements OnInit, OnDestroy {
   constructor(private paymentService: PaymentService,

@@ -7,7 +7,7 @@ import { TxnService } from '../txn.service';
 @Component({
   selector: 'app-txn-list',
   templateUrl: './txn-list.component.html',
-  styleUrls: ['./txn-list.component.css']
+  styleUrls: ['./txn-list.component.scss']
 })
 export class TxnListComponent implements OnInit, OnDestroy {
 

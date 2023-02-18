@@ -8,7 +8,7 @@ import { CardService } from '../card.service';
 @Component({
   selector: 'app-card-modify',
   templateUrl: './card-modify.component.html',
-  styleUrls: ['./card-modify.component.css']
+  styleUrls: ['./card-modify.component.scss']
 })
 export class CardModifyComponent implements OnInit {
   subArray: Subscription[] = []

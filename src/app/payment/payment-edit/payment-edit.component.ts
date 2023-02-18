@@ -13,7 +13,7 @@ import { PaymentService } from '../payment.service';
 @Component({
   selector: 'app-payment-edit',
   templateUrl: './payment-edit.component.html',
-  styleUrls: ['./payment-edit.component.css']
+  styleUrls: ['./payment-edit.component.scss']
 })
 export class PaymentEditComponent implements OnInit {
   subArray: Subscription[] = []
