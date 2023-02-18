@@ -152,6 +152,7 @@ export class CardService {
     return {
       _id: 'new',
       cardName: '',
+      cardNumber: '',
       dueDate: 0,
       amountDue: 0,
       billDate: 0,

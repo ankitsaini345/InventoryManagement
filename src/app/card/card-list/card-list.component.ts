@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { Icard } from '../card';
@@ -25,6 +26,7 @@ export class CardListComponent implements OnInit, OnDestroy {
 
   constructor(private cardService: CardService,
     private confirmationService: ConfirmationService,
+    private clipboard: Clipboard,
     private messageService: MessageService) { }
 
   ngOnInit(): void {
@@ -81,11 +83,11 @@ export class CardListComponent implements OnInit, OnDestroy {
       if (this.selectedCardOverlay.type == 'Remaining Amount')
         this.selectedCardOverlay.card.amountDue = +this.selectedCardOverlay.amount;
       else this.selectedCardOverlay.card.amountDue -= +this.selectedCardOverlay.amount;
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Info',
-          detail: this.selectedCardOverlay.card.cardName + ' marked for Updation.',
-        });
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Info',
+        detail: this.selectedCardOverlay.card.cardName + ' marked for Updation.',
+      });
       this.cardService.updateCard(this.selectedCardOverlay.card);
     }
 
@@ -101,4 +103,27 @@ export class CardListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.sub.unsubscribe();
   }
+
+  copyCardNum(card: Icard) {
+    if (this.clipboard.copy(card.cardNumber))
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: card.cardName + ' number copied',
+      });
+    else console.log('Error in copying card number');
+    
+
+  }
+
+  // customUpdate() {
+  //   this.cards.forEach((card)=> {
+  //     if(card.cardNumber) {
+  //       console.log('updated: ' + card.cardName + ': ' + card.cardNumber);
+
+  //       this.cardService.updateCard(card, false);
+  //     }
+  //   })
+  // }
+
 }
