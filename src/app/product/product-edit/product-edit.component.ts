@@ -13,7 +13,7 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-product-edit',
   templateUrl: './product-edit.component.html',
-  styleUrls: ['./product-edit.component.css']
+  styleUrls: ['./product-edit.component.scss']
 })
 export class ProductEditComponent implements OnInit, OnDestroy {
 
@@ -187,7 +187,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
             amountDue: 0,
             billDate: 0,
             dueDate: 0,
-            totalAmount: 0
+            totalAmount: 0,
+            cardNumber: ''
           })
         } else return;
       }

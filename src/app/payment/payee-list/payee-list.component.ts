@@ -7,7 +7,7 @@ import { PayeeService } from '../payee.service';
 @Component({
   selector: 'app-payee-list',
   templateUrl: './payee-list.component.html',
-  styleUrls: ['./payee-list.component.css']
+  styleUrls: ['./payee-list.component.scss']
 })
 export class PayeeListComponent implements OnInit, OnDestroy {
   filterBy = '';
