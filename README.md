@@ -1,5 +1,12 @@
 ## Todo
 
+home:
+total {ordered, undelivered, distibutor}
+amount {ordered, undelivered, disributor}
+amount pending with payees, cards, difference
+
+orders per month 
+
 Table
 https://primeng.org/table/coltoggle
 
