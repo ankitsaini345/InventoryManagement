@@ -24,3 +24,14 @@ export interface IProduct {
     cashback: number,
     delivery: number
 }
+
+export interface IProductStats {
+    undeliveredCount: number,
+    deliveredCount: number,
+    OrderCount: number,
+    buyerCount: number,
+    undeliveredAmount: number,
+    deliveredAmount: number,
+    OrderAmount: number,
+    buyerAmount: number
+}

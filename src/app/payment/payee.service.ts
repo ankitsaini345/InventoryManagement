@@ -21,6 +21,10 @@ export class PayeeService {
   private url = environment.baseUrl + 'api/payees';
   private payeeData$ = new BehaviorSubject<IPayee[]>([]);
   private uniquePayeeName$ = new BehaviorSubject<string[]>([]);
+  private pendingAmount$ = new BehaviorSubject<any>({
+    distributor: 0,
+    others: 0
+  });
 
   async initialiseData() {
     try {
@@ -29,9 +33,11 @@ export class PayeeService {
       if (data) {
         dataArray = JSON.parse(data);
         this.payeeData$.next(dataArray);
+        this.calcStats();
       } else {
         dataArray = await firstValueFrom(this.http.get<IPayee[]>(this.url));
         this.payeeData$.next(dataArray);
+        this.calcStats();
         sessionStorage.setItem(this.StorageString, JSON.stringify(dataArray));
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payee Initialised' });
       }
@@ -43,6 +49,24 @@ export class PayeeService {
       console.error(error);
       this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in initialising Payee: ' + error.message });
     }
+  }
+
+  calcStats() {
+    let stats = {
+      distributor: 0,
+      others: 0
+    }
+
+    this.payeeData$.getValue().forEach((payee)=> {
+      if(payee.name == 'Amit Aryangr') stats.distributor += payee.totalAmount;
+      else stats.others += payee.totalAmount;
+    });
+
+    this.pendingAmount$.next(stats);
+  }
+
+  getPendingAmount() {
+    return this.pendingAmount$.asObservable();
   }
 
   getPayees(): Observable<IPayee[]> {

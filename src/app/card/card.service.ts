@@ -18,10 +18,23 @@ export class CardService {
 
   private cardData$ = new BehaviorSubject<Icard[]>([]);
   private cardNameArray$ = new BehaviorSubject<string[]>([]);
+  private pendingAmount$ = new BehaviorSubject<number>(0);
 
   constructor(private http: HttpClient,
     private messageService: MessageService) {
     // this.initialiseCardData();
+  }
+
+  calcPendingAmount() {
+    let pendingAmount = 0;
+    this.cardData$.getValue().forEach((card)=> {
+      pendingAmount += card.amountDue;
+    })
+    this.pendingAmount$.next(pendingAmount);
+  }
+
+  getPendingAmount() {
+   return this.pendingAmount$.asObservable();
   }
 
   getCards(): Observable<Icard[]> {
@@ -38,10 +51,12 @@ export class CardService {
     if (cards) {
       cardsArray = JSON.parse(cards);
       this.cardData$.next(cardsArray);
+      this.calcPendingAmount();
     } else {
       cardsArray = await firstValueFrom(this.http.get<Icard[]>(this.url));
       sessionStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
       this.cardData$.next(cardsArray);
+      this.calcPendingAmount();
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Cards Data Initialised' });
     }
     let cardNames: string[] = [];

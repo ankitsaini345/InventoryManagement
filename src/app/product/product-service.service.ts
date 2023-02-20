@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
-import { IProduct } from './product';
+import { IProduct, IProductStats } from './product';
 import { environment } from 'src/environments/environment';
 import { CardService } from '../card/card.service';
 import { TxnService } from '../txn/txn.service';
@@ -30,6 +30,17 @@ export class ProductServiceService {
   private uniqueProductName$ = new BehaviorSubject<string[]>([]);
   private uniqueAccountName$ = new BehaviorSubject<string[]>([]);
 
+  private statsData$ = new BehaviorSubject<IProductStats>({
+    undeliveredCount: 0,
+    deliveredCount: 0,
+    OrderCount: 0,
+    buyerCount: 0,
+    undeliveredAmount: 0,
+    deliveredAmount: 0,
+    OrderAmount: 0,
+    buyerAmount: 0
+  });
+
   async initialiseProductData() {
     try {
       let products = sessionStorage.getItem(this.productStorageString);
@@ -37,9 +48,11 @@ export class ProductServiceService {
       if (products) {
         productArray = JSON.parse(products);
         this.productData$.next(productArray);
+        this.caclStats();
       } else {
         productArray = await firstValueFrom(this.http.get<IProduct[]>(this.url));
         this.productData$.next(productArray);
+        this.caclStats();
         sessionStorage.setItem(this.productStorageString, JSON.stringify(productArray));
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Products Initialised' });
       }
@@ -52,8 +65,49 @@ export class ProductServiceService {
 
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
     }
+  }
+
+  caclStats() {
+    let total: IProductStats = {
+      undeliveredCount: 0,
+      deliveredCount: 0,
+      OrderCount: 0,
+      buyerCount: 0,
+      undeliveredAmount: 0,
+      deliveredAmount: 0,
+      OrderAmount: 0,
+      buyerAmount: 0
+    }
+  // orderStatus = ['Ordered', 'Shipped', 'DeliveredToLoc', 'DeliveredHome', 'Distributor', 'Cancelled']
+
+    this.productData$.getValue().forEach((product) => {
+      total.OrderCount++;
+      total.OrderAmount += product.costToMe;
+      switch (product.status) {
+        case 'Ordered':
+          total.undeliveredCount++;
+          total.undeliveredAmount += product.buyerPrice;
+          break;
+          case 'DeliveredHome' || 'DeliveredToLoc':
+            total.deliveredCount++;
+            total.deliveredAmount += product.buyerPrice;
+          break;
+          case 'Distributor':
+            total.buyerCount++;
+            total.buyerAmount += product.buyerPrice;
+          break;
+        default:
+          break;
+      }
+    });
+
+    this.statsData$.next(total);
+  }
+
+  getStats(): Observable<IProductStats> {
+    return this.statsData$.asObservable();
   }
 
   getProducts(): Observable<IProduct[]> {
@@ -91,7 +145,7 @@ export class ProductServiceService {
         updatedCard.totalAmount += currentProduct.cardAmount;
         this.cardService.updateCard(updatedCard);
       } else {
-        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
       }
     } catch (error: any) {
@@ -114,11 +168,11 @@ export class ProductServiceService {
         this.cardService.updateCardUsingProduct(currentProduct, originalProduct, init)
 
       } else {
-        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
       }
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name + ' Error: ' + error.message });
       console.error('Unable to add Product ' + currentProduct.name + ' Error: ', error);
     }
 
@@ -139,7 +193,7 @@ export class ProductServiceService {
         if (updatedCard.amountDue >= currentProduct.cardAmount) updatedCard.amountDue -= currentProduct.cardAmount;
         this.cardService.updateCard(updatedCard);
       } else {
-        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to delete Product ' + currentProduct.name });
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to delete Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);
       }
     } catch (error: any) {

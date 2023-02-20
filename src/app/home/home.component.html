@@ -1,2 +1,67 @@
-<!-- <app-spinner></app-spinner>
-<button (click)="start()">Show spinner for 3 secs</button> -->
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            Summary
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Count</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Undelivered</td>
+                            <td>{{productStat.undeliveredCount}}</td>
+                            <td>{{productStat.undeliveredAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td>Delivered</td>
+                            <td>{{productStat.deliveredCount}}</td>
+                            <td>{{productStat.deliveredAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Order</td>
+                            <td>{{productStat.OrderCount}}</td>
+                            <td>{{productStat.OrderAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td>Distributor</td>
+                            <td>{{productStat.buyerCount}}</td>
+                            <td>{{productStat.buyerAmount}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Pending with Distributor</td>
+                            <td></td>
+                            <td>{{pendingAmount.distributor}}</td>
+                        </tr>
+                        <tr>
+                            <td>Pending with Others</td>
+                            <td></td>
+                            <td>{{pendingAmount.others}}</td>
+                        </tr>
+                        <tr>
+                            <td>Pending in Card</td>
+                            <td></td>
+                            <td>{{pendingCardAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td>Difference</td>
+                            <td></td>
+                            <td>{{pendingAmount.distributor + pendingAmount.others + productStat.undeliveredAmount +
+                                productStat.deliveredAmount - pendingCardAmount}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>
