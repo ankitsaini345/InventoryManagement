@@ -38,6 +38,27 @@
                             required minlength="3" name="dueDate" [(ngModel)]=currentCard.dueDate>
                     </div>
                 </div>
+
+                <div class="form-group row">
+                    <label class="col col-form-label" for="lastBilledMonth">
+                        lastBilledMonth
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="lastBilledMonth" placeholder="lastBilledMonth"
+                            required minlength="3" name="lastBilledMonth" [(ngModel)]=currentCard.lastBilledMonth>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col col-form-label" for="unbilledAmount">
+                       Unbilled Amount
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="unbilledAmount" placeholder="Amount Due (required)"
+                            required minlength="3" name="unbilledAmount" [(ngModel)]=currentCard.unbilledAmount>
+                    </div>
+                </div>
+
                 <div class="form-group row">
                     <label class="col col-form-label" for="amountDue">
                         Amount Due

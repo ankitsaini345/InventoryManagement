@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     productStat!: IProductStats;
     pendingAmount!: any;
-    pendingCardAmount!: number;
+    pendingCardAmount!: any;
     subArray: Subscription[] = [];
     cols!: any
 

@@ -151,7 +151,7 @@ export class PaymentEditComponent implements OnInit {
 
     if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
       let card = this.cardService.getCard(this.currentPayment.receiver);
-      card.amountDue -= this.currentPayment.amount;
+      card.unbilledAmount -= this.currentPayment.amount;
       const p4 = this.cardService.updateCard(card);
       promiseArray.push(p4);
     }

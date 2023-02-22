@@ -141,7 +141,7 @@ export class ProductServiceService {
         this.txnService.addTxnfromProduct(currentProduct);
 
         let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
-        updatedCard.amountDue += currentProduct.cardAmount;
+        updatedCard.unbilledAmount += currentProduct.cardAmount;
         updatedCard.totalAmount += currentProduct.cardAmount;
         this.cardService.updateCard(updatedCard);
       } else {
@@ -190,7 +190,7 @@ export class ProductServiceService {
 
         let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
         updatedCard.totalAmount -= currentProduct.cardAmount;
-        if (updatedCard.amountDue >= currentProduct.cardAmount) updatedCard.amountDue -= currentProduct.cardAmount;
+        if (updatedCard.unbilledAmount >= currentProduct.cardAmount) updatedCard.unbilledAmount -= currentProduct.cardAmount;
         this.cardService.updateCard(updatedCard);
       } else {
         this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to delete Product ' + currentProduct.name });

@@ -188,7 +188,9 @@ export class ProductEditComponent implements OnInit, OnDestroy {
             billDate: 0,
             dueDate: 0,
             totalAmount: 0,
-            cardNumber: ''
+            cardNumber: '',
+            unbilledAmount: 0,
+            lastBilledMonth: 0
           })
         } else return;
       }

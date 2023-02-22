@@ -41,9 +41,21 @@ export class CardListComponent implements OnInit, OnDestroy {
     })
   }
 
+  customUpdate() {
+    this.cards.forEach((card) => {
+      // card.lastBilledMonth = 0;
+      // this.cardService.updateCard(card, false);
+    })
+  }
+
+  refresh() {
+    this.cardService.refresh();
+  }
+
   calcTotal() {
     this.aggregate = {};
     this.filteredValue.forEach((item) => {
+      this.aggregate.unbilledAmount ? this.aggregate.unbilledAmount += item.unbilledAmount : this.aggregate.unbilledAmount = item.unbilledAmount;
       this.aggregate.amountDue ? this.aggregate.amountDue += item.amountDue : this.aggregate.amountDue = item.amountDue;
       this.aggregate.totalAmount ? this.aggregate.totalAmount += item.totalAmount : this.aggregate.totalAmount = item.totalAmount;
     })
@@ -112,18 +124,5 @@ export class CardListComponent implements OnInit, OnDestroy {
         detail: card.cardName + ' number copied',
       });
     else console.log('Error in copying card number');
-    
-
   }
-
-  // customUpdate() {
-  //   this.cards.forEach((card)=> {
-  //     if(card.cardNumber) {
-  //       console.log('updated: ' + card.cardName + ': ' + card.cardNumber);
-
-  //       this.cardService.updateCard(card, false);
-  //     }
-  //   })
-  // }
-
 }

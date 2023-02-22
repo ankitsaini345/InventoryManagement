@@ -15,10 +15,14 @@ export class CardService {
   private cardStorageString = 'inventoryCards';
   private txnStorageString = 'inventoryTxns';
   private url = environment.baseUrl + 'api/cards'
+  private billGenerateFlag = true;
 
   private cardData$ = new BehaviorSubject<Icard[]>([]);
   private cardNameArray$ = new BehaviorSubject<string[]>([]);
-  private pendingAmount$ = new BehaviorSubject<number>(0);
+  private pendingAmount$ = new BehaviorSubject<any>({
+    due: 0,
+    unbilled: 0
+  });
 
   constructor(private http: HttpClient,
     private messageService: MessageService) {
@@ -26,15 +30,20 @@ export class CardService {
   }
 
   calcPendingAmount() {
-    let pendingAmount = 0;
-    this.cardData$.getValue().forEach((card)=> {
-      pendingAmount += card.amountDue;
+    let due = 0;
+    let unbilled = 0;
+    this.cardData$.getValue().forEach((card) => {
+      due += card.amountDue;
+      unbilled += card.unbilledAmount;
     })
-    this.pendingAmount$.next(pendingAmount);
+    this.pendingAmount$.next({
+      due: due,
+      unbilled: unbilled
+    });
   }
 
   getPendingAmount() {
-   return this.pendingAmount$.asObservable();
+    return this.pendingAmount$.asObservable();
   }
 
   getCards(): Observable<Icard[]> {
@@ -57,13 +66,19 @@ export class CardService {
       sessionStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
       this.cardData$.next(cardsArray);
       this.calcPendingAmount();
+      if (this.billGenerateFlag) this.generateBill();
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Cards Data Initialised' });
     }
     let cardNames: string[] = [];
-    cardsArray.forEach((card: Icard)=> {
+    cardsArray.forEach((card: Icard) => {
       cardNames.push(card.cardName);
     })
     this.cardNameArray$.next(cardNames);
+  }
+
+  refresh() {
+    sessionStorage.removeItem(this.cardStorageString);
+    this.initialiseCardData();
   }
 
   getCard(cardName: string): Icard {
@@ -94,7 +109,7 @@ export class CardService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to add card: ' + card.cardName + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to add card: ' + card.cardName + ' Error: ' + error.message });
     }
   }
 
@@ -113,12 +128,12 @@ export class CardService {
 
         } else {
           console.error(card.cardName + ': Not matched with any existing card');
-          this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: card.cardName + ': Not matched with any existing card' });
+          this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: card.cardName + ': Not matched with any existing card' });
         }
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to update card: ' + card.cardName + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to update card: ' + card.cardName + ' Error: ' + error.message });
     }
   }
 
@@ -126,23 +141,23 @@ export class CardService {
 
     if (currentProduct.cardHolder != originalProduct.cardHolder) {
       let oldCard = this.getCard(originalProduct.cardHolder);
-      oldCard.amountDue -= originalProduct.cardAmount;
-      if (!oldCard.amountDue) oldCard.amountDue = 0;
+      oldCard.unbilledAmount -= originalProduct.cardAmount;
+      if (!oldCard.unbilledAmount) oldCard.unbilledAmount = 0;
       oldCard.totalAmount -= originalProduct.cardAmount;
       this.updateCard(oldCard, init);
 
       let newCard = this.getCard(currentProduct.cardHolder);
       newCard.totalAmount += currentProduct.cardAmount;
-      newCard.amountDue += currentProduct.cardAmount;
+      newCard.unbilledAmount += currentProduct.cardAmount;
       this.updateCard(newCard, init);
 
     } else if (currentProduct.cardAmount != originalProduct.cardAmount) {
       let oldCard = this.getCard(originalProduct.cardHolder);
-      oldCard.amountDue -= originalProduct.cardAmount;
+      oldCard.unbilledAmount -= originalProduct.cardAmount;
       oldCard.totalAmount -= originalProduct.cardAmount;
 
       oldCard.totalAmount += currentProduct.cardAmount;
-      oldCard.amountDue += currentProduct.cardAmount;
+      oldCard.unbilledAmount += currentProduct.cardAmount;
       this.updateCard(oldCard, init);
     }
   }
@@ -159,7 +174,39 @@ export class CardService {
       } else throw res;
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to delete card: ' + card.cardName + ' Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to delete card: ' + card.cardName + ' Error: ' + error.message });
+    }
+  }
+
+  generateBill() {
+    try {
+      this.billGenerateFlag = false;
+      let promiseArray: Promise<any>[] = [];
+      let currentMonth = (new Date()).getMonth() + 1;
+      let currentDate = (new Date()).getDate();
+      for (const card of this.cardData$.getValue()) {
+        if (!card.unbilledAmount) {
+          continue;
+        } else {
+          if ((card.lastBilledMonth != currentMonth) && (card.billDate <= currentDate)) {
+            card.amountDue += card.unbilledAmount;
+            card.unbilledAmount = 0;
+            card.lastBilledMonth = currentMonth;
+            let sub = this.updateCard(card, false);
+            promiseArray.push(sub);
+            console.log('bill generated for ' + card.cardName);
+          }
+        }
+      }
+      if (promiseArray.length) {
+        Promise.all(promiseArray).then(() => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Bill Generated' });
+          sessionStorage.removeItem(this.cardStorageString);
+          this.initialiseCardData();
+        })
+      }
+    } catch (error: any) {
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to generate card bill. Error: ' + error.message });
     }
   }
 
@@ -171,7 +218,9 @@ export class CardService {
       dueDate: 0,
       amountDue: 0,
       billDate: 0,
-      totalAmount: 0
+      totalAmount: 0,
+      unbilledAmount: 0,
+      lastBilledMonth: 0
     }
   }
 

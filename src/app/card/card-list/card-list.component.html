@@ -6,6 +6,14 @@
             <div class="table-header">
                 Card List
                 <div>
+                    <button pButton pRipple type="button" icon="pi pi-check" pTooltip="update Card"
+                    (click)="customUpdate()" tooltipPosition="top"
+                    class="p-button-rounded p-button-text"></button>
+
+                    <button pButton pRipple type="button" icon="pi pi-refresh" pTooltip="Refresh Cards"
+                    (click)="refresh()" tooltipPosition="top"
+                    class="p-button-rounded p-button-text"></button>
+
                     <span class="p-input-icon-left mr-1">
                         <i class="pi pi-search"></i>
                         <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
@@ -22,35 +30,37 @@
                 </th>
                 <th pSortableColumn="dueDate" style="min-width:6rem">DueDate<p-sortIcon field="dueDate"></p-sortIcon>
                 </th>
-                <th>Unbilled Amount</th>
-                <th>Due Amount</th>
-                <th>Total</th>
+                <th>last</th>
+                <th>Unbilled</th>
+                <th>Due</th>
+                <th>tillDate</th>
                 <th>Action</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="product">
+        <ng-template pTemplate="body" let-card let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="card">
                 <td>{{ri+1}}</td>
-                <td> {{product.cardName}}  <span *ngIf="product.cardNumber"><i class="pi pi-copy" (click)="copyCardNum(product)"></i></span></td>
-                <td> {{product.billDate}} </td>
-                <td> {{product.dueDate}} </td>
-                <td> {{product.amountDue}} </td>
-                <td> {{product.amountDue}} </td>
-                <td> {{product.totalAmount}} </td>
+                <td> {{card.cardName}}  <span *ngIf="card.cardNumber"><i class="pi pi-copy" (click)="copyCardNum(card)"></i></span></td>
+                <td> {{card.billDate}} </td>
+                <td> {{card.dueDate}} </td>
+                <td> {{card.lastBilledMonth}} </td>
+                <td style="color: green;"> {{card.unbilledAmount}} </td>
+                <td style="color: red;"> {{card.amountDue}} </td>
+                <td> {{card.totalAmount}} </td>
                 <td style="min-width: 100px;">
                     <div class="flex align-items-center justify-content-center gap-2">
                         <button pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" pTooltip="Edit Card"
-                            [routerLink]="['/card', product._id, 'edit']" tooltipPosition="top"
+                            [routerLink]="['/card', card._id, 'edit']" tooltipPosition="top"
                             class="p-button-rounded p-button-text"></button>
                         <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" pTooltip="Bill Pay"
-                            (click)="selectedCardOverlay.card = product" tooltipPosition="top"
+                            (click)="selectedCardOverlay.card = card" tooltipPosition="top"
                             class="p-button-rounded p-button-text p-button-success mr-2"></button>
                         <button pButton pRipple type="button" pCancelEditableRow pTooltip="See txns"
                             icon="pi pi-list" tooltipPosition="top"
-                            [routerLink]="['/transactions/', product.cardName]"
+                            [routerLink]="['/transactions/', card.cardName]"
                             class="p-button-rounded p-button-text"></button>
                         <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Delete Card"
-                            (click)="deleteCard($event,product)" tooltipPosition="top"
+                            (click)="deleteCard($event,card)" tooltipPosition="top"
                             class="p-button-rounded p-button-text p-button-danger"></button>
                     </div>
                 </td>
@@ -62,7 +72,8 @@
                 <td>Total</td>
                 <td></td>
                 <td></td>
-                <td>{{aggregate.amountDue}}</td>
+                <td></td>
+                <td>{{aggregate.unbilledAmount}}</td>
                 <td>{{aggregate.amountDue}}</td>
                 <td>{{aggregate.totalAmount}}</td>
                 <td></td>

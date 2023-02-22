@@ -81,20 +81,20 @@ export class ProductListComponent implements OnInit, OnDestroy {
       this.subArray.push(sub);
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
     }
   }
 
-  globalFilter(event:any) {
+  globalFilter(event: any) {
     // console.log(event.target.);
     // console.log(this.table);
     // console.log('filterby ' + this.filterBy);
-    
+
     this.table.filterGlobal(event.target.value, 'contains');
-      // console.log('values ', this.table.value);
-      // console.log('Fvalues ', this.table.);
-      
-      
+    // console.log('values ', this.table.value);
+    // console.log('Fvalues ', this.table.);
+
+
   }
 
   calcTotal() {
@@ -146,7 +146,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
       } else throw 'orgProduct missing or id is different'
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in updaing ' + product.name + ' ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in updaing ' + product.name + ' ' + error.message });
     }
   }
 
@@ -168,10 +168,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   onDateSelect(value: any) {
     console.log(value);
     console.log(this.formatDate(value));
-    
+
     console.log(this.table);
-    
-    
+
+
     this.table.filter(this.formatDate(value), 'date', 'equals')
   }
 
@@ -180,41 +180,68 @@ export class ProductListComponent implements OnInit, OnDestroy {
     let day = date.getDate();
 
     if (month < 10) {
-        month = '0' + month;
+      month = '0' + month;
     }
 
     if (day < 10) {
-        day = '0' + day;
+      day = '0' + day;
     }
 
     return date.getFullYear() + '-' + month + '-' + day;
-}
+  }
 
   async exportText() {
     // console.log(this.selectedProduct);
     if (!this.selectedProduct.length) {
       console.error('No Product Selected');
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
       let exportData: any = {};
       let totalAmount = 0;
       let totalQty = 0;
+      let checkQty = 0;
       this.selectedProduct.forEach((item) => {
         let name = item.name + ' ' + item.ram + ' ' + item.storage;
         item.buyerPrice = Math.round(item.buyerPrice);
-        if (exportData.hasOwnProperty(name) && exportData[name].cost == item.buyerPrice) {
-          exportData[name].qty += 1;
-          exportData[name].totalCost = exportData[name].qty * exportData[name].cost;
+
+        if (exportData.hasOwnProperty(name)) {
+          if (exportData[name].cost == item.buyerPrice) {
+            // name present cost match
+            exportData[name].qty += 1;
+            exportData[name].totalCost = exportData[name].qty * exportData[name].cost;
+            checkQty++;
+          } else {
+            //name present & cost mismatch. add cost in bracket
+            const modName = name + ('(' + item.buyerPrice + ')');
+            if (exportData.hasOwnProperty(modName)) {
+              exportData[modName].qty += 1;
+              exportData[modName].totalCost = exportData[modName].qty * exportData[modName].cost;
+              checkQty++;
+            } else {
+              exportData[modName] = {
+                qty: 1,
+                cost: item.buyerPrice,
+                totalCost: item.buyerPrice
+              }
+              checkQty++;
+            }
+          }
         } else {
           exportData[name] = {
             qty: 1,
             cost: item.buyerPrice,
             totalCost: item.buyerPrice
           }
+          checkQty++;
         }
         totalAmount += item.buyerPrice;
         totalQty += 1;
       })
+      if(checkQty != totalQty) {
+        console.log('quantity mismatch');
+        console.log('total: ' + totalQty + ' check: ' + checkQty);
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Quantity Mismatch' });
+      }
       let tableArray = [];
       tableArray.push(['Name', '1PcCost', 'Qty', 'Amount'])
       for (const key in exportData) {
@@ -238,13 +265,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
   async exportTelegramData() {
     if (!this.selectedProduct.length) {
       console.error('No Product Selected');
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
       let lastDate = this.selectedProduct[0].date;
       let exportString = '';
       exportString += lastDate + '\n';
       this.selectedProduct.forEach((item) => {
-        if(item.date != lastDate) {
+        if (item.date != lastDate) {
           lastDate = item.date;
           exportString += lastDate + '\n';
         }
@@ -269,7 +296,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
       const shareMessage = await this.shareService.share(shareData);
       if (shareMessage.error) {
         console.error(shareMessage.message);
-        this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: shareMessage.message });
       }
     }
   }
@@ -277,7 +304,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   deliveryStatus(flag: boolean) {
     if (!this.selectedProduct.length) {
       console.error('No Product Selected');
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Product Selected' });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Product Selected' });
     } else {
       if (flag) {
         this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
@@ -295,11 +322,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.selectedProduct.forEach((product: IProduct) => {
       let originalProduct = product;
       // if (product.status != status) {
-        product.status = status;
-        if (status == 'Distributor') product.buyerDate = this.formatDate(date);
-        if (status == 'DeliveredHome') product.deliveryDate = this.formatDate(date);
-        let pro = this.productService.editProduct(product, originalProduct, false);
-        promiseArray.push(pro);
+      product.status = status;
+      if (status == 'Distributor') product.buyerDate = this.formatDate(date);
+      if (status == 'DeliveredHome') product.deliveryDate = this.formatDate(date);
+      let pro = this.productService.editProduct(product, originalProduct, false);
+      promiseArray.push(pro);
       // }
     });
     Promise.all(promiseArray).then(() => {
