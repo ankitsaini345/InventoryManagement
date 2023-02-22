@@ -5,6 +5,8 @@ export interface Icard {
     billDate: number,
     dueDate: number,
     amountDue: number,
-    totalAmount: number
+    totalAmount: number,
+    unbilledAmount: number,
+    lastBilledMonth: number
 }
 

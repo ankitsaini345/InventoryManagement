@@ -87,7 +87,7 @@
                         </ng-template>
                     </p-cellEditor>
                 </td>
-                <td> {{payment.prevAmount}} | {{payment.remAmount}} | {{payment.pendingCommision}}</td>
+                <td> {{payment.prevAmount}} | {{payment.remAmount}} <span *ngIf="payment.pendingCommision">| {{payment.pendingCommision}}</span></td>
                 <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">

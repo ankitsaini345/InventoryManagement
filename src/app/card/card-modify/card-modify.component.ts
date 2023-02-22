@@ -48,6 +48,7 @@ export class CardModifyComponent implements OnInit {
   }
 
   resetCard() {
+    this.currentCard.unbilledAmount = 0;
     this.currentCard.amountDue = 0;
     this.currentCard.billDate = 0;
     this.currentCard.dueDate = 0;
