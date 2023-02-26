@@ -1,4 +1,4 @@
-<div class="mr-4 ml-4">
+<div *ngIf="display == 'component'" class="mr-4 ml-4">
     <p-table #dt [value]="cards" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
         (onFilter)="onFilter($event)" [loading]="!cards.length" scrollHeight="73vh" styleClass="p-datatable-sm"
         styleClass="p-datatable-gridlines" [filterDelay]="0" [globalFilterFields]="['cardName']">
@@ -7,12 +7,10 @@
                 Card List
                 <div>
                     <button pButton pRipple type="button" icon="pi pi-check" pTooltip="update Card"
-                    (click)="customUpdate()" tooltipPosition="top"
-                    class="p-button-rounded p-button-text"></button>
+                        (click)="customUpdate()" tooltipPosition="top" class="p-button-rounded p-button-text"></button>
 
                     <button pButton pRipple type="button" icon="pi pi-refresh" pTooltip="Refresh Cards"
-                    (click)="refresh()" tooltipPosition="top"
-                    class="p-button-rounded p-button-text"></button>
+                        (click)="refresh()" tooltipPosition="top" class="p-button-rounded p-button-text"></button>
 
                     <span class="p-input-icon-left mr-1">
                         <i class="pi pi-search"></i>
@@ -31,8 +29,8 @@
                 <th pSortableColumn="dueDate" style="min-width:6rem">DueDate<p-sortIcon field="dueDate"></p-sortIcon>
                 </th>
                 <th>last</th>
-                <th>Unbilled</th>
-                <th>Due</th>
+                <th pSortableColumn="unbilledAmount">Unbilled<p-sortIcon field="unbilledAmount"></p-sortIcon></th>
+                <th pSortableColumn="amountDue">Due<p-sortIcon field="amountDue"></p-sortIcon></th>
                 <th>tillDate</th>
                 <th>Action</th>
             </tr>
@@ -40,7 +38,8 @@
         <ng-template pTemplate="body" let-card let-editing="editing" let-ri="rowIndex">
             <tr [pEditableRow]="card">
                 <td>{{ri+1}}</td>
-                <td> {{card.cardName}}  <span *ngIf="card.cardNumber"><i class="pi pi-copy" (click)="copyCardNum(card)"></i></span></td>
+                <td> {{card.cardName}} <span *ngIf="card.cardNumber"><i class="pi pi-copy"
+                            (click)="copyCardNum(card)"></i></span></td>
                 <td> {{card.billDate}} </td>
                 <td> {{card.dueDate}} </td>
                 <td> {{card.lastBilledMonth}} </td>
@@ -55,9 +54,8 @@
                         <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" pTooltip="Bill Pay"
                             (click)="selectedCardOverlay.card = card" tooltipPosition="top"
                             class="p-button-rounded p-button-text p-button-success mr-2"></button>
-                        <button pButton pRipple type="button" pCancelEditableRow pTooltip="See txns"
-                            icon="pi pi-list" tooltipPosition="top"
-                            [routerLink]="['/transactions/', card.cardName]"
+                        <button pButton pRipple type="button" pCancelEditableRow pTooltip="See txns" icon="pi pi-list"
+                            tooltipPosition="top" [routerLink]="['/transactions/', card.cardName]"
                             class="p-button-rounded p-button-text"></button>
                         <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Delete Card"
                             (click)="deleteCard($event,card)" tooltipPosition="top"
@@ -91,48 +89,105 @@
         <h5>Selected Card: {{selectedCardOverlay.card.cardName}}</h5>
         <div class="field col-12 md:col-4">
             <label for="dtype">Payment Type</label>
-            <p-dropdown appendTo="body" [options]="['Remaining Amount', 'Paid Amount']"
+            <p-dropdown appendTo="body" [options]="['Remaining Amount', 'Paid Amount', 'Full']"
                 [(ngModel)]="selectedCardOverlay.type" placeholder="Select payment type"
                 [showClear]="true"></p-dropdown>
         </div>
         <div class="field col-12 md:col-4">
             <label for="icon">Amount</label>
-            <input type="text" pInputText [(ngModel)]="selectedCardOverlay.amount">
+            <input [disabled]="selectedCardOverlay.type == 'Full'" type="text" pInputText
+                [(ngModel)]="selectedCardOverlay.amount">
         </div>
     </div>
     <ng-template pTemplate="footer">
         <p-button (click)="markAsPaid(false)" label="Cancel" styleClass="p-button-outlined"></p-button>
-        <p-button [disabled]="!selectedCardOverlay.card || !selectedCardOverlay.amount || !selectedCardOverlay.type"
+        <p-button
+            [disabled]="!selectedCardOverlay.card || (!selectedCardOverlay.amount && selectedCardOverlay.type != 'Full') || !selectedCardOverlay.type"
             (click)="markAsPaid(true)" label="Paid" styleClass="p-button-outlined"></p-button>
     </ng-template>
 </p-dialog>
 
 
-<!-- <div class="card" style="width: 90%">
-    <div class="card-header">
-    </div>
+<div *ngIf="display == 'home'" class="container">
+    <div class="card">
+        <div class="card-header clr-red">
+            Card Due Summary
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table style="text-align: center;" class="table table-bordered table-sm">
+                    <thead class="clr-red">
+                        <tr>
+                            <th>Card Name</th>
+                            <th>date</th>
+                            <th>Due</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let card of dueCards">
+                            <td> {{card.cardName}} <span *ngIf="card.cardNumber"><i class="pi pi-copy"
+                                        (click)="copyCardNum(card)"></i></span></td>
+                            <td>{{card.dueDate}} </td>
+                            <td>{{card.amountDue}} </td>
+                            <td>
+                                <i style="color: green;" class="pi pi-check" pTooltip="Bill Pay" tooltipPosition="top"
+                                        (click)="selectedCardOverlay.card = card"></i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td></td>
+                            <td class="clr-red"><b>{{totalDue}}</b></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-    <div class="card-body">
-        <form novalidate>
-            <fieldset>
-                    <div  *ngFor="let card of cards" class="form-group row">
-                        <label class="col col-form-label" for="cardNameId">
-                            {{card.cardName}}:{{card.cardNumber}}
-                        </label>
-                        <div class="col">
-                            <input type="text" class="form-control" id="cardNameId" placeholder="number (required)"
-                                required minlength="3" name="cardNameId" [(ngModel)]=card.cardNumber>
-                        </div>
-                    </div>
-
-            </fieldset>
-        </form>
-        <div class="row mb-2">
-            <div class="col">
-                <button class="btn btn-primary mr-3" style="width:80px" type="button" (click)="customUpdate()">
-                    Save
-                </button>
             </div>
+
         </div>
     </div>
-</div> -->
+</div>
+<br>
+<div *ngIf="display == 'home'" class="container">
+    <div class="card">
+        <div class="card-header clr-green">
+            Card Unbilled Summary
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table style="text-align: center;" class="table table-bordered table-sm">
+                    <thead class="clr-green">
+                        <tr>
+                            <th>Card Name</th>
+                            <th>date</th>
+                            <th>Unbilled</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let card of unbilledCards">
+                            <td> {{card.cardName}} <span *ngIf="card.cardNumber"><i class="pi pi-copy"
+                                        (click)="copyCardNum(card)"></i></span></td>
+                            <td>{{card.billDate}} </td>
+                            <td>{{card.unbilledAmount}} </td>
+                            <td>
+                                <!-- <i style="color: green;" class="pi pi-check" pTooltip="Bill Pay" tooltipPosition="top"
+                                        (click)="selectedCardOverlay.card = card"></i> -->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td></td>
+                            <td class="clr-green"><b>{{totalUnbilled}}</b></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>

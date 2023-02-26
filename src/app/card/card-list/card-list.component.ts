@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
@@ -11,8 +11,15 @@ import { CardService } from '../card.service';
   styleUrls: ['./card-list.component.scss']
 })
 export class CardListComponent implements OnInit, OnDestroy {
+
+  @Input() display = 'component';
+
   filterBy = '';
-  cards: Icard[] = []
+  cards: Icard[] = [];
+  dueCards: Icard[] = [];
+  unbilledCards: Icard[] = [];
+  totalDue = 0;
+  totalUnbilled = 0;
   sub!: Subscription;
   aggregate: any = {};
   filteredValue: Icard[] = [];
@@ -20,7 +27,7 @@ export class CardListComponent implements OnInit, OnDestroy {
     card: {
       cardName: null
     },
-    amount: 0,
+    amount: null,
     type: ''
   }
 
@@ -38,7 +45,47 @@ export class CardListComponent implements OnInit, OnDestroy {
       this.cards = cards;
       this.filteredValue = cards;
       this.calcTotal();
+      if (this.display == 'home') this.cardList();
     })
+  }
+
+  cardList() {
+    this.totalDue = 0;
+    this.totalUnbilled = 0;
+    for (const card of this.cards) {
+      if (card.amountDue > 0) {
+        this.totalDue += card.amountDue;
+        this.dueCards.push(card);
+      }
+      if (card.unbilledAmount > 0) {
+        this.totalUnbilled += card.unbilledAmount;
+        this.unbilledCards.push(card);
+      }
+      this.dueCards.sort(this.dueSortFn);
+      this.unbilledCards.sort(this.unbilledSortFn);
+    }
+  }
+
+  dueSortFn(a: Icard, b: Icard) {
+    const currentDay = (new Date()).getDate();
+    if(a.dueDate == b.dueDate) return a.amountDue - b.amountDue;
+    if ((a.dueDate >= currentDay && b.dueDate >= currentDay) || (a.dueDate <= currentDay && b.dueDate <= currentDay))
+      return a.dueDate - b.dueDate;
+    else {
+      if(a.dueDate >= currentDay) return -1;
+      else return 1
+    }
+  }
+
+  unbilledSortFn(a: Icard, b: Icard) {
+    const currentDay = (new Date()).getDate();
+    if(a.billDate == b.billDate) return a.unbilledAmount - b.unbilledAmount;
+    if ((a.billDate >= currentDay && b.billDate >= currentDay) || (a.billDate <= currentDay && b.billDate <= currentDay))
+      return a.billDate - b.billDate;
+    else {
+      if(a.billDate >= currentDay) return -1;
+      else return 1
+    }
   }
 
   customUpdate() {
@@ -92,7 +139,9 @@ export class CardListComponent implements OnInit, OnDestroy {
   async markAsPaid(status: boolean) {
 
     if (status) {
-      if (this.selectedCardOverlay.type == 'Remaining Amount')
+      if (this.selectedCardOverlay.type == 'Full')
+        this.selectedCardOverlay.card.amountDue = 0;
+      else if (this.selectedCardOverlay.type == 'Remaining Amount')
         this.selectedCardOverlay.card.amountDue = +this.selectedCardOverlay.amount;
       else this.selectedCardOverlay.card.amountDue -= +this.selectedCardOverlay.amount;
       this.messageService.add({
