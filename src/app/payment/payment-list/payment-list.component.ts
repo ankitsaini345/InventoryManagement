@@ -27,6 +27,11 @@ export class PaymentListComponent implements OnInit, OnDestroy {
 
   private PaymentStorageString = 'inventoryPayments';
 
+  showPayStringDialog = {
+    visible: false,
+    payee: '',
+    paymentString: ''
+  }
   payments: IPayment[] = [];
   filterBy = '';
   payeeName!: string;
@@ -147,7 +152,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     return date.getFullYear() + '-' + month + '-' + day;
   }
 
-  async exportData() {
+  async exportData(includeCom = false) {
     try {
       if (!this.selectedPayment.length) {
         this.messageService.add({ severity: 'info', summary: 'Info', detail: 'No Payment Selected' });
@@ -156,50 +161,64 @@ export class PaymentListComponent implements OnInit, OnDestroy {
         let lastDate = '';
         this.selectedPayment.sort((a, b) => a.count - b.count);
         let firstEl = this.selectedPayment[0];
-        exportString += ('[Last Date: ' + this.formatDate(firstEl.lastPayDate, true) + '] [Last Amount: ' + firstEl.prevAmount + ']\n');
+        // exportString += ('[Last Date: ' + this.formatDate(firstEl.lastPayDate, true) + '] [Last Amount: ' + firstEl.prevAmount + ']\n');
         // exportString += ('[#' + firstEl.count + '] [' + firstEl.date + ']\n');
         // exportString += (firstEl.prevAmount + ' ');
-        let finalPayment = firstEl.prevAmount;
+        let calculatedAmount = firstEl.prevAmount;
+        let calculationString = calculatedAmount + ' ';
         this.selectedPayment.forEach((item) => {
 
           if (item.name != firstEl.name) throw new Error('Different Payee Selected');
 
-          if(lastDate != item.date) {
+          if (lastDate != item.date) {
             lastDate = item.date;
             exportString += ('\n[' + this.formatDate(item.date, true) + '] ')
           }
           if (item.type == 'in') {
-            finalPayment -= item.amount;
+            calculatedAmount -= item.amount;
             // exportString += ('- ' + item.amount + ' ');
-            exportString += ('-' + item.amount + ' ')
+            exportString += ('-' + item.amount + ' ');
+            calculationString += ('- ' + item.amount + ' ');
           } else {
-            finalPayment += item.amount;
+            calculatedAmount += item.amount;
             // exportString += ('+ ' + item.amount + ' ');
             exportString += ('+' + item.amount + ' ')
+            calculationString += ('+ ' + item.amount + ' ');
           }
-          if(item.name == 'Dev' && item.cashback) exportString += ('(' + item.cashback + ') ')
+          if (includeCom && item.cashback) exportString += ('(' + item.cashback + ') ')
         });
-        exportString += ('\n\n[Total] = ' + finalPayment)
-        
+        exportString += ('\n\n' + calculationString + '= ' + calculatedAmount)
+        // exportString += ('\n\n[Total] = ' + calculatedAmount)
         let payee = this.payeeService.getPayeeByName(firstEl.name);
-        if(firstEl.name == 'Dev')
-        exportString += ('\n[Pending Commision] = ' + payee.pendingComm);
-        if(payee.totalAmount != finalPayment) 
-        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Final Price Mismatch' });
+        if (includeCom)
+          exportString += ('\n[Pending Commision] = ' + payee.pendingComm);
+        if (payee.totalAmount != calculatedAmount)
+          this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Final Price Mismatch' });
 
-        this.clipboard.copy(exportString);
-        const shareData: ShareData = {
-          title: 'Payment Details',
-          text: exportString
-        }
-        const shareMessage = await this.shareService.share(shareData);
-        if (shareMessage.error) {
-          this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: shareMessage.message });
-        }
+        this.showPayStringDialog.visible = true;
+        this.showPayStringDialog.payee = firstEl.name;
+        this.showPayStringDialog.paymentString = exportString;
       }
     } catch (error: any) {
       this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: error.message });
     }
+  }
+
+  async paymentOverlayAction(exportString: string, copy: boolean, share: boolean) {
+    if (copy) this.clipboard.copy(exportString);
+    if (share) {
+      const shareData: ShareData = {
+        title: 'Payment Details',
+        text: exportString
+      }
+      const shareMessage = await this.shareService.share(shareData);
+      if (shareMessage.error) {
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: shareMessage.message });
+      }
+    }
+    this.showPayStringDialog.visible = false;
+    this.showPayStringDialog.payee = '';
+    this.showPayStringDialog.paymentString = '';
   }
 
 
@@ -209,13 +228,13 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   // } 
   //   // let promiseArray: Promise<any>[] = [];
   //   console.log('pending comm');
-    
+
   //   let Comm = 0;
   //   let newArr = this.selectedPayment.slice();
   //   newArr.sort((a, b) => a.count - b.count);
   //   newArr.forEach((payment: IPayment) => {
   //     console.log(payment.name);
-      
+
   //     if (payment.name == 'Vivek') {
   //       Comm += payment.cashback;
   //       if (!payment.pendingCommision) {

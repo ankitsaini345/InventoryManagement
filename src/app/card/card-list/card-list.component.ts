@@ -149,7 +149,8 @@ export class CardListComponent implements OnInit, OnDestroy {
         summary: 'Info',
         detail: this.selectedCardOverlay.card.cardName + ' marked for Updation.',
       });
-      this.cardService.updateCard(this.selectedCardOverlay.card);
+      let p1 = this.cardService.updateCard(this.selectedCardOverlay.card);
+      p1.then(()=> this.cardList());
     }
 
     this.selectedCardOverlay = {

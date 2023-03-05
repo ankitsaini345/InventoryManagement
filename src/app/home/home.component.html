@@ -57,6 +57,11 @@
                             <td>{{pendingCardAmount.due}}</td>
                         </tr>
                         <tr>
+                            <td>Pending in Card (Total)</td>
+                            <td></td>
+                            <td>{{pendingCardAmount.due + pendingCardAmount.unbilled}}</td>
+                        </tr>
+                        <tr>
                             <td>Difference</td>
                             <td></td>
                             <td>{{pendingAmount.distributor + pendingAmount.others + productStat.undeliveredAmount +

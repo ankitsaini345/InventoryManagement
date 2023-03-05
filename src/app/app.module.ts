@@ -52,6 +52,8 @@ import { PayeeListComponent } from './payment/payee-list/payee-list.component';
 import { PayeeEditComponent } from './payment/payee-edit/payee-edit.component';
 import { PaymentEditComponent } from './payment/payment-edit/payment-edit.component';
 import { PaymentListComponent } from './payment/payment-list/payment-list.component';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+
 
 
 
@@ -84,6 +86,7 @@ import { PaymentListComponent } from './payment/payment-list/payment-list.compon
     MenubarModule,
     RadioButtonModule,
     MenuModule,
+    InputTextareaModule,
     ConfirmPopupModule,
     AutoCompleteModule,
     SplitButtonModule,
