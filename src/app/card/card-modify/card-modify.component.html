@@ -21,6 +21,16 @@
                 </div>
 
                 <div class="form-group row">
+                    <label class="col col-form-label" for="cardNumber">
+                        Card Number
+                    </label>
+                    <div class="col">
+                        <input type="text" class="form-control" id="cardNumber" placeholder="Number"
+                            required minlength="3" name="cardName" [(ngModel)]=currentCard.cardNumber>
+                    </div>
+                </div>
+
+                <div class="form-group row">
                     <label class="col col-form-label" for="billDate">
                         Bill Date
                     </label>

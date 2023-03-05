@@ -171,7 +171,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
 
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in initialising Products: ' + error.message });
     }
   }
 
@@ -204,7 +204,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         }
         else {
           console.error('No Change in Product to save');
-          this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'No Change in Product to save' });
+          this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Change in Product to save' });
         }
       }
       if (this.addMoreProduct) {
@@ -215,12 +215,29 @@ export class ProductEditComponent implements OnInit, OnDestroy {
         }, 300);
       } else this.router.navigate(['/products']);
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
     }
   }
 
   async addAsNewProduct() {
     try {
+      let existingCard = this.cardNameArray.includes(this.currentProduct.cardHolder);
+      if (!existingCard) {
+        if (confirm('Card ' + this.currentProduct.cardHolder + ' is not in list. Do you want to add it?')) {
+          this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Adding Card: ' + this.currentProduct.cardHolder + '...' });
+          await this.cardService.addCard({
+            cardName: this.currentProduct.cardHolder,
+            _id: new ObjectId().toString(),
+            amountDue: 0,
+            billDate: 0,
+            dueDate: 0,
+            totalAmount: 0,
+            cardNumber: '',
+            unbilledAmount: 0,
+            lastBilledMonth: 0
+          })
+        } else return;
+      }
       this.currentProduct._id = new ObjectId().toString();
       this.currentProduct.txnId = new ObjectId().toString();
       this.productService.addProduct(this.currentProduct);
@@ -234,7 +251,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       } else this.router.navigate(['/products']);
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to save product. Error: ' + error.message });
     }
   }
 
