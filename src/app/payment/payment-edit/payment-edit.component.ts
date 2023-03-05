@@ -67,7 +67,7 @@ export class PaymentEditComponent implements OnInit {
       this.currentPayment.remAmount = this.currentPayment.prevAmount + this.currentPayment.amount;
   }
 
-  setName(val: string){
+  setName(val: string) {
     if (val) {
       this.currentPayment.name = val;
       this.payee = this.payeeService.getPayeeByName(val);
@@ -151,7 +151,14 @@ export class PaymentEditComponent implements OnInit {
 
     if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
       let card = this.cardService.getCard(this.currentPayment.receiver);
-      card.unbilledAmount -= this.currentPayment.amount;
+      if (card.amountDue >= this.currentPayment.amount)
+        card.amountDue -= this.currentPayment.amount;
+      else if (card.amountDue && card.amountDue < this.currentPayment.amount){
+        let remAmount = this.currentPayment.amount - card.amountDue;
+        card.amountDue = 0;
+        card.unbilledAmount -= remAmount;
+      } else card.unbilledAmount -= this.currentPayment.amount;
+
       const p4 = this.cardService.updateCard(card);
       promiseArray.push(p4);
     }
