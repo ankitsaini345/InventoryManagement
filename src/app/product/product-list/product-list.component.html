@@ -1,8 +1,8 @@
 <div class="mr-2 ml-2">
-    <p-table #dt [value]="products" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true" (onFilter)="onFilter($event)"
-        [loading]="!products.length" scrollHeight="73vh" styleClass="p-datatable-sm" styleClass="p-datatable-gridlines"
-        (selectionChange)="schange($event)" [(selection)]="selectedProduct" [filterDelay]="0"
-        [globalFilterFields]="['name', 'status']">
+    <p-table #dt [value]="products" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
+        (onFilter)="onFilter($event)" [loading]="!products.length" scrollHeight="73vh" styleClass="p-datatable-sm"
+        styleClass="p-datatable-gridlines" (selectionChange)="schange($event)" [(selection)]="selectedProduct"
+        [filterDelay]="0" [globalFilterFields]="['name', 'status']">
         <ng-template pTemplate="caption">
             <div class="table-header">
                 Product List
@@ -23,7 +23,7 @@
                         <i class="pi pi-search"></i>
                         <!-- <input pInputText type="text" (input)="globalFilter($event)" [(ngModel)]=filterBy placeholder="Global Search" /> -->
                         <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                                placeholder="Global Search" />
+                            placeholder="Global Search" />
                     </span>
                 </div>
             </div>
@@ -94,15 +94,19 @@
                     </p-dropdown>
                 </th>
                 <th>
-                    <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'AppAccount', 'contains')"
-                    placeholder="Search" class="p-column-filter">
+                    <input pInputText type="text"
+                        (input)="dt.filter($any($event.target).value, 'AppAccount', 'contains')" placeholder="Search"
+                        class="p-column-filter">
                 </th>
                 <th>
-                    <p-calendar appendTo="body" (onSelect)="dt.filter(formatDate($event), 'date', 'equals')" (onClearClick)="dt.filter('', 'date', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"></p-calendar>
+                    <p-calendar appendTo="body" (onSelect)="dt.filter(formatDate($event), 'date', 'equals')"
+                        (onClearClick)="dt.filter('', 'date', 'equals')" [showButtonBar]="true"
+                        styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"></p-calendar>
                 </th>
                 <th>
-                    <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'cardHolder', 'contains')"
-                    placeholder="Search" class="p-column-filter">
+                    <input pInputText type="text"
+                        (input)="dt.filter($any($event.target).value, 'cardHolder', 'contains')" placeholder="Search"
+                        class="p-column-filter">
                 </th>
                 <th></th>
                 <th></th>
@@ -115,7 +119,9 @@
                 <th></th>
                 <th></th>
                 <th>
-                    <p-calendar appendTo="body" (onSelect)="dt.filter(formatDate($event), 'buyerDate', 'equals')" (onClearClick)="dt.filter('', 'buyerDate', 'equals')" [showButtonBar]="true" styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"></p-calendar>
+                    <p-calendar appendTo="body" (onSelect)="dt.filter(formatDate($event), 'buyerDate', 'equals')"
+                        (onClearClick)="dt.filter('', 'buyerDate', 'equals')" [showButtonBar]="true"
+                        styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"></p-calendar>
                 </th>
                 <th></th>
             </tr>
@@ -305,13 +311,49 @@
         </div>
         <div class="field col-12 md:col-4">
             <label for="icon">Date</label>
-            <p-calendar appendTo="body" [(ngModel)]="deliveryDialog.date" [showIcon]="true"
-                inputId="icon"></p-calendar>
+            <p-calendar appendTo="body" [(ngModel)]="deliveryDialog.date" [showIcon]="true" inputId="icon"></p-calendar>
         </div>
     </div>
     <ng-template pTemplate="footer">
         <p-button (click)="deliveryStatus(false)" label="Cancel" styleClass="p-button-outlined"></p-button>
         <p-button [disabled]="!selectedProduct.length || !deliveryDialog.type || !deliveryDialog.date"
             (click)="deliveryStatus(true)" label="Deliver" styleClass="p-button-outlined"></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog (onHide)="visible = false && dataArray = []" header="Invoice" position="top" [(visible)]="visible"
+    [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <div class="container">
+        <div class="card" id="invoiceData" #invoicedt>
+            <div class="card-header clr-green">
+                Invoice
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table style="text-align: center;" class="table table-bordered table-sm">
+                        <thead class="clr-green">
+                            <tr>
+                                <th>Name</th>
+                                <th>Cost</th>
+                                <th>Quantity</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of dataArray">
+                                <td> {{item.name}} </td>
+                                <td> {{item.cost}} </td>
+                                <td> {{item.qty}} </td>
+                                <td> {{item.total}} </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button (click)="visible = false && dataArray = []" label="Cancel" styleClass="p-button-outlined"></p-button>
+        <p-button (click)="shareData()" label="Share" styleClass="p-button-outlined"></p-button>
     </ng-template>
 </p-dialog>

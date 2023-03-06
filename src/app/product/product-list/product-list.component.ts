@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { table } from 'table';
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+import { toCanvas } from 'html-to-image';
 import { Subscription } from 'rxjs';
 import { CardService } from 'src/app/card/card.service';
 import { TxnService } from 'src/app/txn/txn.service';
@@ -37,6 +37,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   orgProduct: IProduct | null;
   subArray: Subscription[] = [];
   filteredValue: IProduct[] = [];
+  dataArray: any[] = []
+  visible = false;
 
   @ViewChild('dt') table!: Table;
 
@@ -237,11 +239,29 @@ export class ProductListComponent implements OnInit, OnDestroy {
         totalAmount += item.buyerPrice;
         totalQty += 1;
       })
-      if(checkQty != totalQty) {
+      if (checkQty != totalQty) {
         console.log('quantity mismatch');
         console.log('total: ' + totalQty + ' check: ' + checkQty);
-      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Quantity Mismatch' });
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Quantity Mismatch' });
       }
+
+
+      for (const key in exportData) {
+        const obj = {
+          name: key,
+          cost: exportData[key].cost,
+          qty: exportData[key].qty,
+          total: exportData[key].totalCost
+        }
+        this.dataArray.push(obj)
+      }
+      this.dataArray.push({
+        name: 'Total',
+        qty: totalQty,
+        total: totalAmount
+      });
+      this.visible = true;
+
       let tableArray = [];
       tableArray.push(['Name', '1PcCost', 'Qty', 'Amount'])
       for (const key in exportData) {
@@ -260,6 +280,39 @@ export class ProductListComponent implements OnInit, OnDestroy {
       //   this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: shareMessage.message });
       // }
     }
+  }
+
+  async shareData() {
+    // Get canvas as dataURL
+    // console.log('share fn');
+
+    let node = document.getElementById('invoiceData');
+    let dataUrl = (await toCanvas(node!)).toDataURL();
+    // console.log(dataUrl);
+
+    // Convert dataUrl into blob using browser fetch API
+    const blob = await (await fetch(dataUrl)).blob()
+
+    // Create file form the blob
+    const image = new File([blob], 'invoice.png', { type: blob.type })
+
+    // Check if the device is able to share these files then open share dialog
+    if (navigator.canShare && navigator.canShare({ files: [image] })) {
+      try {
+        await navigator.share({
+          files: [image],         // Array of files to share
+          title: 'Invoice'  // Share dialog title
+        })
+      } catch (error) {
+        console.log('Sharing failed!', error)
+        this.visible = false;
+        this.dataArray = [];
+      }
+    } else {
+      console.log('This device does not support sharing files.')
+    }
+    this.visible = false;
+    this.dataArray = [];
   }
 
   async exportTelegramData() {
