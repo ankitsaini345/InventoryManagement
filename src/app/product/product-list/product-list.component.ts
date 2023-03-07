@@ -1,10 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { table } from 'table';
-import { toCanvas } from 'html-to-image';
 import { Subscription } from 'rxjs';
 import { CardService } from 'src/app/card/card.service';
-import { TxnService } from 'src/app/txn/txn.service';
 import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
 
@@ -37,8 +34,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   orgProduct: IProduct | null;
   subArray: Subscription[] = [];
   filteredValue: IProduct[] = [];
-  dataArray: any[] = []
-  visible = false;
+  invoiceDataArray: any[] = []
+  invoiceTableDisplay = false;
 
   @ViewChild('dt') table!: Table;
 
@@ -253,25 +250,25 @@ export class ProductListComponent implements OnInit, OnDestroy {
           qty: exportData[key].qty,
           total: exportData[key].totalCost
         }
-        this.dataArray.push(obj)
+        this.invoiceDataArray.push(obj)
       }
-      this.dataArray.push({
+      this.invoiceDataArray.push({
         name: 'Total',
         qty: totalQty,
         total: totalAmount
       });
-      this.visible = true;
+      this.invoiceTableDisplay = true;
 
-      let tableArray = [];
-      tableArray.push(['Name', '1PcCost', 'Qty', 'Amount'])
-      for (const key in exportData) {
-        tableArray.push([key, exportData[key].cost, exportData[key].qty, exportData[key].totalCost])
-      }
-      tableArray.push(['Total', '', totalQty, totalAmount])
+      // let tableArray = [];
+      // tableArray.push(['Name', '1PcCost', 'Qty', 'Amount'])
+      // for (const key in exportData) {
+      //   tableArray.push([key, exportData[key].cost, exportData[key].qty, exportData[key].totalCost])
+      // }
+      // tableArray.push(['Total', '', totalQty, totalAmount])
 
-      let cdata = table(tableArray);
+      // let cdata = table(tableArray);
 
-      this.clipboard.copy(cdata);
+      this.clipboard.copy('Items: ' + totalQty + ' Amount: ' + totalAmount);
       // const shareMessage: any = await this.shareService.share({
       //   title: 'Invoice',
       //   text: cdata
@@ -282,38 +279,38 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
-  async shareData() {
-    // Get canvas as dataURL
-    // console.log('share fn');
+  // async shareData() {
+  //   // Get canvas as dataURL
+  //   // console.log('share fn');
 
-    let node = document.getElementById('invoiceData');
-    let dataUrl = (await toCanvas(node!)).toDataURL();
-    // console.log(dataUrl);
+  //   let node = document.getElementById('invoiceData');
+  //   let dataUrl = (await toCanvas(node!)).toDataURL();
+  //   // console.log(dataUrl);
 
-    // Convert dataUrl into blob using browser fetch API
-    const blob = await (await fetch(dataUrl)).blob()
+  //   // Convert dataUrl into blob using browser fetch API
+  //   const blob = await (await fetch(dataUrl)).blob()
 
-    // Create file form the blob
-    const image = new File([blob], 'invoice.png', { type: blob.type })
+  //   // Create file form the blob
+  //   const image = new File([blob], 'invoice.png', { type: blob.type })
 
-    // Check if the device is able to share these files then open share dialog
-    if (navigator.canShare && navigator.canShare({ files: [image] })) {
-      try {
-        await navigator.share({
-          files: [image],         // Array of files to share
-          title: 'Invoice'  // Share dialog title
-        })
-      } catch (error) {
-        console.log('Sharing failed!', error)
-        this.visible = false;
-        this.dataArray = [];
-      }
-    } else {
-      console.log('This device does not support sharing files.')
-    }
-    this.visible = false;
-    this.dataArray = [];
-  }
+  //   // Check if the device is able to share these files then open share dialog
+  //   if (navigator.canShare && navigator.canShare({ files: [image] })) {
+  //     try {
+  //       await navigator.share({
+  //         files: [image],         // Array of files to share
+  //         title: 'Invoice'  // Share dialog title
+  //       })
+  //     } catch (error) {
+  //       console.log('Sharing failed!', error)
+  //       this.invoiceTableDisplay = false;
+  //       this.invoiceDataArray = [];
+  //     }
+  //   } else {
+  //     console.log('This device does not support sharing files.')
+  //   }
+  //   this.invoiceTableDisplay = false;
+  //   this.invoiceDataArray = [];
+  // }
 
   async exportTelegramData() {
     if (!this.selectedProduct.length) {

@@ -1,4 +1,4 @@
-<div class="mr-2 ml-2">
+<div class="mr-2 ml-2" *ngIf="!invoiceTableDisplay">
     <p-table #dt [value]="products" dataKey="_id" editMode="row" [scrollable]="true" [rowHover]="true"
         (onFilter)="onFilter($event)" [loading]="!products.length" scrollHeight="73vh" styleClass="p-datatable-sm"
         styleClass="p-datatable-gridlines" (selectionChange)="schange($event)" [(selection)]="selectedProduct"
@@ -321,39 +321,35 @@
     </ng-template>
 </p-dialog>
 
-<p-dialog (onHide)="visible = false && dataArray = []" header="Invoice" position="top" [(visible)]="visible"
-    [breakpoints]="{'960px': '75vw'}" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
-    <div class="container">
-        <div class="card" id="invoiceData" #invoicedt>
-            <div class="card-header clr-green">
-                Invoice
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table style="text-align: center;" class="table table-bordered table-sm">
-                        <thead class="clr-green">
-                            <tr>
-                                <th>Name</th>
-                                <th>Cost</th>
-                                <th>Quantity</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let item of dataArray">
-                                <td> {{item.name}} </td>
-                                <td> {{item.cost}} </td>
-                                <td> {{item.qty}} </td>
-                                <td> {{item.total}} </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<div class="container" *ngIf="invoiceTableDisplay">
+    <div class="card" id="invoiceData">
+        <div style="text-align: center;" class="card-header">
+            <b>INVOICE</b>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table style="text-align: center;" class="table table-bordered table-sm">
+                    <thead class="clr-green">
+                        <tr>
+                            <th>Name</th>
+                            <th>Cost</th>
+                            <th>Q</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of invoiceDataArray">
+                            <td> {{item.name}} </td>
+                            <td> {{item.cost}} </td>
+                            <td> {{item.qty}} </td>
+                            <td> {{item.total}} </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <ng-template pTemplate="footer">
-        <p-button (click)="visible = false && dataArray = []" label="Cancel" styleClass="p-button-outlined"></p-button>
-        <p-button (click)="shareData()" label="Share" styleClass="p-button-outlined"></p-button>
-    </ng-template>
-</p-dialog>
+    <br>
+    <div style="text-align: -webkit-center;"><p-button (click)="invoiceTableDisplay = false && invoiceDataArray = []" label="Close"
+            styleClass="p-button-outlined"></p-button></div>
+</div>
