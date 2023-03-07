@@ -1,13 +1,10 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { table } from 'table';
-import { toCanvas } from 'html-to-image';
 import { Subscription } from 'rxjs';
 import { CardService } from 'src/app/card/card.service';
-import { TxnService } from 'src/app/txn/txn.service';
 import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
-
+import { toCanvas } from 'html-to-image';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { Icard } from 'src/app/card/card';
@@ -37,8 +34,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   orgProduct: IProduct | null;
   subArray: Subscription[] = [];
   filteredValue: IProduct[] = [];
-  dataArray: any[] = []
-  visible = false;
+  invoiceDataArray: any[] = []
+  invoiceTableDisplay = false;
 
   @ViewChild('dt') table!: Table;
 
@@ -245,6 +242,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Quantity Mismatch' });
       }
 
+      this.invoiceDataArray = [];
 
       for (const key in exportData) {
         const obj = {
@@ -253,25 +251,25 @@ export class ProductListComponent implements OnInit, OnDestroy {
           qty: exportData[key].qty,
           total: exportData[key].totalCost
         }
-        this.dataArray.push(obj)
+        this.invoiceDataArray.push(obj)
       }
-      this.dataArray.push({
+      this.invoiceDataArray.push({
         name: 'Total',
         qty: totalQty,
         total: totalAmount
       });
-      this.visible = true;
+      this.invoiceTableDisplay = true;
 
-      let tableArray = [];
-      tableArray.push(['Name', '1PcCost', 'Qty', 'Amount'])
-      for (const key in exportData) {
-        tableArray.push([key, exportData[key].cost, exportData[key].qty, exportData[key].totalCost])
-      }
-      tableArray.push(['Total', '', totalQty, totalAmount])
+      // let tableArray = [];
+      // tableArray.push(['Name', '1PcCost', 'Qty', 'Amount'])
+      // for (const key in exportData) {
+      //   tableArray.push([key, exportData[key].cost, exportData[key].qty, exportData[key].totalCost])
+      // }
+      // tableArray.push(['Total', '', totalQty, totalAmount])
 
-      let cdata = table(tableArray);
+      // let cdata = table(tableArray);
 
-      this.clipboard.copy(cdata);
+      this.clipboard.copy('Items: ' + totalQty + ' Amount: ' + totalAmount);
       // const shareMessage: any = await this.shareService.share({
       //   title: 'Invoice',
       //   text: cdata
@@ -295,24 +293,25 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
     // Create file form the blob
     const image = new File([blob], 'invoice.png', { type: blob.type })
-
+    let len = this.invoiceDataArray.length;
     // Check if the device is able to share these files then open share dialog
     if (navigator.canShare && navigator.canShare({ files: [image] })) {
       try {
         await navigator.share({
+          text: 'Items: ' + this.invoiceDataArray[len - 1].qty + ' Amount: ' + this.invoiceDataArray[len - 1].total,
           files: [image],         // Array of files to share
           title: 'Invoice'  // Share dialog title
         })
       } catch (error) {
         console.log('Sharing failed!', error)
-        this.visible = false;
-        this.dataArray = [];
+        this.invoiceTableDisplay = false;
+        this.invoiceDataArray = [];
       }
     } else {
       console.log('This device does not support sharing files.')
     }
-    this.visible = false;
-    this.dataArray = [];
+    this.invoiceTableDisplay = false;
+    this.invoiceDataArray = [];
   }
 
   async exportTelegramData() {
@@ -389,10 +388,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.filterBy = ''
   }
 
-  // async exportImage() {
-  //   const dataUrl = await toPng(document.getElementById('my-table')!)
-  //   this.clipboard.copy(dataUrl);
-  // }
 
   ngOnDestroy(): void {
     this.subArray.forEach((sub: Subscription) => {
