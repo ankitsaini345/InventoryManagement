@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { CardService } from 'src/app/card/card.service';
 import { IProduct } from '../product';
 import { ProductServiceService } from '../product-service.service';
-
+import { toCanvas } from 'html-to-image';
 import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 import { Icard } from 'src/app/card/card';
@@ -242,6 +242,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Quantity Mismatch' });
       }
 
+      this.invoiceDataArray = [];
 
       for (const key in exportData) {
         const obj = {
@@ -279,38 +280,39 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // async shareData() {
-  //   // Get canvas as dataURL
-  //   // console.log('share fn');
+  async shareData() {
+    // Get canvas as dataURL
+    // console.log('share fn');
 
-  //   let node = document.getElementById('invoiceData');
-  //   let dataUrl = (await toCanvas(node!)).toDataURL();
-  //   // console.log(dataUrl);
+    let node = document.getElementById('invoiceData');
+    let dataUrl = (await toCanvas(node!)).toDataURL();
+    // console.log(dataUrl);
 
-  //   // Convert dataUrl into blob using browser fetch API
-  //   const blob = await (await fetch(dataUrl)).blob()
+    // Convert dataUrl into blob using browser fetch API
+    const blob = await (await fetch(dataUrl)).blob()
 
-  //   // Create file form the blob
-  //   const image = new File([blob], 'invoice.png', { type: blob.type })
-
-  //   // Check if the device is able to share these files then open share dialog
-  //   if (navigator.canShare && navigator.canShare({ files: [image] })) {
-  //     try {
-  //       await navigator.share({
-  //         files: [image],         // Array of files to share
-  //         title: 'Invoice'  // Share dialog title
-  //       })
-  //     } catch (error) {
-  //       console.log('Sharing failed!', error)
-  //       this.invoiceTableDisplay = false;
-  //       this.invoiceDataArray = [];
-  //     }
-  //   } else {
-  //     console.log('This device does not support sharing files.')
-  //   }
-  //   this.invoiceTableDisplay = false;
-  //   this.invoiceDataArray = [];
-  // }
+    // Create file form the blob
+    const image = new File([blob], 'invoice.png', { type: blob.type })
+    let len = this.invoiceDataArray.length;
+    // Check if the device is able to share these files then open share dialog
+    if (navigator.canShare && navigator.canShare({ files: [image] })) {
+      try {
+        await navigator.share({
+          text: 'Items: ' + this.invoiceDataArray[len - 1].qty + ' Amount: ' + this.invoiceDataArray[len - 1].total,
+          files: [image],         // Array of files to share
+          title: 'Invoice'  // Share dialog title
+        })
+      } catch (error) {
+        console.log('Sharing failed!', error)
+        this.invoiceTableDisplay = false;
+        this.invoiceDataArray = [];
+      }
+    } else {
+      console.log('This device does not support sharing files.')
+    }
+    this.invoiceTableDisplay = false;
+    this.invoiceDataArray = [];
+  }
 
   async exportTelegramData() {
     if (!this.selectedProduct.length) {
@@ -386,10 +388,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.filterBy = ''
   }
 
-  // async exportImage() {
-  //   const dataUrl = await toPng(document.getElementById('my-table')!)
-  //   this.clipboard.copy(dataUrl);
-  // }
 
   ngOnDestroy(): void {
     this.subArray.forEach((sub: Subscription) => {

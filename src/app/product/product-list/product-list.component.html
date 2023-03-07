@@ -350,6 +350,10 @@
         </div>
     </div>
     <br>
-    <div style="text-align: -webkit-center;"><p-button (click)="invoiceTableDisplay = false && invoiceDataArray = []" label="Close"
-            styleClass="p-button-outlined"></p-button></div>
+    <div style="text-align: -webkit-center;">
+        <p-button (click)="invoiceTableDisplay = false && invoiceDataArray = []" label="Close"
+            styleClass="p-button-outlined" class="mr-3"></p-button>
+        <p-button (click)="shareData()" label="Share"
+            styleClass="p-button-outlined"></p-button>
+        </div>
 </div>
