@@ -52,6 +52,8 @@ export class CardListComponent implements OnInit, OnDestroy {
   cardList() {
     this.totalDue = 0;
     this.totalUnbilled = 0;
+    this.dueCards = [];
+    this.unbilledCards = [];
     for (const card of this.cards) {
       if (card.amountDue > 0) {
         this.totalDue += card.amountDue;
