@@ -5,8 +5,12 @@
         [filterDelay]="0" [globalFilterFields]="['name', 'status']">
         <ng-template pTemplate="caption">
             <div class="table-header">
-                Product List
+                Products
                 <div>
+                    <button type="button" pButton pRipple icon="pi pi-plus"
+                        routerLink="/product/new/edit" class="p-button-success mr-2" pTooltip="Add"
+                        tooltipPosition="top"></button>
+
                     <button type="button" pButton pRipple icon="pi pi-check-square"
                         (click)="deliveryDialog.display=true" class="p-button-help mr-2" pTooltip="Change Status"
                         tooltipPosition="top"></button>
@@ -31,11 +35,11 @@
         <ng-template pTemplate="header">
             <tr>
                 <th pFrozenColumn>SN</th>
-                <th pFrozenColumn style="width: 3rem">
+                <th style="width: 3rem">
                 </th>
-                <th pSortableColumn="name" pFrozenColumn>ProductName <p-sortIcon field="name"></p-sortIcon></th>
-                <th pFrozenColumn>Action</th>
-                <th>Size</th>
+                <th pSortableColumn="name">ProductName <p-sortIcon field="name"></p-sortIcon></th>
+                <th>Action</th>
+                <th>Config</th>
                 <th>Status</th>
                 <th>App</th>
                 <th>Account</th>
@@ -57,14 +61,14 @@
 
             <tr>
                 <th pFrozenColumn></th>
-                <th pFrozenColumn>
+                <th>
                     <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
-                <th pFrozenColumn>
+                <th>
                     <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'name', 'contains')"
                         placeholder="Search" class="p-column-filter">
                 </th>
-                <th pFrozenColumn></th>
+                <th></th>
                 <th></th>
                 <th>
                     <!-- <p-multiSelect appendTo="body" [showClear]="false" [options]="orderStatus" placeholder="Status"
@@ -130,13 +134,13 @@
         <ng-template pTemplate="body" let-product let-editing="editing" let-ri="rowIndex">
             <tr [pEditableRow]="product">
                 <td pFrozenColumn>{{ri+1}}</td>
-                <td pFrozenColumn>
+                <td>
                     <p-tableCheckbox [value]="product"></p-tableCheckbox>
                 </td>
-                <td pFrozenColumn>
+                <td>
                     {{product.name}}
                 </td>
-                <td pFrozenColumn style="min-width: 100px;">
+                <td style="min-width: 100px;">
                     <div class="flex align-items-center justify-content-center gap-2">
                         <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                             (click)="onRowEditInit(product)" class="p-button-rounded p-button-text"></button>
@@ -268,10 +272,10 @@
         <ng-template pTemplate="footer">
             <tr>
                 <td pFrozenColumn></td>
-                <td pFrozenColumn style="width: 4rem">
+                <td style="width: 4rem">
                 </td>
                 <td>Total</td>
-                <td pFrozenColumn></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -353,8 +357,8 @@
     <div style="text-align: -webkit-center;">
         <p-button (click)="invoiceTableDisplay = false && invoiceDataArray = []" label="Close"
             styleClass="p-button-outlined" class="mr-3"></p-button>
-        <p-button (click)="shareData()" label="Share" [disabled]="shareButtonLoading"
-            styleClass="p-button-outlined"> <span *ngIf="shareButtonLoading"><i class="pi pi-spin pi-spinner mr-2" style="font-size: 1rem"></i></span>
+        <p-button (click)="shareData()" label="Share" [disabled]="shareButtonLoading" styleClass="p-button-outlined">
+            <span *ngIf="shareButtonLoading"><i class="pi pi-spin pi-spinner mr-2" style="font-size: 1rem"></i></span>
         </p-button>
-        </div>
+    </div>
 </div>

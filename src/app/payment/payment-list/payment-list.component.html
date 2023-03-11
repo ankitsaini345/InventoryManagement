@@ -73,10 +73,10 @@
         <ng-template pTemplate="body" let-payment let-editing="editing" let-ri="rowIndex">
             <tr [pEditableRow]="payment">
                 <td pFrozenColumn>{{ri+1}}</td>
-                <td pFrozenColumn>
+                <td>
                     <p-tableCheckbox [value]="payment"></p-tableCheckbox>
                 </td>
-                <td pFrozenColumn>
+                <td>
                     {{payment.name}} #{{payment.count}}
                 </td>
                 <td>
@@ -116,7 +116,7 @@
                         </ng-template>
                     </p-cellEditor>
                 </td>
-                <td pFrozenColumn style="min-width: 100px;">
+                <td style="min-width: 100px;">
                     <div class="flex align-items-center justify-content-center gap-2">
                         <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                             (click)="onRowEditInit(payment)" class="p-button-rounded p-button-text"></button>

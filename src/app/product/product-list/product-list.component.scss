@@ -12,13 +12,13 @@
     width: 2rem;
 }
 
-:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+:host ::ng-deep .p-datatable .p-datatable-thead>tr>th {
     text-align: center;
-    padding: 0rem 1rem;
+    padding: 0.3rem 0.3rem;
     font-weight: 550;
 }
 
-:host ::ng-deep .p-datatable .p-datatable-tfoot > tr > td {
+:host ::ng-deep .p-datatable .p-datatable-tfoot>tr>td {
     text-align: center;
     padding: 0rem 1rem;
     font-weight: 550;
@@ -29,25 +29,80 @@
     justify-content: space-between;
 }
 
-:host ::ng-deep .p-datatable .p-datatable-header {
-    padding: .5rem 0.5rem;
-}
+// :host ::ng-deep .p-datatable .p-datatable-header {
+//     padding: .5rem 0.5rem;
+// }
 
-:host ::ng-deep .p-datatable .p-datatable-header .p-button.p-button-icon-only{
+:host ::ng-deep .p-datatable .p-datatable-header .p-button.p-button-icon-only {
     width: 2.6rem;
 }
 
-:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-    padding: 0.4rem 1.1rem;
-    font-weight: 550;
-}
+// :host ::ng-deep .p-datatable .p-datatable-thead>tr>th {
+//     padding: 0.4rem 1.1rem;
+//     font-weight: 550;
+// }
 
-:host ::ng-deep .p-datatable .p-datatable-thead > tr > th .p-inputtext {
-    font-size: .9rem;
-    padding: 0.3rem 0.3rem;
-    max-width: 11vw;
+:host ::ng-deep .p-datatable-thead .p-inputtext {
+    /* Media Query for Mobile Devices */
+    @media (max-width: 480px) {
+        width: 26vw;
+        height: 3.8vh;
+        padding-left: 2rem;
+        padding-top: 0.2rem;
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+        font-size: .9rem;
+        padding: 0.3rem 0.3rem;
+        max-width: 9vw;
+    }
+
+    @media (min-width: 1025px) and (max-width: 1280px) {
+        font-size: .9rem;
+        padding: 0.3rem 0.3rem;
+        max-width: 9vw;
+    }
+
+    @media (min-width: 1281px) {
+        font-size: .9rem;
+        padding: 0.3rem 0.3rem;
+        max-width: 9vw;
+    }
 }
 
 table tr:last-child {
-    font-weight: bold;  
-  }
+    font-weight: bold;
+}
+
+@media (max-width: 480px) {
+    .table-header .p-inputtext {
+        width: 24vw;
+        height: 3.8vh;
+        padding-left: 2rem;
+        margin-right: 2rem;
+    }
+
+    .table-header .p-inputtext::placeholder {
+        opacity: 0;
+    }
+
+    .table-header .p-button.p-button-icon-only {
+        width: 1.8rem !important;
+        padding: 0.2rem;
+    }
+}
+
+// /* Media Query for Mobile Devices */
+// @media (max-width: 480px) {}
+
+// /* Media Query for low resolution  Tablets, Ipads */
+// @media (min-width: 481px) and (max-width: 767px) {}
+
+// /* Media Query for Tablets Ipads portrait mode */
+// @media (min-width: 768px) and (max-width: 1024px) {}
+
+// /* Media Query for Laptops and Desktops */
+// @media (min-width: 1025px) and (max-width: 1280px) {}
+
+// /* Media Query for Large screens */
+// @media (min-width: 1281px) {}
