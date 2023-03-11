@@ -55,3 +55,21 @@
 .clr-green {
   color: green;
 }
+
+@media (max-width: 480px) {
+  .table-header .p-inputtext {
+    width: 24vw;
+    height: 3.8vh;
+    padding-left: 2rem;
+    margin-right: 2rem;
+  }
+
+  .table-header .p-inputtext::placeholder {
+      opacity: 0;
+  }
+
+  .table-header .p-button.p-button-icon-only {
+      width: 1.8rem !important;
+      padding: 0.2rem;
+  }
+}

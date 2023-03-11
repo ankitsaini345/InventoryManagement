@@ -50,7 +50,7 @@
                 <th></th>
                 <th>
                     <p-dropdown appendTo="body" [options]="mode"
-                        (onChange)="dt.filter($event.value, 'status', 'equals')" styleClass="p-column-filter"
+                        (onChange)="dt.filter($event.value, 'paymentMode', 'equals')" styleClass="p-column-filter"
                         placeholder="mode" [showClear]="true">
                         <ng-template let-option pTemplate="">
                             <span>&#123;&#123;option&#125;&#125;</span>
@@ -60,8 +60,7 @@
                 <th>
                     <p-calendar appendTo="body" (onSelect)="onDateSelect($event)"
                         (onClearClick)="dt.filter('', 'date', 'equals')" [showButtonBar]="true"
-                        styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"
-                        dateFormat="yyyy-mm-dd"></p-calendar>
+                        styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"></p-calendar>
                 </th>
                 <th>
                     <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'receiver', 'contains')"
@@ -74,10 +73,10 @@
         <ng-template pTemplate="body" let-payment let-editing="editing" let-ri="rowIndex">
             <tr [pEditableRow]="payment">
                 <td pFrozenColumn>{{ri+1}}</td>
-                <td pFrozenColumn>
+                <td>
                     <p-tableCheckbox [value]="payment"></p-tableCheckbox>
                 </td>
-                <td pFrozenColumn>
+                <td>
                     {{payment.name}} #{{payment.count}}
                 </td>
                 <td>
@@ -117,7 +116,7 @@
                         </ng-template>
                     </p-cellEditor>
                 </td>
-                <td pFrozenColumn style="min-width: 100px;">
+                <td style="min-width: 100px;">
                     <div class="flex align-items-center justify-content-center gap-2">
                         <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                             (click)="onRowEditInit(payment)" class="p-button-rounded p-button-text"></button>

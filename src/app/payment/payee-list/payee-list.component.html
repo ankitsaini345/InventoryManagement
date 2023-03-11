@@ -3,25 +3,19 @@
     <div class="card-header">
         Payee List
         <span *ngIf="!payees"><i class="pi pi-spin pi-spinner ml-2 mr-2" style="font-size: 1rem"></i>Loading..</span>
+        <span class="p-input-icon-left mr-2">
+            <i class="pi pi-search"></i>
+            <input style="padding-left: 2rem;" type="text" [(ngModel)]=filterBy class="form-control" />
+        </span>
     </div>
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-1">
-                <label class="col-form-label">
-                    FilterBy:
-                </label>
-            </div>
-            <div>
-                <input [(ngModel)]=filterBy type="text" class="form-control">
-            </div>
-        </div>
-        <div class="row" *ngIf="filterBy">
+        <!-- <div class="row" *ngIf="filterBy">
             <div class="col-md-6">
                 <label class="col-form-label">
                     Showing Payee containing <b>{{filterBy}}</b>
                 </label>
             </div>
-        </div>
+        </div> -->
         <br>
 
         <div class="table-responsive">
@@ -34,7 +28,7 @@
                         <th>Pending Commision</th>
                         <th>Final Amount</th>
                         <th>Last Paid</th>
-                        <th>LastPaid Date</th>
+                        <th>LastTxn.Date</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -47,18 +41,18 @@
                         <td>{{item.totalAmount + item.pendingComm}}</td>
                         <td>{{item.lastPaidAmount}}</td>
                         <td>{{item.lastPaymentDate}}</td>
-                        <td>
+                        <td style="min-width: 9rem;">
                             <button pButton pRipple type="button" icon="pi pi-pencil" pTooltip="Edit"
                                 tooltipPosition="top" [routerLink]="['/payee', item._id, 'edit']"
                                 class="p-button-text"></button>
-                     
+
                             <button pButton pRipple type="button" icon="pi pi-check" pTooltip="Mark as Paid"
                                 tooltipPosition="top" (click)="markAsPaid($event,item)" class="p-button-text"></button>
-                        
-                            <button pButton pRipple type="button" pTooltip="See txns"
-                                icon="pi pi-list" tooltipPosition="top" [routerLink]="['/payments/', item.name]"
+
+                            <button pButton pRipple type="button" pTooltip="See txns" icon="pi pi-list"
+                                tooltipPosition="top" [routerLink]="['/payments/', item.name]"
                                 class="p-button-rounded p-button-text"></button>
-                        
+
                             <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Delete"
                                 (click)="deletePayee($event,item)" tooltipPosition="top"
                                 class="p-button-rounded p-button-text p-button-danger"></button>

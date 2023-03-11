@@ -36,6 +36,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   filteredValue: IProduct[] = [];
   invoiceDataArray: any[] = []
   invoiceTableDisplay = false;
+  shareButtonLoading = false;
 
   @ViewChild('dt') table!: Table;
 
@@ -281,6 +282,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   async shareData() {
+    this.shareButtonLoading = true;
     // Get canvas as dataURL
     // console.log('share fn');
 
@@ -306,12 +308,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
         console.log('Sharing failed!', error)
         this.invoiceTableDisplay = false;
         this.invoiceDataArray = [];
+        this.shareButtonLoading = false
       }
     } else {
       console.log('This device does not support sharing files.')
     }
     this.invoiceTableDisplay = false;
     this.invoiceDataArray = [];
+    this.shareButtonLoading = false;
   }
 
   async exportTelegramData() {
