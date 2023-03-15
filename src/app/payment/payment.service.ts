@@ -23,6 +23,11 @@ export class PaymentService {
     // this.initialisePaymentData();
   }
 
+  reload() {
+    sessionStorage.removeItem(this.PaymentStorageString);
+    this.initialisePaymentData();
+  }
+
   getPayments(): Observable<IPayment[]> {
     return this.paymentData$.asObservable();
   }

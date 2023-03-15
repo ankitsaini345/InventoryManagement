@@ -118,6 +118,11 @@ export class AppComponent implements OnInit, OnDestroy {
           icon: 'pi pi-fw pi-plus',
           routerLink: '/payments/new/edit'
         }]
+      },
+      {
+        label: 'Reload',
+        icon: 'pi pi-fw pi-refresh',
+        command: (() => this.reloadData())
       }
     ];
   }
@@ -152,7 +157,7 @@ export class AppComponent implements OnInit, OnDestroy {
       })
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Error in initialising user: ' + error.message });
+      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in initialising user: ' + error.message });
     }
   }
 
@@ -162,6 +167,16 @@ export class AppComponent implements OnInit, OnDestroy {
       this.initUserDetails()
     } else {
       this.router.navigate(['/login']);
+    }
+  }
+
+  reloadData() {
+    if (confirm('Reload Data?')) {
+      this.productService.reload();
+      this.cardService.reload();
+      this.txnService.reload();
+      this.payeeService.reload();
+      this.paymentService.reload();
     }
   }
 }

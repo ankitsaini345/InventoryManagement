@@ -25,6 +25,11 @@ export class TxnService {
     // this.initialiseTxnData();
   }
 
+  reload() {
+    sessionStorage.removeItem(this.txnStorageString);
+    this.initialiseTxnData();
+  }
+
   getTxns(): Observable<Itxn[]> {
     return this.txnData$.asObservable();
   }
