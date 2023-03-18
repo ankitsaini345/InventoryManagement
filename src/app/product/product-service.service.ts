@@ -25,6 +25,11 @@ export class ProductServiceService {
     // this.initialiseProductData();
   }
 
+  reload() {
+    sessionStorage.removeItem(this.productStorageString);
+    this.initialiseProductData();
+  }
+
   private url = environment.baseUrl + 'api/orders';
   private productData$ = new BehaviorSubject<IProduct[]>([]);
   private uniqueProductName$ = new BehaviorSubject<string[]>([]);

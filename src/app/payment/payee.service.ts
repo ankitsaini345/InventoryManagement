@@ -26,6 +26,11 @@ export class PayeeService {
     others: 0
   });
 
+  reload() {
+    sessionStorage.removeItem(this.StorageString);
+    this.initialiseData();
+  }
+
   async initialiseData() {
     try {
       let data = sessionStorage.getItem(this.StorageString);

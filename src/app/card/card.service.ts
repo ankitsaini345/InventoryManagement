@@ -13,7 +13,6 @@ import { Icard } from './card';
 export class CardService {
 
   private cardStorageString = 'inventoryCards';
-  private txnStorageString = 'inventoryTxns';
   private url = environment.baseUrl + 'api/cards'
   private billGenerateFlag = true;
 
@@ -27,6 +26,11 @@ export class CardService {
   constructor(private http: HttpClient,
     private messageService: MessageService) {
     // this.initialiseCardData();
+  }
+
+  reload() {
+    sessionStorage.removeItem(this.cardStorageString);
+    this.initialiseCardData();
   }
 
   calcPendingAmount() {
