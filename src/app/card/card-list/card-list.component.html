@@ -173,8 +173,8 @@
                             <td>{{card.billDate}} </td>
                             <td>{{card.unbilledAmount}} </td>
                             <td>
-                                <!-- <i style="color: green;" class="pi pi-check" pTooltip="Bill Pay" tooltipPosition="top"
-                                        (click)="selectedCardOverlay.card = card"></i> -->
+                                <i style="color: green;" class="pi pi-pencil" Tooltip="Edit" tooltipPosition="top"
+                                [routerLink]="['/card', card._id, 'edit']"></i>
                             </td>
                         </tr>
                         <tr>

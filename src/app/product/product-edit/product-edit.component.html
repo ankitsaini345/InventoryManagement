@@ -276,15 +276,24 @@
                     </div>
                 </fieldset>
             </form>
-            <div class="row mb-2 form-group">
-                <div class="col-md-4">
-                    <div class="form-check form-switch addmore" style="text-align-last: end;">
+            <div class="row mb-4 form-group" style="justify-content: center;">
+                <!-- <div class="col"> -->
+                    <div class="form-check form-switch addmore mr-2" style="text-align-last: end;">
                         <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
                             [(ngModel)]=addMoreProduct>
                         <label class="form-check-label" for="flexSwitchCheckDefault">Add More Products</label>
                     </div>
-                </div>
-                <div class="col-md-8">
+                <!-- </div>
+                <div class="col"> -->
+                    <div class="form-check form-switch addmore" style="text-align-last: end;">
+                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                            [(ngModel)]=addToCard>
+                        <label class="form-check-label" for="flexSwitchCheckDefault">Add to card</label>
+                    </div>
+                <!-- </div> -->
+            </div>
+            <div class="row form-group" style="text-align: center;">
+                <div class="col">
                     <button [disabled]="isLoading" class="btn btn-primary mr-3" style="width:80px" type="button"
                         (click)="saveProduct()">
                         {{ saveButtonText }}

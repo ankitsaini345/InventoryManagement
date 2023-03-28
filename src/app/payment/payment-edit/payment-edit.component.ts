@@ -17,7 +17,7 @@ import { PaymentService } from '../payment.service';
 })
 export class PaymentEditComponent implements OnInit {
   subArray: Subscription[] = []
-  mode = ["phonePe", "Gpay", "Paytm", "Cash", "Card", "LIC", "Order", "Others"];
+  mode = ["phonePe", "Gpay", "Payee", "Paytm", "Cash", "Card", "LIC", "Order", "Others"];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -153,7 +153,7 @@ export class PaymentEditComponent implements OnInit {
       let card = this.cardService.getCard(this.currentPayment.receiver);
       if (card.amountDue >= this.currentPayment.amount)
         card.amountDue -= this.currentPayment.amount;
-      else if (card.amountDue && card.amountDue < this.currentPayment.amount){
+      else if (card.amountDue && card.amountDue < this.currentPayment.amount) {
         let remAmount = this.currentPayment.amount - card.amountDue;
         card.amountDue = 0;
         card.unbilledAmount -= remAmount;
@@ -161,6 +161,43 @@ export class PaymentEditComponent implements OnInit {
 
       const p4 = this.cardService.updateCard(card);
       promiseArray.push(p4);
+    }
+    
+    if(this.currentPayment.paymentMode == 'Payee' && this.currentPayment.type == 'in') {
+      let receiver = this.payeeService.getPayeeByName(this.currentPayment.receiver);
+      if(receiver) {
+        //add new payment
+        let newPayment: IPayment = {
+          _id: new ObjectId().toString(),
+          name: receiver.name,
+          amount: this.currentPayment.amount,
+          date: this.currentPayment.date,
+          percent: 0,
+          paymentMode: 'Payee',
+          receiver: receiver.name,
+          prevAmount: receiver.lastPaidAmount,
+          remark: 'from ' + this.currentPayment.name,
+          type: 'out',
+          count: receiver.lastPaymentNum + 1,
+          lastPayDate: receiver.lastPaymentDate,
+          remAmount: receiver.totalAmount - this.currentPayment.amount,
+          cashback: 0,
+          pendingCommision: receiver.pendingComm
+        }
+        const p1 = this.paymentService.addPayment(newPayment);
+        promiseArray.push(p1);
+
+        receiver.lastPaidAmount = this.currentPayment.amount;
+        receiver.lastPaymentDate = this.currentPayment.date;
+        receiver.lastPaymentNum += 1;
+        receiver.totalAmount -= this.currentPayment.amount;
+        const p2 = this.payeeService.editPayee(receiver);
+        promiseArray.push(p2);
+      } else {
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'mode: payee & ' + this.currentPayment.receiver + ' not found' });
+        console.log('mode: payee & ' + this.currentPayment.receiver + ' not found');
+        return;
+      }
     }
 
     if (stayOnPage) {
@@ -204,6 +241,15 @@ export class PaymentEditComponent implements OnInit {
           }
         }
       } else this.filteredReceiverNameArray = this.cardNameArray.slice();
+    } else if (this.currentPayment.paymentMode == 'Payee') {
+      if (query) {
+        for (let i = 0; i < this.payeeNameArray.length; i++) {
+          let name = this.payeeNameArray[i];
+          if (name.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+            this.filteredReceiverNameArray.push(name);
+          }
+        }
+      } else this.filteredReceiverNameArray = this.payeeNameArray.slice();
     } else {
       if (query) {
         for (let i = 0; i < this.receiverNameArray.length; i++) {

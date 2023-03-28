@@ -76,10 +76,10 @@ table tr:last-child {
 
 @media (max-width: 480px) {
     .table-header .p-inputtext {
-        width: 24vw;
-        height: 3.8vh;
+        width: 25vw;
+        height: 4.8vh;
         padding-left: 2rem;
-        margin-right: 2rem;
+        margin-right: 0rem;
     }
 
     .table-header .p-inputtext::placeholder {

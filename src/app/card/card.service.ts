@@ -189,17 +189,13 @@ export class CardService {
       let currentMonth = (new Date()).getMonth() + 1;
       let currentDate = (new Date()).getDate();
       for (const card of this.cardData$.getValue()) {
-        if (!card.unbilledAmount) {
-          continue;
-        } else {
-          if ((card.lastBilledMonth != currentMonth) && (card.billDate <= currentDate)) {
-            card.amountDue += card.unbilledAmount;
-            card.unbilledAmount = 0;
-            card.lastBilledMonth = currentMonth;
-            let sub = this.updateCard(card, false);
-            promiseArray.push(sub);
-            console.log('bill generated for ' + card.cardName);
-          }
+        if ((card.lastBilledMonth != currentMonth) && (card.billDate <= currentDate)) {
+          card.amountDue += card.unbilledAmount;
+          card.unbilledAmount = 0;
+          card.lastBilledMonth = currentMonth;
+          let sub = this.updateCard(card, false);
+          promiseArray.push(sub);
+          console.log('bill generated for ' + card.cardName);
         }
       }
       if (promiseArray.length) {
