@@ -85,7 +85,7 @@ export class ProductServiceService {
       OrderAmount: 0,
       buyerAmount: 0
     }
-  // orderStatus = ['Ordered', 'Shipped', 'DeliveredToLoc', 'DeliveredHome', 'Distributor', 'Cancelled']
+    // orderStatus = ['Ordered', 'Shipped', 'DeliveredToLoc', 'DeliveredHome', 'Distributor', 'Cancelled']
 
     this.productData$.getValue().forEach((product) => {
       total.OrderCount++;
@@ -95,13 +95,13 @@ export class ProductServiceService {
           total.undeliveredCount++;
           total.undeliveredAmount += product.buyerPrice;
           break;
-          case 'DeliveredHome' || 'DeliveredToLoc':
-            total.deliveredCount++;
-            total.deliveredAmount += product.buyerPrice;
+        case 'DeliveredHome' || 'DeliveredToLoc':
+          total.deliveredCount++;
+          total.deliveredAmount += product.buyerPrice;
           break;
-          case 'Distributor':
-            total.buyerCount++;
-            total.buyerAmount += product.buyerPrice;
+        case 'Distributor':
+          total.buyerCount++;
+          total.buyerAmount += product.buyerPrice;
           break;
         default:
           break;
@@ -135,7 +135,7 @@ export class ProductServiceService {
     }
   }
 
-  async addProduct(currentProduct: IProduct) {
+  async addProduct(currentProduct: IProduct, addToCard = true) {
     try {
       const res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, currentProduct));
       if (res.acknowledged) {
@@ -145,10 +145,12 @@ export class ProductServiceService {
 
         this.txnService.addTxnfromProduct(currentProduct);
 
-        let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
-        updatedCard.unbilledAmount += currentProduct.cardAmount;
-        updatedCard.totalAmount += currentProduct.cardAmount;
-        this.cardService.updateCard(updatedCard);
+        if (addToCard) {
+          let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
+          updatedCard.unbilledAmount += currentProduct.cardAmount;
+          updatedCard.totalAmount += currentProduct.cardAmount;
+          this.cardService.updateCard(updatedCard);
+        }
       } else {
         this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Unable to add Product ' + currentProduct.name });
         console.error('Unable to add Product ' + currentProduct.name + ' Error: ', res);

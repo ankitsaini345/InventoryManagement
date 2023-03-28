@@ -38,6 +38,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   filterBy = '';
   isLoading = false;
   addMoreProduct = false;
+  addToCard = true;
   cashbackup!: number
 
   get listPrice() {
@@ -197,7 +198,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       if (this.currentProduct._id == 'new') {
         this.currentProduct._id = new ObjectId().toString();
         this.currentProduct.txnId = new ObjectId().toString();
-        this.productService.addProduct(this.currentProduct);
+        this.productService.addProduct(this.currentProduct, this.addToCard);
       } else {
         if (this.currentProduct != this.originalProduct) {
           this.productService.editProduct(this.currentProduct, this.originalProduct);
@@ -240,7 +241,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
       }
       this.currentProduct._id = new ObjectId().toString();
       this.currentProduct.txnId = new ObjectId().toString();
-      this.productService.addProduct(this.currentProduct);
+      this.productService.addProduct(this.currentProduct, this.addToCard);
 
       if (this.addMoreProduct) {
         this.resetProduct();
