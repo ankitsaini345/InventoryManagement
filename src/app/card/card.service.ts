@@ -218,6 +218,7 @@ export class CardService {
       dueDate: 0,
       amountDue: 0,
       billDate: 0,
+      limit:0,
       totalAmount: 0,
       unbilledAmount: 0,
       lastBilledMonth: 0

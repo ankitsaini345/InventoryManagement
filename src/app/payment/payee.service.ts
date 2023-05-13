@@ -59,11 +59,13 @@ export class PayeeService {
   calcStats() {
     let stats = {
       distributor: 0,
-      others: 0
+      others: 0,
+      personal: 0
     }
 
     this.payeeData$.getValue().forEach((payee)=> {
-      if(payee.name == 'Amit Aryangr') stats.distributor += payee.totalAmount;
+      if(payee.name == 'Amit Aryangr') stats.distributor = payee.totalAmount;
+      else if(payee.name == 'Personal') stats.personal = payee.totalAmount;
       else stats.others += payee.totalAmount;
     });
 

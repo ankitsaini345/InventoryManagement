@@ -43,8 +43,13 @@
                     <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                 </th>
                 <th>
-                    <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'name', 'contains')"
-                        placeholder="Search" class="p-column-filter">
+                    <p-dropdown appendTo="body" [options]="allPayeeNames"
+                        (onChange)="dt.filter($event.value, 'name', 'equals')" styleClass="p-column-filter"
+                        placeholder="name" [showClear]="true">
+                        <ng-template let-option pTemplate="">
+                            <span>&#123;&#123;option&#125;&#125;</span>
+                        </ng-template>
+                    </p-dropdown>
                 </th>
                 <th></th>
                 <th></th>

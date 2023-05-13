@@ -21,43 +21,49 @@
                             <td>{{productStat.undeliveredAmount}}</td>
                         </tr>
                         <tr>
-                            <td>Delivered</td>
+                            <td>Delivered Home</td>
                             <td>{{productStat.deliveredCount}}</td>
                             <td>{{productStat.deliveredAmount}}</td>
                         </tr>
                         <tr>
-                            <td>Total Order</td>
+                            <td>Order till Date</td>
                             <td>{{productStat.OrderCount}}</td>
                             <td>{{productStat.OrderAmount}}</td>
                         </tr>
                         <tr>
-                            <td>Distributor</td>
+                            <td>Delivered to Distributor</td>
                             <td>{{productStat.buyerCount}}</td>
                             <td>{{productStat.buyerAmount}}</td>
                         </tr>
 
                         <tr>
-                            <td>Pending with Distributor</td>
+                            <td>Personal Orders</td>
+                            <td></td>
+                            <td>{{pendingAmount.personal}}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Pending (Distributor)</td>
                             <td></td>
                             <td>{{pendingAmount.distributor}}</td>
                         </tr>
                         <tr>
-                            <td>Pending with Others</td>
+                            <td>Pending (Others)</td>
                             <td></td>
                             <td>{{pendingAmount.others}}</td>
                         </tr>
                         <tr>
-                            <td>Pending in Card (unbilled)</td>
+                            <td>Card (unbilled)</td>
                             <td></td>
                             <td>{{pendingCardAmount.unbilled}}</td>
                         </tr>
                         <tr>
-                            <td>Pending in Card (due)</td>
+                            <td>Card (due)</td>
                             <td></td>
                             <td>{{pendingCardAmount.due}}</td>
                         </tr>
                         <tr>
-                            <td>Pending in Card (Total)</td>
+                            <td>Card (Total)</td>
                             <td></td>
                             <td>{{pendingCardAmount.due + pendingCardAmount.unbilled}}</td>
                         </tr>
@@ -65,7 +71,7 @@
                             <td>Difference</td>
                             <td></td>
                             <td>{{pendingAmount.distributor + pendingAmount.others + productStat.undeliveredAmount +
-                                productStat.deliveredAmount - pendingCardAmount.unbilled - pendingCardAmount.due}}</td>
+                                productStat.deliveredAmount - pendingCardAmount.unbilled - pendingCardAmount.due - pendingAmount.personal}}</td>
                         </tr>
                     </tbody>
                 </table>

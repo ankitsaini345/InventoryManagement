@@ -4,6 +4,7 @@ export interface Icard {
     cardNumber: string,
     billDate: number,
     dueDate: number,
+    limit: number,
     amountDue: number,
     totalAmount: number,
     unbilledAmount: number,
