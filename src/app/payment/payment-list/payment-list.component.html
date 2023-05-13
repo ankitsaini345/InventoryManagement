@@ -76,7 +76,7 @@
 
         </ng-template>
         <ng-template pTemplate="body" let-payment let-editing="editing" let-ri="rowIndex">
-            <tr [pEditableRow]="payment">
+            <tr [pEditableRow]="payment" [ngClass]="{'green': payment.type == 'in', 'red': payment.type == 'out'}">
                 <td pFrozenColumn>{{ri+1}}</td>
                 <td>
                     <p-tableCheckbox [value]="payment"></p-tableCheckbox>
