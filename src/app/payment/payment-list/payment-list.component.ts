@@ -35,6 +35,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   payments: IPayment[] = [];
   filterBy = '';
   payeeName!: string;
+  allPayeeNames!: string[];
   aggregate: any = {};
   orgPayment: IPayment | null = null;
   subArray: Subscription[] = [];
@@ -81,6 +82,13 @@ export class PaymentListComponent implements OnInit, OnDestroy {
       }
     })
     this.subArray.push(sub1);
+
+    let sub2 = this.payeeService.getUniquePayeeNames().subscribe((names) => {
+      this.allPayeeNames = names;
+    })
+
+    this.subArray.push(sub2);
+
   }
 
 
@@ -199,6 +207,9 @@ export class PaymentListComponent implements OnInit, OnDestroy {
         this.showPayStringDialog.payee = firstEl.name;
         this.showPayStringDialog.paymentString = exportString;
       }
+
+      this.selectedPayment = [];
+
     } catch (error: any) {
       this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: error.message });
     }

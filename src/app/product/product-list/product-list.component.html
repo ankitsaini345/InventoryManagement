@@ -355,7 +355,7 @@
     </div>
     <br>
     <div style="text-align: -webkit-center;">
-        <p-button (click)="invoiceTableDisplay = false && invoiceDataArray = []" label="Close"
+        <p-button (click)="invoiceTableClose()" label="Close"
             styleClass="p-button-outlined" class="mr-3"></p-button>
         <p-button (click)="shareData()" label="Share" [disabled]="shareButtonLoading" styleClass="p-button-outlined">
             <span *ngIf="shareButtonLoading"><i class="pi pi-spin pi-spinner mr-2" style="font-size: 1rem"></i></span>

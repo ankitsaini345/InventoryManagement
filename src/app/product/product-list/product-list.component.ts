@@ -316,6 +316,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.invoiceTableDisplay = false;
     this.invoiceDataArray = [];
     this.shareButtonLoading = false;
+    if (this.selectedProduct.length) {
+      this.selectedProduct = [];
+    }
   }
 
   async exportTelegramData() {
@@ -345,6 +348,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
       this.clipboard.copy(exportString);
 
+      if (this.selectedProduct.length) {
+        this.selectedProduct = [];
+      }
+
       const shareData: ShareData = {
         title: 'Order Details',
         text: exportString
@@ -358,18 +365,19 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   deliveryStatus(flag: boolean) {
-    if (!this.selectedProduct.length) {
-      console.error('No Product Selected');
-      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Product Selected' });
-    } else {
-      if (flag) {
-        this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
-        this.deliveryDialog.display = false;
+    if (flag) {
+      if (!this.selectedProduct.length) {
+        console.error('No Product Selected');
+        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'No Product Selected' });
       } else {
-        this.deliveryDialog.display = false,
-          this.deliveryDialog.date = '',
-          this.deliveryDialog.type = ''
+        this.bulkStatusChange(this.deliveryDialog.type, this.deliveryDialog.date);
       }
+    }
+    this.deliveryDialog.display = false,
+      this.deliveryDialog.date = '',
+      this.deliveryDialog.type = ''
+    if (this.selectedProduct.length) {
+      this.selectedProduct = [];
     }
   }
 
@@ -384,6 +392,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
       let pro = this.productService.editProduct(product, originalProduct, false);
       promiseArray.push(pro);
       // }
+      if (this.selectedProduct.length) {
+        this.selectedProduct = [];
+      }
     });
     Promise.all(promiseArray).then(() => {
       sessionStorage.removeItem(this.productStorageString);
@@ -403,4 +414,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.table.filter(event.value, 'status', 'in')
   }
 
+  invoiceTableClose(): any {
+    this.invoiceDataArray = [];
+    this.invoiceTableDisplay = false;
+    if (this.selectedProduct.length) {
+      this.selectedProduct = [];
+    }
+
+  }
 }

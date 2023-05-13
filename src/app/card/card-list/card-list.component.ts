@@ -91,10 +91,12 @@ export class CardListComponent implements OnInit, OnDestroy {
   }
 
   customUpdate() {
-    this.cards.forEach((card) => {
-      // card.lastBilledMonth = 0;
-      // this.cardService.updateCard(card, false);
-    })
+    // this.cards.forEach((card) => {
+    //   card.limit = 0;
+    //   this.cardService.updateCard(card, false);
+    // })
+
+    alert('No action defined');
   }
 
   refresh() {

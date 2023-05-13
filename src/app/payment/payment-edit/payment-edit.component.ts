@@ -161,6 +161,11 @@ export class PaymentEditComponent implements OnInit {
 
       const p4 = this.cardService.updateCard(card);
       promiseArray.push(p4);
+    } else if(this.addPaymentToCard && this.currentPayment.paymentMode == 'LIC') {
+      let card = this.cardService.getCard(this.currentPayment.receiver);
+      card.unbilledAmount += this.currentPayment.amount;
+      const p5 = this.cardService.updateCard(card);
+      promiseArray.push(p5);
     }
     
     if(this.currentPayment.paymentMode == 'Payee' && this.currentPayment.type == 'in') {
@@ -232,7 +237,7 @@ export class PaymentEditComponent implements OnInit {
   filterReceiver(event: any) {
     this.filteredReceiverNameArray = [];
     let query = event.query;
-    if (this.currentPayment.paymentMode == 'Card') {
+    if (this.currentPayment.paymentMode == 'Card' || this.currentPayment.paymentMode == 'LIC') {
       if (query) {
         for (let i = 0; i < this.cardNameArray.length; i++) {
           let name = this.cardNameArray[i];
