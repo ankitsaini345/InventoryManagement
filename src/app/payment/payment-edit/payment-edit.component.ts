@@ -17,7 +17,7 @@ import { PaymentService } from '../payment.service';
 })
 export class PaymentEditComponent implements OnInit {
   subArray: Subscription[] = []
-  mode = ["phonePe", "Gpay", "Payee", "Paytm", "Cash", "Card", "LIC", "Order", "Others"];
+  mode = ["phonePe", "Gpay", "Payee", "Paytm", "Cash", "Card", "LIC/Personal", "Order", "Others"];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -141,6 +141,9 @@ export class PaymentEditComponent implements OnInit {
       this.payee.lastPaymentDate = this.currentPayment.date;
       this.currentPayment.pendingCommision = this.payee.pendingComm + this.currentPayment.cashback;
       this.payee.pendingComm += this.currentPayment.cashback;
+      if(this.payee.name == 'Personal') {
+        this.payee.pendingComm += this.currentPayment.amount;
+      }
       this.payee.lastPaidAmount = this.currentPayment.amount;
       const p2 = this.payeeService.editPayee(this.payee);
       promiseArray.push(p2);
@@ -161,7 +164,7 @@ export class PaymentEditComponent implements OnInit {
 
       const p4 = this.cardService.updateCard(card);
       promiseArray.push(p4);
-    } else if(this.addPaymentToCard && this.currentPayment.paymentMode == 'LIC') {
+    } else if(this.addPaymentToCard && this.currentPayment.paymentMode == 'LIC/Personal') {
       let card = this.cardService.getCard(this.currentPayment.receiver);
       card.unbilledAmount += this.currentPayment.amount;
       const p5 = this.cardService.updateCard(card);
@@ -237,7 +240,7 @@ export class PaymentEditComponent implements OnInit {
   filterReceiver(event: any) {
     this.filteredReceiverNameArray = [];
     let query = event.query;
-    if (this.currentPayment.paymentMode == 'Card' || this.currentPayment.paymentMode == 'LIC') {
+    if (this.currentPayment.paymentMode == 'Card' || this.currentPayment.paymentMode == 'LIC/Personal') {
       if (query) {
         for (let i = 0; i < this.cardNameArray.length; i++) {
           let name = this.cardNameArray[i];

@@ -48,7 +48,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   }
 
 
-  mode = ["phonePe", "Gpay", "Payee", "Paytm", "Cash", "Card", "LIC", "Order", "Others"];
+  mode = ["phonePe", "Gpay", "Payee", "Paytm", "Cash", "Card", "LIC/Personal", "Order", "Others"];
 
   // cardNames: string[] = [];
   selectedPayment: IPayment[] = [];
