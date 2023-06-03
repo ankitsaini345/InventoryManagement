@@ -65,7 +65,7 @@ export class PayeeService {
 
     this.payeeData$.getValue().forEach((payee)=> {
       if(payee.name == 'Amit Aryangr') stats.distributor = payee.totalAmount;
-      else if(payee.name == 'Personal') stats.personal = payee.totalAmount;
+      else if(payee.name == 'Personal' || payee.name == 'Others') stats.personal += payee.totalAmount;
       else stats.others += payee.totalAmount;
     });
 
@@ -168,7 +168,8 @@ export class PayeeService {
       totalAmount: 0,
       pendingComm: 0,
       lastPaymentNum: 0,
-      lastPaidAmount: 0
+      lastPaidAmount: 0,
+      tillDate: 0
     }
   }
 
