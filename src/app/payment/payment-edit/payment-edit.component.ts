@@ -141,9 +141,7 @@ export class PaymentEditComponent implements OnInit {
       this.payee.lastPaymentDate = this.currentPayment.date;
       this.currentPayment.pendingCommision = this.payee.pendingComm + this.currentPayment.cashback;
       this.payee.pendingComm += this.currentPayment.cashback;
-      if(this.payee.name == 'Personal') {
-        this.payee.pendingComm += this.currentPayment.amount;
-      }
+      this.payee.tillDate += this.currentPayment.amount;
       this.payee.lastPaidAmount = this.currentPayment.amount;
       const p2 = this.payeeService.editPayee(this.payee);
       promiseArray.push(p2);
