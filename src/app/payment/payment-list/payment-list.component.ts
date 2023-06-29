@@ -12,26 +12,26 @@ import { PayeeService } from '../payee.service';
 @Component({
   selector: 'app-payment-list',
   templateUrl: './payment-list.component.html',
-  styleUrls: ['./payment-list.component.scss']
+  styleUrls: ['./payment-list.component.scss'],
 })
 export class PaymentListComponent implements OnInit, OnDestroy {
-  constructor(private paymentService: PaymentService,
+  constructor(
+    private paymentService: PaymentService,
     private route: ActivatedRoute,
     private clipboard: Clipboard,
     private shareService: ShareService,
     private payeeService: PayeeService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
-  ) {
-  }
+  ) {}
 
   private PaymentStorageString = 'inventoryPayments';
 
   showPayStringDialog = {
     visible: false,
     payee: '',
-    paymentString: ''
-  }
+    paymentString: '',
+  };
   payments: IPayment[] = [];
   filterBy = '';
   payeeName!: string;
@@ -44,11 +44,20 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   deliveryDialog = {
     display: false,
     date: '',
-    type: ''
-  }
+    type: '',
+  };
 
-
-  mode = ["phonePe", "Gpay", "Payee", "Paytm", "Cash", "Card", "LIC/Personal", "Order", "Others"];
+  mode = [
+    'phonePe',
+    'Gpay',
+    'Payee',
+    'Paytm',
+    'Cash',
+    'Card',
+    'LIC/Personal',
+    'Order',
+    'Others',
+  ];
 
   // cardNames: string[] = [];
   selectedPayment: IPayment[] = [];
@@ -59,13 +68,20 @@ export class PaymentListComponent implements OnInit, OnDestroy {
 
   async getPayments() {
     try {
-      let sub: Subscription = this.paymentService.getPayments().subscribe((payments) => {
-        this.payments = payments;
-      });
+      let sub: Subscription = this.paymentService
+        .getPayments()
+        .subscribe((payments) => {
+          this.payments = payments;
+        });
       this.subArray.push(sub);
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in getting Products: ' + error.message });
+      this.messageService.add({
+        severity: 'error',
+        life: 15000,
+        summary: 'Error',
+        detail: 'Error in getting Products: ' + error.message,
+      });
     }
   }
 
@@ -73,24 +89,24 @@ export class PaymentListComponent implements OnInit, OnDestroy {
     let sub1: Subscription = this.route.params.subscribe(async (param) => {
       this.payeeName = param['name'];
       if (this.payeeName == 'All') {
-        let sub2: Subscription = this.paymentService.getPayments().subscribe((payments) => {
-          this.payments = payments;
-        });
+        let sub2: Subscription = this.paymentService
+          .getPayments()
+          .subscribe((payments) => {
+            this.payments = payments;
+          });
         this.subArray.push(sub2);
       } else {
         this.payments = this.paymentService.getPaymentByName(this.payeeName);
       }
-    })
+    });
     this.subArray.push(sub1);
 
     let sub2 = this.payeeService.getUniquePayeeNames().subscribe((names) => {
       this.allPayeeNames = names;
-    })
+    });
 
     this.subArray.push(sub2);
-
   }
-
 
   deletePayment(event: Event, payment: IPayment) {
     this.confirmationService.confirm({
@@ -116,12 +132,21 @@ export class PaymentListComponent implements OnInit, OnDestroy {
 
   onRowEditSave(payment: IPayment) {
     try {
-      if (this.orgPayment && payment._id == this.orgPayment._id && (this.orgPayment != payment)) {
-        this.paymentService.updatePayment(payment)
-      } else throw 'orgPayment missing or id is different'
+      if (
+        this.orgPayment &&
+        payment._id == this.orgPayment._id &&
+        this.orgPayment != payment
+      ) {
+        this.paymentService.updatePayment(payment);
+      } else throw 'orgPayment missing or id is different';
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in updaing ' + payment.name + ' ' + error.message });
+      this.messageService.add({
+        severity: 'error',
+        life: 15000,
+        summary: 'Error',
+        detail: 'Error in updaing ' + payment.name + ' ' + error.message,
+      });
     }
   }
 
@@ -141,7 +166,7 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   }
 
   onDateSelect(value: any) {
-    this.table.filter(this.formatDate(value), 'date', 'equals')
+    this.table.filter(this.formatDate(value), 'date', 'equals');
   }
 
   formatDate(str: any, regular = false) {
@@ -163,7 +188,11 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   async exportData(includeCom = false) {
     try {
       if (!this.selectedPayment.length) {
-        this.messageService.add({ severity: 'info', summary: 'Info', detail: 'No Payment Selected' });
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Info',
+          detail: 'No Payment Selected',
+        });
       } else {
         let exportString = '';
         let lastDate = '';
@@ -175,68 +204,89 @@ export class PaymentListComponent implements OnInit, OnDestroy {
         let calculatedAmount = firstEl.prevAmount;
         let calculationString = calculatedAmount + ' ';
         this.selectedPayment.forEach((item) => {
-
-          if (item.name != firstEl.name) throw new Error('Different Payee Selected');
+          if (item.name != firstEl.name)
+            throw new Error('Different Payee Selected');
 
           if (lastDate != item.date) {
             lastDate = item.date;
-            exportString += ('\n[' + this.formatDate(item.date, true) + '] ')
+            exportString += '\n[' + this.formatDate(item.date, true) + '] ';
           }
           if (item.type == 'in') {
             calculatedAmount -= item.amount;
             // exportString += ('- ' + item.amount + ' ');
-            exportString += ('-' + item.amount + ' ');
-            calculationString += ('- ' + item.amount + ' ');
+            exportString += '-' + item.amount + ' ';
+            calculationString += '- ' + item.amount + ' ';
           } else {
             calculatedAmount += item.amount;
             // exportString += ('+ ' + item.amount + ' ');
-            exportString += ('+' + item.amount + ' ')
-            calculationString += ('+ ' + item.amount + ' ');
+            exportString += '+' + item.amount + ' ';
+            calculationString += '+ ' + item.amount + ' ';
           }
-          if (includeCom && item.cashback) exportString += ('(' + item.cashback + ') ')
+          if (includeCom && item.cashback)
+            exportString += '(' + item.cashback + ') ';
         });
-        exportString += ('\n\n' + calculationString + '= ' + calculatedAmount)
+        exportString += '\n\n' + calculationString + '= ' + calculatedAmount;
         // exportString += ('\n\n[Total] = ' + calculatedAmount)
         let payee = this.payeeService.getPayeeByName(firstEl.name);
         if (includeCom)
-          exportString += ('\n[Pending Commision] = ' + payee.pendingComm);
+          exportString += '\n[Pending Commision] = ' + payee.pendingComm;
         if (payee.totalAmount != calculatedAmount)
-          this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Final Price Mismatch' });
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Info',
+            detail: 'Final Price Mismatch',
+          });
 
         this.showPayStringDialog.visible = true;
         this.showPayStringDialog.payee = firstEl.name;
         this.showPayStringDialog.paymentString = exportString;
       }
 
-      this.selectedPayment = [];
-
+      // this.selectedPayment = [];
     } catch (error: any) {
-      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: error.message });
+      this.messageService.add({
+        severity: 'error',
+        life: 15000,
+        summary: 'Error',
+        detail: error.message,
+      });
     }
   }
 
-  async paymentOverlayAction(exportString: string, copy: boolean, share: boolean) {
-    if (copy) this.clipboard.copy(exportString);
+  async paymentOverlayAction(
+    exportString: string,
+    copy: boolean,
+    share: boolean
+  ) {
+    if (copy) {
+      this.clipboard.copy(exportString);
+      this.selectedPayment = [];
+    }
     if (share) {
       const shareData: ShareData = {
         title: 'Payment Details',
-        text: exportString
-      }
+        text: exportString,
+      };
       const shareMessage = await this.shareService.share(shareData);
       if (shareMessage.error) {
-        this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: shareMessage.message });
+        this.messageService.add({
+          severity: 'error',
+          life: 15000,
+          summary: 'Error',
+          detail: shareMessage.message,
+        });
       }
     }
     this.showPayStringDialog.visible = false;
     this.showPayStringDialog.payee = '';
     this.showPayStringDialog.paymentString = '';
+    this.selectedPayment = [];
   }
-
 
   // async bulkStatusChange() {
   // if (!this.selectedPayment.length) {
   //   this.messageService.add({ severity: 'info', summary: 'Info', detail: 'No Payment Selected' });
-  // } 
+  // }
   //   // let promiseArray: Promise<any>[] = [];
   //   console.log('pending comm');
 
@@ -256,15 +306,13 @@ export class PaymentListComponent implements OnInit, OnDestroy {
   //   });
   // }
 
-
   ngOnDestroy(): void {
     this.subArray.forEach((sub: Subscription) => {
       sub.unsubscribe();
-    })
+    });
   }
 
   onRepresentativeChange(event: any) {
-    this.table.filter(event.value, 'status', 'in')
+    this.table.filter(event.value, 'status', 'in');
   }
-
 }

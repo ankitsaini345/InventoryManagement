@@ -149,6 +149,9 @@ export class ProductServiceService {
           let updatedCard = this.cardService.getCard(currentProduct.cardHolder);
           updatedCard.unbilledAmount += currentProduct.cardAmount;
           updatedCard.totalAmount += currentProduct.cardAmount;
+          if(currentProduct.cashback && currentProduct.cashback > 0){
+            updatedCard.cashback = currentProduct.cashback;
+          }
           this.cardService.updateCard(updatedCard);
         }
       } else {

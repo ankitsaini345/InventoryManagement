@@ -92,7 +92,7 @@ export class CardListComponent implements OnInit, OnDestroy {
 
   customUpdate() {
     // this.cards.forEach((card) => {
-    //   card.limit = 0;
+    //   card.cashback = 0;
     //   this.cardService.updateCard(card, false);
     // })
 
@@ -109,6 +109,7 @@ export class CardListComponent implements OnInit, OnDestroy {
       this.aggregate.unbilledAmount ? this.aggregate.unbilledAmount += item.unbilledAmount : this.aggregate.unbilledAmount = item.unbilledAmount;
       this.aggregate.amountDue ? this.aggregate.amountDue += item.amountDue : this.aggregate.amountDue = item.amountDue;
       this.aggregate.totalAmount ? this.aggregate.totalAmount += item.totalAmount : this.aggregate.totalAmount = item.totalAmount;
+      this.aggregate.cashback ? this.aggregate.cashback += item.cashback : this.aggregate.cashback = item.cashback;
     })
   }
 

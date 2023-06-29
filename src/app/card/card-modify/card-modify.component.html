@@ -80,6 +80,16 @@
                 </div>
 
                 <div class="form-group row">
+                    <label class="col col-form-label" for="cashback">
+                        Cashback
+                    </label>
+                    <div class="col">
+                        <input type="number" class="form-control" id="cashback" placeholder="Cashback (required)"
+                            required name="cashback" [(ngModel)]=currentCard.cashback>
+                    </div>
+                </div>
+
+                <div class="form-group row">
                     <label class="col col-form-label" for="totalAmount">
                         Total Amount
                     </label>
