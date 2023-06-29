@@ -29,7 +29,7 @@
                 <th pSortableColumn="dueDate" style="min-width:6rem">DueDate<p-sortIcon field="dueDate"></p-sortIcon>
                 </th>
                 <th>last</th>
-                <th>Limit</th>
+                <th>Cashback</th>
                 <th pSortableColumn="unbilledAmount">Unbilled<p-sortIcon field="unbilledAmount"></p-sortIcon></th>
                 <th pSortableColumn="amountDue">Due<p-sortIcon field="amountDue"></p-sortIcon></th>
                 <th>tillDate</th>
@@ -44,7 +44,7 @@
                 <td> {{card.billDate}} </td>
                 <td> {{card.dueDate}} </td>
                 <td> {{card.lastBilledMonth}} </td>
-                <td> {{card.limit}} </td>
+                <td> {{card.cashback}} </td>
                 <td style="color: green;"> {{card.unbilledAmount}} </td>
                 <td style="color: red;"> {{card.amountDue}} </td>
                 <td> {{card.totalAmount}} </td>
@@ -73,6 +73,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td>{{aggregate.cashback}}</td>
                 <td>{{aggregate.unbilledAmount}}</td>
                 <td>{{aggregate.amountDue}}</td>
                 <td>{{aggregate.totalAmount}}</td>

@@ -146,7 +146,7 @@ export class CardService {
     if (currentProduct.cardHolder != originalProduct.cardHolder) {
       let oldCard = this.getCard(originalProduct.cardHolder);
       oldCard.unbilledAmount -= originalProduct.cardAmount;
-      if (!oldCard.unbilledAmount) oldCard.unbilledAmount = 0;
+      // if (!oldCard.unbilledAmount) oldCard.unbilledAmount = 0;
       oldCard.totalAmount -= originalProduct.cardAmount;
       this.updateCard(oldCard, init);
 
@@ -164,6 +164,8 @@ export class CardService {
       oldCard.unbilledAmount += currentProduct.cardAmount;
       this.updateCard(oldCard, init);
     }
+
+    this.messageService.add({ severity: 'info', life: 15000, summary: 'Info', detail: 'Card edited. Please adjust cashback manualy if any' });
   }
 
   async deleteCard(card: Icard, init = true) {
@@ -192,6 +194,11 @@ export class CardService {
         if ((card.lastBilledMonth != currentMonth) && (card.billDate <= currentDate)) {
           card.amountDue += card.unbilledAmount;
           card.unbilledAmount = 0;
+          if(card.cashback) 
+          {
+            card.unbilledAmount -= card.cashback
+            card.cashback = 0;
+          }
           card.lastBilledMonth = currentMonth;
           let sub = this.updateCard(card, false);
           promiseArray.push(sub);
@@ -218,7 +225,7 @@ export class CardService {
       dueDate: 0,
       amountDue: 0,
       billDate: 0,
-      limit:0,
+      cashback:0,
       totalAmount: 0,
       unbilledAmount: 0,
       lastBilledMonth: 0
