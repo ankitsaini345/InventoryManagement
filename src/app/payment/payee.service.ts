@@ -27,13 +27,13 @@ export class PayeeService {
   });
 
   reload() {
-    sessionStorage.removeItem(this.StorageString);
+    localStorage.removeItem(this.StorageString);
     this.initialiseData();
   }
 
   async initialiseData() {
     try {
-      let data = sessionStorage.getItem(this.StorageString);
+      let data = localStorage.getItem(this.StorageString);
       let dataArray: IPayee[];
       if (data) {
         dataArray = JSON.parse(data);
@@ -43,7 +43,7 @@ export class PayeeService {
         dataArray = await firstValueFrom(this.http.get<IPayee[]>(this.url));
         this.payeeData$.next(dataArray);
         this.calcStats();
-        sessionStorage.setItem(this.StorageString, JSON.stringify(dataArray));
+        localStorage.setItem(this.StorageString, JSON.stringify(dataArray));
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payee Initialised' });
       }
 
@@ -101,7 +101,7 @@ export class PayeeService {
       const res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, payee));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payee ' + payee.name + ' added.' });
-        sessionStorage.removeItem(this.StorageString);
+        localStorage.removeItem(this.StorageString);
         this.initialiseData();
       } else {
         this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Acknowledge failed: add Payee ' + payee.name });
@@ -119,7 +119,7 @@ export class PayeeService {
       if (res.acknowledged && res.modifiedCount) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payee ' + payee.name + ' Updated.' });
         if (init) {
-          sessionStorage.removeItem(this.StorageString);
+          localStorage.removeItem(this.StorageString);
           this.initialiseData();
         }
       } else {
@@ -138,7 +138,7 @@ export class PayeeService {
       const res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + payee._id));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payee ' + payee.name + ' deleted.' });
-        sessionStorage.removeItem(this.StorageString);
+        localStorage.removeItem(this.StorageString);
         this.initialiseData();
       } else {
         this.messageService.add({ severity: 'error', life:15000, summary: 'Error', detail: 'Unable to delete Payee ' + payee.name });

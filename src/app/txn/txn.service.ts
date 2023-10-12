@@ -26,7 +26,7 @@ export class TxnService {
   }
 
   reload() {
-    sessionStorage.removeItem(this.txnStorageString);
+    localStorage.removeItem(this.txnStorageString);
     this.initialiseTxnData();
   }
 
@@ -35,14 +35,14 @@ export class TxnService {
   }
 
   async initialiseTxnData() {
-    let txns = sessionStorage.getItem(this.txnStorageString);
+    let txns = localStorage.getItem(this.txnStorageString);
     let txnsArray: Itxn[];
     if (txns) {
       txnsArray = JSON.parse(txns);
       this.txnData$.next(txnsArray);
     } else {
       txnsArray = await firstValueFrom(this.http.get<Itxn[]>(this.url));
-      sessionStorage.setItem(this.txnStorageString, JSON.stringify(txnsArray));
+      localStorage.setItem(this.txnStorageString, JSON.stringify(txnsArray));
       this.txnData$.next(txnsArray);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn Data Initialised' });
     }
@@ -64,7 +64,7 @@ export class TxnService {
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' added.' });
         if (init) {
-          sessionStorage.removeItem(this.txnStorageString);
+          localStorage.removeItem(this.txnStorageString);
           this.initialiseTxnData();
         }
       } else throw res;
@@ -104,7 +104,7 @@ export class TxnService {
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' updated.' });
         if (init) {
-          sessionStorage.removeItem(this.txnStorageString);
+          localStorage.removeItem(this.txnStorageString);
           this.initialiseTxnData();
         }
       } else throw res;
@@ -120,7 +120,7 @@ export class TxnService {
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + _id + ' deleted.' });
         if (init) {
-          sessionStorage.removeItem(this.txnStorageString);
+          localStorage.removeItem(this.txnStorageString);
           this.initialiseTxnData();
         }
       } else throw res;

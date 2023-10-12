@@ -397,7 +397,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
       }
     });
     Promise.all(promiseArray).then(() => {
-      sessionStorage.removeItem(this.productStorageString);
+      localStorage.removeItem(this.productStorageString);
       this.productService.initialiseProductData();
     })
     this.filterBy = ''

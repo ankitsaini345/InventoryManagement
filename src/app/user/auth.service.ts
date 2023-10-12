@@ -116,9 +116,9 @@ export class AuthService implements HttpInterceptor {
     localStorage.removeItem('inventoryAppToken');
     localStorage.removeItem('inventoryAppUser');
 
-    sessionStorage.removeItem('inventoryProducts');
-    sessionStorage.removeItem('inventoryCards');
-    sessionStorage.removeItem('inventoryTxns');
+    localStorage.removeItem('inventoryProducts');
+    localStorage.removeItem('inventoryCards');
+    localStorage.removeItem('inventoryTxns');
 
     this.router.navigate(['/login']);
   }
