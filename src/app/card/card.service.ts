@@ -165,7 +165,7 @@ export class CardService {
       this.updateCard(oldCard, init);
     }
 
-    this.messageService.add({ severity: 'info', life: 15000, summary: 'Info', detail: 'Card edited. Please adjust cashback manualy if any' });
+    // this.messageService.add({ severity: 'info', life: 15000, summary: 'Info', detail: 'Card edited. Please adjust cashback manualy if any' });
   }
 
   async deleteCard(card: Icard, init = true) {
