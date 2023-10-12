@@ -26,7 +26,7 @@ export class ProductServiceService {
   }
 
   reload() {
-    sessionStorage.removeItem(this.productStorageString);
+    localStorage.removeItem(this.productStorageString);
     this.initialiseProductData();
   }
 
@@ -48,7 +48,7 @@ export class ProductServiceService {
 
   async initialiseProductData() {
     try {
-      let products = sessionStorage.getItem(this.productStorageString);
+      let products = localStorage.getItem(this.productStorageString);
       let productArray: IProduct[];
       if (products) {
         productArray = JSON.parse(products);
@@ -58,7 +58,7 @@ export class ProductServiceService {
         productArray = await firstValueFrom(this.http.get<IProduct[]>(this.url));
         this.productData$.next(productArray);
         this.caclStats();
-        sessionStorage.setItem(this.productStorageString, JSON.stringify(productArray));
+        localStorage.setItem(this.productStorageString, JSON.stringify(productArray));
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Products Initialised' });
       }
 
@@ -140,7 +140,7 @@ export class ProductServiceService {
       const res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, currentProduct));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' added.' });
-        sessionStorage.removeItem(this.productStorageString);
+        localStorage.removeItem(this.productStorageString);
         this.initialiseProductData();
 
         this.txnService.addTxnfromProduct(currentProduct);
@@ -170,7 +170,7 @@ export class ProductServiceService {
       if (res.acknowledged && res.modifiedCount) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' Updated.' });
         if (init) {
-          sessionStorage.removeItem(this.productStorageString);
+          localStorage.removeItem(this.productStorageString);
           this.initialiseProductData();
         }
 
@@ -193,7 +193,7 @@ export class ProductServiceService {
       const res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + currentProduct._id));
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' deleted.' });
-        sessionStorage.removeItem(this.productStorageString);
+        localStorage.removeItem(this.productStorageString);
         this.initialiseProductData();
 
         this.txnService.deleteTxn(currentProduct.txnId);

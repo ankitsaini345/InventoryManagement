@@ -29,7 +29,7 @@ export class CardService {
   }
 
   reload() {
-    sessionStorage.removeItem(this.cardStorageString);
+    localStorage.removeItem(this.cardStorageString);
     this.initialiseCardData();
   }
 
@@ -59,7 +59,7 @@ export class CardService {
   }
 
   async initialiseCardData() {
-    let cards = sessionStorage.getItem(this.cardStorageString);
+    let cards = localStorage.getItem(this.cardStorageString);
     let cardsArray: Icard[];
     if (cards) {
       cardsArray = JSON.parse(cards);
@@ -67,7 +67,7 @@ export class CardService {
       this.calcPendingAmount();
     } else {
       cardsArray = await firstValueFrom(this.http.get<Icard[]>(this.url));
-      sessionStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
+      localStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
       this.cardData$.next(cardsArray);
       this.calcPendingAmount();
       if (this.billGenerateFlag) this.generateBill();
@@ -81,7 +81,7 @@ export class CardService {
   }
 
   refresh() {
-    sessionStorage.removeItem(this.cardStorageString);
+    localStorage.removeItem(this.cardStorageString);
     this.initialiseCardData();
   }
 
@@ -107,7 +107,7 @@ export class CardService {
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' added.' });
         if (init) {
-          sessionStorage.removeItem(this.cardStorageString);
+          localStorage.removeItem(this.cardStorageString);
           this.initialiseCardData();
         }
       } else throw res;
@@ -124,7 +124,7 @@ export class CardService {
         if (res.matchedCount && res.modifiedCount) {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' Updated.' });
           if (init) {
-            sessionStorage.removeItem(this.cardStorageString);
+            localStorage.removeItem(this.cardStorageString);
             this.initialiseCardData();
           }
         } else if (!res.modifiedCount) {
@@ -165,7 +165,7 @@ export class CardService {
       this.updateCard(oldCard, init);
     }
 
-    this.messageService.add({ severity: 'info', life: 15000, summary: 'Info', detail: 'Card edited. Please adjust cashback manualy if any' });
+    // this.messageService.add({ severity: 'info', life: 15000, summary: 'Info', detail: 'Card edited. Please adjust cashback manualy if any' });
   }
 
   async deleteCard(card: Icard, init = true) {
@@ -174,7 +174,7 @@ export class CardService {
       if (res.acknowledged && res.deletedCount) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' deleted.' });
         if (init) {
-          sessionStorage.removeItem(this.cardStorageString);
+          localStorage.removeItem(this.cardStorageString);
           this.initialiseCardData();
         }
       } else throw res;
@@ -208,7 +208,7 @@ export class CardService {
       if (promiseArray.length) {
         Promise.all(promiseArray).then(() => {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Bill Generated' });
-          sessionStorage.removeItem(this.cardStorageString);
+          localStorage.removeItem(this.cardStorageString);
           this.initialiseCardData();
         })
       }

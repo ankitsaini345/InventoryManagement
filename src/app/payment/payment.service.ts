@@ -24,7 +24,7 @@ export class PaymentService {
   }
 
   reload() {
-    sessionStorage.removeItem(this.PaymentStorageString);
+    localStorage.removeItem(this.PaymentStorageString);
     this.initialisePaymentData();
   }
 
@@ -33,14 +33,14 @@ export class PaymentService {
   }
 
   async initialisePaymentData() {
-    let payments = sessionStorage.getItem(this.PaymentStorageString);
+    let payments = localStorage.getItem(this.PaymentStorageString);
     let paymentsArray: IPayment[];
     if (payments) {
       paymentsArray = JSON.parse(payments);
       this.paymentData$.next(paymentsArray);
     } else {
       paymentsArray = await firstValueFrom(this.http.get<IPayment[]>(this.url));
-      sessionStorage.setItem(this.PaymentStorageString, JSON.stringify(paymentsArray));
+      localStorage.setItem(this.PaymentStorageString, JSON.stringify(paymentsArray));
       this.paymentData$.next(paymentsArray);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payments Data Initialised' });
     }
@@ -78,7 +78,7 @@ export class PaymentService {
       if (res.acknowledged) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payment for : ' + payment.name + ' added.' });
         if (init) {
-          sessionStorage.removeItem(this.PaymentStorageString);
+          localStorage.removeItem(this.PaymentStorageString);
           this.initialisePaymentData();
         }
       } else throw res;
@@ -95,7 +95,7 @@ export class PaymentService {
         if (res.matchedCount && res.modifiedCount) {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payment for: ' + payment.name + ' Updated.' });
           if (init) {
-            sessionStorage.removeItem(this.PaymentStorageString);
+            localStorage.removeItem(this.PaymentStorageString);
             this.initialisePaymentData();
           }
         } else {
@@ -116,7 +116,7 @@ export class PaymentService {
       if (res.acknowledged && res.deletedCount) {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payment for: ' + payment.name + ' deleted.' });
         if (init) {
-          sessionStorage.removeItem(this.PaymentStorageString);
+          localStorage.removeItem(this.PaymentStorageString);
           this.initialisePaymentData();
         }
       } else throw res;
