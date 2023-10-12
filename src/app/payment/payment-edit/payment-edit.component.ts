@@ -17,7 +17,7 @@ import { PaymentService } from '../payment.service';
 })
 export class PaymentEditComponent implements OnInit {
   subArray: Subscription[] = []
-  mode = ["phonePe", "Gpay", "Payee", "Paytm", "Cash", "Card", "LIC/Personal", "Order", "Others"];
+  mode = ["phonePe", "Gpay", "Payee", "Paytm", "Cash", "Card_IN", "Card_OUT", "Order", "Others"];
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -150,7 +150,7 @@ export class PaymentEditComponent implements OnInit {
       promiseArray.push(p3);
     }
 
-    if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card') {
+    if (this.addPaymentToCard && this.currentPayment.paymentMode == 'Card_IN') {
       let card = this.cardService.getCard(this.currentPayment.receiver);
       if (card.amountDue >= this.currentPayment.amount)
         card.amountDue -= this.currentPayment.amount;
@@ -162,7 +162,7 @@ export class PaymentEditComponent implements OnInit {
 
       const p4 = this.cardService.updateCard(card);
       promiseArray.push(p4);
-    } else if(this.addPaymentToCard && this.currentPayment.paymentMode == 'LIC/Personal') {
+    } else if(this.addPaymentToCard && this.currentPayment.paymentMode == 'Card_OUT') {
       let card = this.cardService.getCard(this.currentPayment.receiver);
       card.unbilledAmount += this.currentPayment.amount;
       const p5 = this.cardService.updateCard(card);
@@ -180,13 +180,13 @@ export class PaymentEditComponent implements OnInit {
           date: this.currentPayment.date,
           percent: 0,
           paymentMode: 'Payee',
-          receiver: receiver.name,
+          receiver: this.currentPayment.name,
           prevAmount: receiver.lastPaidAmount,
           remark: 'from ' + this.currentPayment.name,
-          type: 'out',
+          type: 'in',
           count: receiver.lastPaymentNum + 1,
           lastPayDate: receiver.lastPaymentDate,
-          remAmount: receiver.totalAmount - this.currentPayment.amount,
+          remAmount: receiver.totalAmount + this.currentPayment.amount,
           cashback: 0,
           pendingCommision: receiver.pendingComm
         }
@@ -196,7 +196,7 @@ export class PaymentEditComponent implements OnInit {
         receiver.lastPaidAmount = this.currentPayment.amount;
         receiver.lastPaymentDate = this.currentPayment.date;
         receiver.lastPaymentNum += 1;
-        receiver.totalAmount -= this.currentPayment.amount;
+        receiver.totalAmount += this.currentPayment.amount;
         const p2 = this.payeeService.editPayee(receiver);
         promiseArray.push(p2);
       } else {
@@ -238,7 +238,7 @@ export class PaymentEditComponent implements OnInit {
   filterReceiver(event: any) {
     this.filteredReceiverNameArray = [];
     let query = event.query;
-    if (this.currentPayment.paymentMode == 'Card' || this.currentPayment.paymentMode == 'LIC/Personal') {
+    if (this.currentPayment.paymentMode == 'Card_IN' || this.currentPayment.paymentMode == 'Card_OUT') {
       if (query) {
         for (let i = 0; i < this.cardNameArray.length; i++) {
           let name = this.cardNameArray[i];
