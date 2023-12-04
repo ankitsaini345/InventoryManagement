@@ -129,7 +129,7 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let card of dueCards">
-                            <td> {{card.cardName}} <span *ngIf="card.cardNumber"><i class="pi pi-copy"
+                            <td> <a [routerLink]="['/card', card._id, 'edit']">{{card.cardName}} </a> <span *ngIf="card.cardNumber"><i class="pi pi-copy"
                                         (click)="copyCardNum(card)"></i></span></td>
                             <td>{{card.dueDate}} </td>
                             <td>{{card.amountDue}} </td>
