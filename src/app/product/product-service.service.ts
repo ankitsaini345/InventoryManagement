@@ -229,6 +229,7 @@ export class ProductServiceService {
       date: new Date().toISOString().slice(0, 10),
       ram: 4,
       storage: 128,
+      color: 'Black',
       AppName: 'Amazon',
       status: 'Ordered',
       AppAccount: '',

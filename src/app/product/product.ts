@@ -4,6 +4,7 @@ export interface IProduct {
     date: string,
     ram: number,
     storage: number,
+    color: string,
     AppName: string,
     AppAccount: string,
     listPrice: number,
