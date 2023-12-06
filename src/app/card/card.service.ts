@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { Iresult } from '../product/Iresult';
 import { IProduct } from '../product/product';
 import { Icard } from './card';
+import { CommitService } from '../commit.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,7 @@ export class CardService {
   });
 
   constructor(private http: HttpClient,
+    private commitService: CommitService,
     private messageService: MessageService) {
     // this.initialiseCardData();
   }
@@ -105,6 +107,7 @@ export class CardService {
     try {
       let res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, card));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('cards');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' added.' });
         if (init) {
           localStorage.removeItem(this.cardStorageString);
@@ -122,6 +125,7 @@ export class CardService {
       let res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + card._id, card));
       if (res.acknowledged) {
         if (res.matchedCount && res.modifiedCount) {
+          this.commitService.updateEditDetails('cards');
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' Updated.' });
           if (init) {
             localStorage.removeItem(this.cardStorageString);
@@ -172,6 +176,7 @@ export class CardService {
     try {
       let res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + card._id));
       if (res.acknowledged && res.deletedCount) {
+        this.commitService.updateEditDetails('cards');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Card: ' + card.cardName + ' deleted.' });
         if (init) {
           localStorage.removeItem(this.cardStorageString);

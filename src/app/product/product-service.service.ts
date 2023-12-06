@@ -7,6 +7,7 @@ import { CardService } from '../card/card.service';
 import { TxnService } from '../txn/txn.service';
 import { MessageService } from 'primeng/api';
 import { Iresult } from './Iresult';
+import { CommitService } from '../commit.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class ProductServiceService {
   constructor(private http: HttpClient,
     private cardService: CardService,
     private txnService: TxnService,
+    private commitService: CommitService,
     private messageService: MessageService
   ) {
     // this.initialiseProductData();
@@ -139,6 +141,7 @@ export class ProductServiceService {
     try {
       const res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, currentProduct));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('orders');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' added.' });
         localStorage.removeItem(this.productStorageString);
         this.initialiseProductData();
@@ -168,6 +171,7 @@ export class ProductServiceService {
     try {
       const res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + currentProduct._id, currentProduct));
       if (res.acknowledged && res.modifiedCount) {
+        this.commitService.updateEditDetails('orders');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' Updated.' });
         if (init) {
           localStorage.removeItem(this.productStorageString);
@@ -192,6 +196,7 @@ export class ProductServiceService {
     try {
       const res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + currentProduct._id));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('orders');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product ' + currentProduct.name + ' deleted.' });
         localStorage.removeItem(this.productStorageString);
         this.initialiseProductData();

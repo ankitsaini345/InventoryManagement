@@ -8,6 +8,7 @@ import { Icard } from '../card/card';
 import { Iresult } from '../product/Iresult';
 import { IProduct } from '../product/product';
 import { Itxn } from './transaction';
+import { CommitService } from '../commit.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class TxnService {
   private txnData$ = new BehaviorSubject<Itxn[]>([]);
 
   constructor(private http: HttpClient,
+    private commitService: CommitService,
     private messageService: MessageService) {
     // this.initialiseTxnData();
   }
@@ -62,6 +64,7 @@ export class TxnService {
     try {
       let res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, Txn));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('transactions');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' added.' });
         if (init) {
           localStorage.removeItem(this.txnStorageString);
@@ -102,6 +105,7 @@ export class TxnService {
     try {
       let res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + Txn._id, Txn));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('transactions');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + Txn.OrderName + ' updated.' });
         if (init) {
           localStorage.removeItem(this.txnStorageString);
@@ -118,6 +122,7 @@ export class TxnService {
     try {
       let res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + _id));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('transactions');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn: ' + _id + ' deleted.' });
         if (init) {
           localStorage.removeItem(this.txnStorageString);
