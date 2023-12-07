@@ -9,39 +9,37 @@ import { ProductServiceService } from './product/product-service.service';
 import { TxnService } from './txn/txn.service';
 import { AuthService } from './user/auth.service';
 import { User } from './user/user';
+import { CommonService } from './common.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-
   title = 'InventoryManagement';
   items!: MenuItem[];
   rightItem!: MenuItem[];
   currentUser!: string;
   sub!: Subscription;
 
-  constructor(private authService: AuthService,
+  constructor(
+    private authService: AuthService,
     private messageService: MessageService,
     private productService: ProductServiceService,
     private cardService: CardService,
     private payeeService: PayeeService,
     private paymentService: PaymentService,
     private txnService: TxnService,
-    private router: Router) { }
-
+    private commonService: CommonService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.initItems();
     this.initUserDetails();
     if (this.authService.isLoggedIn) {
-      this.productService.initialiseProductData();
-      this.cardService.initialiseCardData();
-      this.txnService.initialiseTxnData();
-      this.payeeService.initialiseData();
-      this.paymentService.initialisePaymentData();
+      this.commonService.getEditDetails();
     }
   }
   ngOnDestroy(): void {
@@ -53,77 +51,85 @@ export class AppComponent implements OnInit, OnDestroy {
       {
         label: 'Home',
         icon: 'pi pi-fw pi-home',
-        routerLink: '/home'
+        routerLink: '/home',
       },
       {
         label: 'Products',
         icon: 'pi pi-fw pi-mobile',
-        items: [{
-          label: 'All Products',
-          icon: 'pi pi-fw pi-server',
-          routerLink: '/products'
-        },
-        {
-          label: 'Add New',
-          icon: 'pi pi-fw pi-plus',
-          routerLink: '/product/new/edit'
-        }]
+        items: [
+          {
+            label: 'All Products',
+            icon: 'pi pi-fw pi-server',
+            routerLink: '/products',
+          },
+          {
+            label: 'Add New',
+            icon: 'pi pi-fw pi-plus',
+            routerLink: '/product/new/edit',
+          },
+        ],
       },
       {
         label: 'Cards',
         icon: 'pi pi-fw pi-credit-card',
         style: { 'margin-left': 'auto' },
-        items: [{
-          label: 'All Cards',
-          icon: 'pi pi-fw pi-server',
-          routerLink: '/cards'
-        },
-        {
-          label: 'Add New',
-          icon: 'pi pi-fw pi-plus',
-          routerLink: '/card/new/edit'
-        }]
+        items: [
+          {
+            label: 'All Cards',
+            icon: 'pi pi-fw pi-server',
+            routerLink: '/cards',
+          },
+          {
+            label: 'Add New',
+            icon: 'pi pi-fw pi-plus',
+            routerLink: '/card/new/edit',
+          },
+        ],
       },
       {
         label: 'Txns',
         icon: 'pi pi-fw pi-dollar',
-        routerLink: '/transactions/All'
+        routerLink: '/transactions/All',
       },
       {
         label: 'Payee',
         icon: 'pi pi-fw pi-credit-card',
         style: { 'margin-left': 'auto' },
-        items: [{
-          label: 'All Payee',
-          icon: 'pi pi-fw pi-server',
-          routerLink: '/payee'
-        },
-        {
-          label: 'Add New',
-          icon: 'pi pi-fw pi-plus',
-          routerLink: '/payee/new/edit'
-        }]
+        items: [
+          {
+            label: 'All Payee',
+            icon: 'pi pi-fw pi-server',
+            routerLink: '/payee',
+          },
+          {
+            label: 'Add New',
+            icon: 'pi pi-fw pi-plus',
+            routerLink: '/payee/new/edit',
+          },
+        ],
       },
       {
         label: 'Payments',
         icon: 'pi pi-fw pi-credit-card',
         style: { 'margin-left': 'auto' },
-        items: [{
-          label: 'All Payments',
-          icon: 'pi pi-fw pi-server',
-          routerLink: '/payments/All'
-        },
-        {
-          label: 'Add New',
-          icon: 'pi pi-fw pi-plus',
-          routerLink: '/payments/new/edit'
-        }]
+        items: [
+          {
+            label: 'All Payments',
+            icon: 'pi pi-fw pi-server',
+            routerLink: '/payments/All',
+          },
+          {
+            label: 'Add New',
+            icon: 'pi pi-fw pi-plus',
+            routerLink: '/payments/new/edit',
+          },
+        ],
       },
       {
         label: 'Reload',
         icon: 'pi pi-fw pi-refresh',
-        command: (() => this.reloadData())
-      }
+        command: () => this.reloadData(),
+      },
     ];
   }
 
@@ -135,36 +141,43 @@ export class AppComponent implements OnInit, OnDestroy {
           this.rightItem = [
             {
               label: 'Manage',
-              icon: 'pi pi-fw pi-cog'
+              icon: 'pi pi-fw pi-cog',
             },
             {
               label: 'Logout',
               icon: 'pi pi-fw pi-power-off',
-              command: (() => this.logout())
-            }]
+              command: () => this.logout(),
+            },
+          ];
         } else {
           this.currentUser = 'Login';
           this.rightItem = [
             {
               label: 'Password??',
-              icon: 'pi pi-fw pi-question-circle'
+              icon: 'pi pi-fw pi-question-circle',
             },
             {
               label: 'Signup',
-              icon: 'pi pi-fw pi-user-plus'
-            }]
+              icon: 'pi pi-fw pi-user-plus',
+            },
+          ];
         }
-      })
+      });
     } catch (error: any) {
       console.error(error);
-      this.messageService.add({ severity: 'error', life: 15000, summary: 'Error', detail: 'Error in initialising user: ' + error.message });
+      this.messageService.add({
+        severity: 'error',
+        life: 15000,
+        summary: 'Error',
+        detail: 'Error in initialising user: ' + error.message,
+      });
     }
   }
 
   logout() {
     if (this.currentUser != 'Login') {
       this.authService.logout();
-      this.initUserDetails()
+      this.initUserDetails();
     } else {
       this.router.navigate(['/login']);
     }

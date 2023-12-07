@@ -5,6 +5,7 @@ import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Iresult } from '../product/Iresult';
 import { IPayment } from './payment';
+import { CommitService } from '../commit.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class PaymentService {
   private uniqueReceiverName$ = new BehaviorSubject<string[]>([]);
 
   constructor(private http: HttpClient,
+    private commitService: CommitService,
     private messageService: MessageService) {
     // this.initialisePaymentData();
   }
@@ -76,6 +78,7 @@ export class PaymentService {
     try {
       let res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, payment));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('payments');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payment for : ' + payment.name + ' added.' });
         if (init) {
           localStorage.removeItem(this.PaymentStorageString);
@@ -92,6 +95,7 @@ export class PaymentService {
     try {
       let res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + payment._id, payment));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('payments');
         if (res.matchedCount && res.modifiedCount) {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payment for: ' + payment.name + ' Updated.' });
           if (init) {
@@ -114,6 +118,7 @@ export class PaymentService {
     try {
       let res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + payment._id));
       if (res.acknowledged && res.deletedCount) {
+        this.commitService.updateEditDetails('payments');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payment for: ' + payment.name + ' deleted.' });
         if (init) {
           localStorage.removeItem(this.PaymentStorageString);

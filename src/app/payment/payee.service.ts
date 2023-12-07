@@ -5,6 +5,7 @@ import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Iresult } from '../product/Iresult';
 import { IPayee } from './payee';
+import { CommitService } from '../commit.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class PayeeService {
   private StorageString = 'inventoryPayee';
 
   constructor(private http: HttpClient,
+    private commitService: CommitService,
     private messageService: MessageService
   ) {
   }
@@ -100,6 +102,7 @@ export class PayeeService {
     try {
       const res: Iresult = await firstValueFrom(this.http.post<Iresult>(this.url, payee));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('payee');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payee ' + payee.name + ' added.' });
         localStorage.removeItem(this.StorageString);
         this.initialiseData();
@@ -117,6 +120,7 @@ export class PayeeService {
     try {
       const res: Iresult = await firstValueFrom(this.http.put<Iresult>(this.url + '/' + payee._id, payee));
       if (res.acknowledged && res.modifiedCount) {
+        this.commitService.updateEditDetails('payee');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payee ' + payee.name + ' Updated.' });
         if (init) {
           localStorage.removeItem(this.StorageString);
@@ -137,6 +141,7 @@ export class PayeeService {
     try {
       const res: Iresult = await firstValueFrom(this.http.delete<Iresult>(this.url + '/' + payee._id));
       if (res.acknowledged) {
+        this.commitService.updateEditDetails('payee');
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payee ' + payee.name + ' deleted.' });
         localStorage.removeItem(this.StorageString);
         this.initialiseData();

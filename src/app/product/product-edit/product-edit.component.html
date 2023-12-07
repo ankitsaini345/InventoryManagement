@@ -61,6 +61,15 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col col-form-label" for="color">
+                            Color
+                        </label>
+                        <div class="col">
+                            <input type="text" class="form-control" id="color" placeholder="Color" required
+                                minlength="3" name="color" [(ngModel)]=currentProduct.color>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col col-form-label" for="date">
                             Purchase Date
                         </label>

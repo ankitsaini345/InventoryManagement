@@ -40,6 +40,7 @@
                 <th pSortableColumn="name">ProductName <p-sortIcon field="name"></p-sortIcon></th>
                 <th>Action</th>
                 <th>Config</th>
+                <th>Color</th>
                 <th>Status</th>
                 <th>App</th>
                 <th>Account</th>
@@ -68,6 +69,7 @@
                     <input pInputText type="text" (input)="dt.filter($any($event.target).value, 'name', 'contains')"
                         placeholder="Search" class="p-column-filter">
                 </th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th>
@@ -168,6 +170,7 @@
                         </ng-template>
                     </p-cellEditor>
                 </td>
+                <td>{{product.color}}</td>
                 <td>
                     <p-cellEditor>
                         <ng-template pTemplate="input">
@@ -275,6 +278,7 @@
                 <td style="width: 4rem">
                 </td>
                 <td>Total</td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
