@@ -27,9 +27,9 @@ export class ProductServiceService {
     // this.initialiseProductData();
   }
 
-  reload() {
+  reload(limit = 50) {
     localStorage.removeItem(this.productStorageString);
-    this.initialiseProductData();
+    this.initialiseProductData(limit);
   }
 
   private url = environment.baseUrl + 'api/orders';
@@ -48,7 +48,7 @@ export class ProductServiceService {
     buyerAmount: 0
   });
 
-  async initialiseProductData() {
+  async initialiseProductData(limit = 50) {
     try {
       let products = localStorage.getItem(this.productStorageString);
       let productArray: IProduct[];
@@ -57,7 +57,7 @@ export class ProductServiceService {
         this.productData$.next(productArray);
         this.caclStats();
       } else {
-        productArray = await firstValueFrom(this.http.get<IProduct[]>(this.url));
+        productArray = await firstValueFrom(this.http.get<IProduct[]>(this.url + '?limit=' + limit));
         this.productData$.next(productArray);
         this.caclStats();
         localStorage.setItem(this.productStorageString, JSON.stringify(productArray));

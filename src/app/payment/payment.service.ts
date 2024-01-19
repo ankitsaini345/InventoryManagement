@@ -25,23 +25,23 @@ export class PaymentService {
     // this.initialisePaymentData();
   }
 
-  reload() {
+  reload(limit = 50) {
     localStorage.removeItem(this.PaymentStorageString);
-    this.initialisePaymentData();
+    this.initialisePaymentData(limit);
   }
 
   getPayments(): Observable<IPayment[]> {
     return this.paymentData$.asObservable();
   }
 
-  async initialisePaymentData() {
+  async initialisePaymentData(limit = 50) {
     let payments = localStorage.getItem(this.PaymentStorageString);
     let paymentsArray: IPayment[];
     if (payments) {
       paymentsArray = JSON.parse(payments);
       this.paymentData$.next(paymentsArray);
     } else {
-      paymentsArray = await firstValueFrom(this.http.get<IPayment[]>(this.url));
+      paymentsArray = await firstValueFrom(this.http.get<IPayment[]>(this.url + '?limit=' + limit));
       localStorage.setItem(this.PaymentStorageString, JSON.stringify(paymentsArray));
       this.paymentData$.next(paymentsArray);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Payments Data Initialised' });

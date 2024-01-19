@@ -27,23 +27,23 @@ export class TxnService {
     // this.initialiseTxnData();
   }
 
-  reload() {
+  reload(limit = 50) {
     localStorage.removeItem(this.txnStorageString);
-    this.initialiseTxnData();
+    this.initialiseTxnData(limit);
   }
 
   getTxns(): Observable<Itxn[]> {
     return this.txnData$.asObservable();
   }
 
-  async initialiseTxnData() {
+  async initialiseTxnData(limit = 50) {
     let txns = localStorage.getItem(this.txnStorageString);
     let txnsArray: Itxn[];
     if (txns) {
       txnsArray = JSON.parse(txns);
       this.txnData$.next(txnsArray);
     } else {
-      txnsArray = await firstValueFrom(this.http.get<Itxn[]>(this.url));
+      txnsArray = await firstValueFrom(this.http.get<Itxn[]>(this.url + '?limit=' + limit));
       localStorage.setItem(this.txnStorageString, JSON.stringify(txnsArray));
       this.txnData$.next(txnsArray);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Txn Data Initialised' });
