@@ -130,6 +130,11 @@ export class AppComponent implements OnInit, OnDestroy {
         icon: 'pi pi-fw pi-refresh',
         command: () => this.reloadData(),
       },
+      {
+        label: 'ShowAll',
+        icon: 'pi pi-fw pi-list',
+        command: () => this.showAll(),
+      }
     ];
   }
 
@@ -191,5 +196,11 @@ export class AppComponent implements OnInit, OnDestroy {
       this.payeeService.reload();
       this.paymentService.reload();
     }
+  }
+
+  showAll() {
+    this.productService.reload(0);
+    this.paymentService.reload(0);
+    this.txnService.reload(0);
   }
 }
