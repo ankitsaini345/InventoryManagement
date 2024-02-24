@@ -44,7 +44,11 @@
                 <th>Status</th>
                 <th>App</th>
                 <th>Account</th>
-                <th pSortableColumn="date" style="min-width:6rem">Date<p-sortIcon field="date"></p-sortIcon></th>
+                <th style="min-width:8rem">OrderDate <p-columnFilter appendTo="body" type="date" field="date" display="menu">
+                    <ng-template pTemplate="filter" let-filter="filterCallback">
+                      <p-calendar dateFormat="yy-mm-dd" (onSelect)="filter($event)"></p-calendar>
+                    </ng-template>
+                   </p-columnFilter></th>
                 <th>CardName</th>
                 <th>ListPrice</th>
                 <th>Coupon</th>
@@ -55,8 +59,16 @@
                 <th>Cost ToMe</th>
                 <th>DPrice</th>
                 <th>Profit</th>
-                <th>deliveryDate</th>
-                <th>BuyerDate</th>
+                <th style="min-width:9rem">DeliveryDate  <p-columnFilter appendTo="body" type="date" field="deliveryDate" display="menu">
+                    <ng-template pTemplate="filter" let-filter="filterCallback">
+                      <p-calendar dateFormat="yy-mm-dd" (onSelect)="filter($event)"></p-calendar>
+                    </ng-template>
+                   </p-columnFilter></th>
+                <th style="min-width:8rem">BuyerDate  <p-columnFilter appendTo="body" type="date" field="buyerDate" display="menu">
+                    <ng-template pTemplate="filter" let-filter="filterCallback">
+                      <p-calendar dateFormat="yy-mm-dd" (onSelect)="filter($event)"></p-calendar>
+                    </ng-template>
+                   </p-columnFilter></th>
                 <th>BuyerName</th>
             </tr>
 
@@ -123,7 +135,11 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th></th>
+                <th>
+                    <p-calendar appendTo="body" (onSelect)="dt.filter(formatDate($event), 'deliveryDate', 'equals')"
+                        (onClearClick)="dt.filter('', 'deliveryDate', 'equals')" [showButtonBar]="true"
+                        styleClass="p-column-filter" placeholder="Date" [readonlyInput]="true"></p-calendar>
+                </th>
                 <th>
                     <p-calendar appendTo="body" (onSelect)="dt.filter(formatDate($event), 'buyerDate', 'equals')"
                         (onClearClick)="dt.filter('', 'buyerDate', 'equals')" [showButtonBar]="true"
