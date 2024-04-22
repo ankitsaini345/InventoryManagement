@@ -67,6 +67,7 @@ export class CardService {
       cardsArray = JSON.parse(cards);
       this.cardData$.next(cardsArray);
       this.calcPendingAmount();
+      if (this.billGenerateFlag) this.generateBill();
     } else {
       cardsArray = await firstValueFrom(this.http.get<Icard[]>(this.url));
       localStorage.setItem(this.cardStorageString, JSON.stringify(cardsArray));
@@ -199,11 +200,11 @@ export class CardService {
         if ((card.lastBilledMonth != currentMonth) && (card.billDate <= currentDate)) {
           card.amountDue += card.unbilledAmount;
           card.unbilledAmount = 0;
-          if(card.cashback) 
-          {
-            card.unbilledAmount -= card.cashback
-            card.cashback = 0;
-          }
+          // if(card.cashback) 
+          // {
+          //   card.unbilledAmount -= card.cashback
+          //   card.cashback = 0;
+          // }
           card.lastBilledMonth = currentMonth;
           let sub = this.updateCard(card, false);
           promiseArray.push(sub);
