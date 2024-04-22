@@ -50,27 +50,27 @@ export class CommonService {
       this.paymentService.initialisePaymentData();
     } else if (editDataFromLocal && editDataFromAPI) {
       editDataFromLocal = JSON.parse(editDataFromLocal);
-      if (editDataFromAPI['orders'] != editDataFromLocal['orders'])
+      if (editDataFromAPI['orders'] !== editDataFromLocal['orders'])
       this.productService.reload();
       else 
       this.productService.initialiseProductData();
       
-      if (editDataFromAPI['payee'] != editDataFromLocal['payee'])
+      if (editDataFromAPI['payee'] !== editDataFromLocal['payee'])
       this.payeeService.reload();
       else
       this.payeeService.initialiseData();
 
-      if (editDataFromAPI['payments'] != editDataFromLocal['payments'])
+      if (editDataFromAPI['payments'] !== editDataFromLocal['payments'])
       this.paymentService.reload();
       else
       this.paymentService.initialisePaymentData();
 
-      if (editDataFromAPI['transactions'] != editDataFromLocal['transactions'])
+      if (editDataFromAPI['transactions'] !== editDataFromLocal['transactions'])
       this.txnService.reload();
       else
       this.txnService.initialiseTxnData();
 
-      if (editDataFromAPI['cards'] != editDataFromLocal['cards'])
+      if (editDataFromAPI['cards'] !== editDataFromLocal['cards'])
       this.cardService.reload();
       else
       this.cardService.initialiseCardData();
